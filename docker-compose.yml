@@ -1,0 +1,85 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: calendar_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: calendar_db
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: rootpassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - calendar_network
+
+  php:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: calendar_php
+    restart: unless-stopped
+    environment:
+      APP_ENV: local
+      APP_DEBUG: true
+      APP_URL: http://calendar.local:8000
+      SANCTUM_STATEFUL_DOMAINS: calendar.local:8000,calendar.local:5173,localhost:8000,localhost:5173
+      SESSION_DOMAIN: .calendar.local
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: calendar_db
+      DB_USERNAME: admin
+      DB_PASSWORD: password
+    volumes:
+      - ./backend:/var/www/html
+    networks:
+      - calendar_network
+    depends_on:
+      - mysql
+
+  # Nginx веб-сервер
+  nginx:
+    image: nginx:alpine
+    container_name: calendar_nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"      # теперь на стандартном порту
+      - "8000:8000"  # бэкенд отдельно (опционально)
+    volumes:
+      - ./backend:/var/www/html
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - calendar_network
+    depends_on:
+      - php
+
+  # Vue Frontend
+  vue:
+    image: node:20-alpine
+    container_name: calendar_vue
+    restart: unless-stopped
+    working_dir: /app
+    environment:
+      VITE_API_URL: http://calendar.local:8000/api
+      VITE_APP_URL: http://calendar.local:5173
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "5173:5173"
+    networks:
+      - calendar_network
+    depends_on:
+      - nginx
+    command: >
+      sh -c "npm install &&
+             npm run dev -- --host 0.0.0.0"
+
+volumes:
+  mysql_data:
+
+networks:
+  calendar_network:
+    driver: bridge

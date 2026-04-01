@@ -1,0 +1,14 @@
+{
+  "name": "calendar_vib",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "private": true,
+  "dependencies": {
+    "laravel-vite-plugin": "^3.0.0",
+    "vite": "^8.0.3"
+  }
+}
