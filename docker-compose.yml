@@ -24,8 +24,8 @@ services:
     environment:
       APP_ENV: local
       APP_DEBUG: true
-      APP_URL: http://calendar.local:8000
-      SANCTUM_STATEFUL_DOMAINS: calendar.local:8000,calendar.local:5173,localhost:8000,localhost:5173
+      APP_URL: http://calendar.local
+      SANCTUM_STATEFUL_DOMAINS: calendar.local,calendar.local:5173,admin.calendar.local
       SESSION_DOMAIN: .calendar.local
       DB_HOST: mysql
       DB_PORT: 3306

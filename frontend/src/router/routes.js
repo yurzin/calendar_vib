@@ -1,11 +1,20 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import axios from '../utils/axios';
 
 const routes = [
   {
     path: '/',
     component: () => import('../views/Pages/View/Welcome.vue'),
     name: 'welcome'
+  },
+  {
+    path: '/user',
+    component: { template: '<div></div>' },
+    name: 'user'
+  },
+  {
+    path: '/main',
+    component: () => import('../views/Pages/View/Welcome.vue'),
+    name: 'main'
   },
   {
     path: '/login',
@@ -18,9 +27,16 @@ const routes = [
     name: 'register'
   },
   {
-    path: '/dashboard',
-    component: () => import('../views/Pages/Admin/Dashboard.vue'),
-    name: 'dashboard'
+    path: '/logout',
+    component: () => import('../views/Pages/View/Welcome.vue'),
+    name: 'logout'
+  },
+  {
+    path: '/admin',
+    beforeEnter: () => {
+      window.location.href = 'http://admin.calendar.local';
+    },
+    component: { template: '<div></div>' },
   },
 ];
 
@@ -29,12 +45,7 @@ const router = createRouter({
   routes,
 });
 
-// Пока убираем все редиректы
-router.beforeEach(async (to, from) => {
-  // Просто логируем переходы для отладки
-  console.log('Переход с:', from.path, 'на:', to.path);
-
-  // Пока пропускаем всё без проверок
+router.beforeEach((to, from) => {
   return true;
 });
 

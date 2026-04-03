@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useAuth } from '@/composable/useAuth';
-import GuestLayout from '../Layouts/GuestLayout.vue';
+import GuestLayout from '../../Layouts/GuestLayout.vue';
 
 const router  = useRouter();
 const route   = useRoute();

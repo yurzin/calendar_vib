@@ -1,13 +1,33 @@
 <script setup lang="ts">
 import {computed, onMounted, ref} from 'vue'
+import { useRouter } from 'vue-router';
+import { useAuth } from '@/composable/useAuth';
+
+const { user, logout, checkAuth } = useAuth();
+const router = useRouter();
 
 const mobileOpen = ref(false)
+const isAdmin = computed(() => user.value?.roles?.includes('admin'));
+const error     = ref('');
+
 const lightboxIndex = ref<number | null>(null)
 
 // Модальное окно формы регистрации
 const modalOpen = ref(false)
 const formSent = ref(false)
 const form = ref({ name: '', company: '', phone: '' })
+
+// Обработчик выхода
+const handleLogout = async () => {
+  try {
+    await logout();
+    router.push('/');
+    mobileOpen.value = false;
+  } catch (error) {
+    console.error('Logout failed:', error);
+  }
+};
+
 
 function openModal() { modalOpen.value = true; formSent.value = false }
 function closeModal() { modalOpen.value = false }
@@ -155,9 +175,32 @@ onMounted(() => {
 
 // Очищаем интервал при размонтировании
 import { onUnmounted } from 'vue'
+import axios from "axios";
 onUnmounted(() => {
   stopAutoplay()
 })
+
+const loadData = async () => {
+  error.value = '';
+
+  try {
+    if (!user.value) await checkAuth();
+    console.log('User after checkAuth:', user.value);
+    console.log('Cookies:', document.cookie);
+
+    const res = await axios.post('/api/main');
+    console.log(res.data);
+  } catch (e: any) {
+    console.error('Error status:', e.response?.status);
+    console.error('Error data:', e.response?.data);
+    error.value = e.response?.data?.message || 'Ошибка загрузки';
+
+  } finally {
+  }
+};
+
+onMounted(loadData);
+
 </script>
 
 <template>
@@ -208,13 +251,15 @@ onUnmounted(() => {
           <a href="#contacts"    class="gl-nav-item">Контакты</a>
         </div>
         <div class="gl-nav-divider" />
-        <router-link to="/login"    class="gl-nav-plain">Войти</router-link>
-        <router-link to="/register" class="gl-nav-accent">
+        <router-link v-if="!user" to="/login" class="gl-nav-accent">Войти</router-link>
+        <button v-else @click="handleLogout" class="gl-nav-accent">Выйти</button>
+        <router-link v-if="!user" to="/register" class="gl-nav-plain">
           <span>Регистрация</span>
           <svg viewBox="0 0 16 16" fill="none" width="11" height="11">
             <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
           </svg>
         </router-link>
+        <router-link v-if="isAdmin" to="/admin" class="gl-nav-plain">Админка</router-link>
       </nav>
 
       <button class="gl-burger" @click="mobileOpen = !mobileOpen" :class="{ 'is-open': mobileOpen }" aria-label="Меню">
@@ -506,7 +551,7 @@ onUnmounted(() => {
           </div>
         </div>
         <div class="gl-members-cta">
-          <router-link to="/members" class="gl-btn-ghost">Все участники →</router-link>
+          <router-link to="#members" class="gl-btn-ghost">Все участники →</router-link>
         </div>
       </div>
     </section>
@@ -566,19 +611,6 @@ onUnmounted(() => {
               :aria-label="`Перейти к слайду ${idx + 1}`"
             />
           </div>
-
-          <!-- Миниатюры (опционально) -->
-<!--          <div class="gl-carousel-thumbnails" v-if="calendarPages.length > 0">
-            <button
-              v-for="(image, idx) in calendarPages.slice(0, 8)"
-              :key="idx"
-              class="gl-carousel-thumb"
-              :class="{ 'is-active': idx === currentSlide }"
-              @click="goToSlide(idx)"
-            >
-              <img :src="image.src" :alt="`Миниатюра ${idx + 1}`" />
-            </button>
-          </div>-->
         </div>
       </div>
     </section>
@@ -622,7 +654,7 @@ onUnmounted(() => {
           </div>
         </div>
         <div class="gl-members-cta" style="margin-top: 48px;">
-          <router-link to="/archive" class="gl-btn-ghost">Весь архив →</router-link>
+          <router-link to="#archive" class="gl-btn-ghost">Весь архив →</router-link>
         </div>
       </div>
     </section>

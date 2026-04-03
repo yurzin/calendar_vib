@@ -16,9 +16,9 @@ const layout = computed(() => {
 </script>
 
 <template>
+  <div id="app">
     <router-view v-slot="{ Component }">
       <component :is="Component" />
     </router-view>
+  </div>
 </template>
-
-

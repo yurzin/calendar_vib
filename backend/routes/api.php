@@ -1,20 +1,31 @@
 <?php
 
-use App\Http\Controllers\Api\MainController;
-use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\Admin\AdminController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\MainController;
 use Illuminate\Support\Facades\Route;
 
-// Публичные маршруты (доступны всем)
+// Только авторизация, без проверки роли
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/sanctum/csrf-cookie', function () {
-        return response()->json(['message' => 'CSRF cookie set']);
-    });
-
-    Route::post('/login', [AuthController::class, 'login']);
-    Route::post('/register', [AuthController::class, 'register']);
     Route::get('/user', [AuthController::class, 'user']);
+    Route::post('/logout', [AuthController::class, 'logout']);
 });
 
-// Получение текущего пользователя (возвращает null если не авторизован)
-/*Route::get('/user', [UserController::class, 'getUser']);*/
+// Отдельно — с проверкой роли
+Route::middleware(['auth:sanctum', 'role:admin|editor'])->group(function () {
+    Route::get('/admin', [AdminController::class, 'index']);
+});
+
+// Публичные
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/main', [MainController::class, 'index']);
+
+Route::domain(env('ADMIN_DOMAIN', 'admin.calendar.local'))->group(function () {
+    // Админские маршруты с проверкой
+    Route::middleware(['auth:sanctum'])->group(function () {
+        Route::get('/user', [AuthController::class, 'user']);
+        Route::get('/dashboard', [AdminController::class, 'index']);
+    });
+});
+

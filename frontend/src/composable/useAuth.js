@@ -11,13 +11,7 @@ export function useAuth() {
     errors.value = {};
 
     try {
-      // Получаем CSRF cookie
-      await axios.get('/sanctum/csrf-cookie');
-
-      // Получаем пользователя
       const response = await axios.get('/api/user');
-
-      // Обрабатываем ответ в зависимости от структуры
       user.value = response.data.data || response.data;
       return user.value;
     } catch (error) {

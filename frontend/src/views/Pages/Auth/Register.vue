@@ -2,7 +2,7 @@
 import { ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
-import GuestLayout from '../../Layouts/GuestLayout.vue';
+import LandingPage from '@/views/Pages/View/LandingPage.vue';
 import InputError from '../../Components/InputError.vue';
 import InputLabel from '../../Components/InputLabel.vue';
 import PrimaryButton from '../../Components/PrimaryButton.vue';
@@ -51,7 +51,7 @@ const submit = async () => {
 </script>
 
 <template>
-  <GuestLayout>
+  <LandingPage>
     <div class="max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
       <h2 class="text-2xl font-bold mb-6">Register</h2>
       <form @submit.prevent="submit">
@@ -145,5 +145,5 @@ const submit = async () => {
         </div>
       </form>
     </div>
-  </GuestLayout>
+  </LandingPage>
 </template>

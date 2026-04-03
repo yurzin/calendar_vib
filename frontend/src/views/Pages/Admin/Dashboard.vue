@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
-import { useAuth } from '../../../composable/useAuth.js';
-import AuthenticatedLayout from '../Layouts/AuthenticatedLayout.vue';
+import { useAuth } from '@/composable/useAuth';
+import AuthenticatedLayout from '../../Layouts/AuthenticatedLayout.vue';
 import axios from 'axios';
 
 const { user, checkAuth } = useAuth();
@@ -24,17 +24,19 @@ const initials = computed(() => {
 
 const loadData = async () => {
   loading.value = true;
-  error.value   = '';
+  error.value = '';
   try {
     if (!user.value) await checkAuth();
+    console.log('User after checkAuth:', user.value);
+    console.log('Cookies:', document.cookie);
+
     const res = await axios.get('/api/dashboard');
     message.value = res.data.message;
   } catch (e: any) {
-    if (e.response?.status === 401) {
-      window.location.href = '/login';
-    } else {
-      error.value = 'Не удалось загрузить данные';
-    }
+    console.error('Error status:', e.response?.status);
+    console.error('Error data:', e.response?.data);
+    // ← редирект убрать временно
+    error.value = e.response?.data?.message || 'Ошибка загрузки';
   } finally {
     loading.value = false;
   }
@@ -57,16 +59,6 @@ onMounted(loadData);
           </div>
         </div>
       </template>
-
-      <!-- Ошибка -->
-      <div v-else-if="error" class="db-error">
-        <svg viewBox="0 0 24 24" fill="none" width="20" height="20">
-          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/>
-          <path d="M12 8v4M12 16h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-        </svg>
-        {{ error }}
-        <button class="db-retry" @click="loadData">Повторить</button>
-      </div>
 
       <!-- Контент -->
       <template v-else>
