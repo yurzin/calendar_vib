@@ -16,6 +16,8 @@ const lightboxIndex = ref<number | null>(null)
 const modalOpen = ref(false)
 const formSent = ref(false)
 const form = ref({ name: '', company: '', phone: '' })
+const members    = ref<Member[]>([]);
+const membersLoading  = ref(false);
 
 // Обработчик выхода
 const handleLogout = async () => {
@@ -48,7 +50,7 @@ const galleryItems = [
 ]
 
 // Участники
-const members = [
+/*const members = [
   { name: 'Новая стоматология',         role: 'Государственное управление',    logo: '/partners/newstomatology.jpg', initials: 'АК' },
   { name: 'КузбассРазрезУголь',         role: 'Горнодобывающая промышленность', logo: '/partners/inarm.jpg',          initials: 'КРУ' },
   { name: 'Банк «Кузнецкий»',           role: 'Финансовый сектор',             logo: '/partners/yurproject.jpg',     initials: 'БК' },
@@ -61,7 +63,19 @@ const members = [
   { name: 'Novaplast',                  role: 'Производство',                  logo: '',                             initials: 'NP' },
   { name: 'Медицинский центр «Авиценна»', role: 'Здравоохранение',             logo: '',                             initials: 'АВ' },
   { name: 'Кузбасс FM',                 role: 'Медиа и реклама',               logo: '',                             initials: 'КФМ' },
-]
+]*/
+
+
+const loadMembers = async () => {
+  try {
+    const { data } = await axios.post('/api/main');
+    members.value = Array.isArray(data?.partners) ? data.partners : [];
+  } catch {
+    members.value = [];
+  } finally {
+    membersLoading.value = false;
+  }
+};
 
 const calendarPages = [
   { src: '/calendar/vib_01.jpg', label: 'Обложка календаря 2026', size: 'lg' },
@@ -168,10 +182,7 @@ const stopAutoplay = () => {
   }
 }
 
-// Загружаем изображения при монтировании
-onMounted(() => {
-  startAutoplay()
-})
+
 
 // Очищаем интервал при размонтировании
 import { onUnmounted } from 'vue'
@@ -199,7 +210,11 @@ const loadData = async () => {
   }
 };
 
-onMounted(loadData);
+onMounted(() => {
+  startAutoplay();
+  loadData();
+  loadMembers();
+})
 
 </script>
 
@@ -927,7 +942,7 @@ onMounted(loadData);
   display: flex; align-items: center; gap: 14px;
   text-decoration: none; color: #dce8f5;
   padding: 14px 32px 14px 40px;
-  border-right: 1px solid rgba(96,165,250,0.1);
+  /*border-right: 1px solid rgba(96,165,250,0.1);*/
   flex-shrink: 0;
   transition: opacity 0.2s;
 }

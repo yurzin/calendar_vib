@@ -1,8 +1,10 @@
 <?php
 
 use App\Http\Controllers\Api\Admin\AdminController;
-use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\MainController;
+use App\Http\Controllers\Api\Admin\PartnerController;
+use App\Http\Controllers\Api\Admin\ProfileController;
+use App\Http\Controllers\Api\View\MainController;
+use App\Http\Controllers\Auth\AuthController;
 use Illuminate\Support\Facades\Route;
 
 // Только авторизация, без проверки роли
@@ -22,10 +24,14 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/main', [MainController::class, 'index']);
 
 Route::domain(env('ADMIN_DOMAIN', 'admin.calendar.local'))->group(function () {
-    // Админские маршруты с проверкой
     Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/user', [AuthController::class, 'user']);
         Route::get('/dashboard', [AdminController::class, 'index']);
+        Route::get('/profiles/search', [ProfileController::class, 'search']);
+        Route::post('/profiles', [ProfileController::class, 'store']);
+        // restore должен быть ДО apiResource
+        Route::post('/partners/{id}/restore', [PartnerController::class, 'restore']);
+        Route::apiResource('partners', PartnerController::class);
     });
 });
 

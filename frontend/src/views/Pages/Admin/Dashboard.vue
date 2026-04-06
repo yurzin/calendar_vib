@@ -27,15 +27,9 @@ const loadData = async () => {
   error.value = '';
   try {
     if (!user.value) await checkAuth();
-    console.log('User after checkAuth:', user.value);
-    console.log('Cookies:', document.cookie);
-
     const res = await axios.get('/api/dashboard');
     message.value = res.data.message;
   } catch (e: any) {
-    console.error('Error status:', e.response?.status);
-    console.error('Error data:', e.response?.data);
-    // ← редирект убрать временно
     error.value = e.response?.data?.message || 'Ошибка загрузки';
   } finally {
     loading.value = false;

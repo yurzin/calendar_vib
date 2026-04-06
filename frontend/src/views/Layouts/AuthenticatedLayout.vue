@@ -68,7 +68,7 @@ const initials = (name: string = '') =>
               <rect x="2" y="3" width="16" height="14" rx="2" stroke="currentColor" stroke-width="1.3"/>
               <path d="M2 7h16M6 3v4M14 3v4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
             </svg>
-            <span>Партнеры</span>
+            <span>Участники</span>
           </router-link>
 
           <router-link to="/profile" class="al-nav-item" active-class="al-nav-item--active">

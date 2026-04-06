@@ -59,7 +59,6 @@ const mobileOpen = ref(false);
   text-decoration: none;
   color: #dce8f5;
   padding: 14px 32px 14px 40px;
-  border-right: 1px solid rgba(96, 165, 250, 0.1);
   flex-shrink: 0;
   transition: opacity 0.2s;
 }

@@ -23,7 +23,7 @@ const routes = [
   },
   {
     path: '/partners',
-    component: { template: '<div></div>' },
+    component: () => import('../views/Pages/Admin/Partners.vue'),
     name: 'partners'
   },
   {
