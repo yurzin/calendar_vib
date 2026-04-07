@@ -18,7 +18,7 @@ const routes = [
   },
     {
     path: '/persons',
-    component: { template: '<div></div>' },
+      component: () => import('../views/Pages/Admin/Persons.vue'),
     name: 'persons'
   },
   {

@@ -380,13 +380,6 @@ const doRestore = async (id: number) => {
 
               <div class="pl-card-body">
                 <h2 class="pl-card-name">{{ partner.name }}</h2>
-                <a :href="normalizeUrl(partner.site)" target="_blank" rel="noopener" class="pl-card-site">
-                  <svg viewBox="0 0 16 16" fill="none" class="pl-icon-xs">
-                    <circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.2"/>
-                    <path d="M8 1.5C8 1.5 5.5 4 5.5 8s2.5 6.5 2.5 6.5M8 1.5C8 1.5 10.5 4 10.5 8S8 14.5 8 14.5M1.5 8h13" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
-                  </svg>
-                  {{ stripProtocol(partner.site) }}
-                </a>
                 <span v-if="partner.profile" class="pl-card-profile">
                   <svg viewBox="0 0 16 16" fill="none" class="pl-icon-xs">
                     <circle cx="8" cy="6" r="3" stroke="currentColor" stroke-width="1.2"/>
@@ -396,50 +389,59 @@ const doRestore = async (id: number) => {
                 </span>
               </div>
             </div>
+<div class="pl-card-bottom">
+  <a :href="normalizeUrl(partner.site)" target="_blank" rel="noopener" class="pl-card-site">
+    <svg viewBox="0 0 16 16" fill="none" class="pl-icon-xs">
+      <circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.2"/>
+      <path d="M8 1.5C8 1.5 5.5 4 5.5 8s2.5 6.5 2.5 6.5M8 1.5C8 1.5 10.5 4 10.5 8S8 14.5 8 14.5M1.5 8h13" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+    </svg>
+    {{ stripProtocol(partner.site) }}
+  </a>
+  <!-- Действия -->
+  <div class="pl-card-actions">
+    <!-- Подтверждение удаления -->
+    <template v-if="deleteConfirmId === partner.id">
+      <span class="pl-confirm-text">Удалить?</span>
+      <button class="pl-icon-btn pl-icon-btn--danger" :disabled="deleting" @click="doDelete(partner.id)" title="Подтвердить">
+        <svg viewBox="0 0 20 20" fill="none"><path d="M5 10h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </button>
+      <button class="pl-icon-btn" @click="cancelDelete" title="Отмена">
+        <svg viewBox="0 0 20 20" fill="none"><path d="M6 6l8 8M14 6l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+    </template>
 
-            <!-- Действия -->
-            <div class="pl-card-actions">
-              <!-- Подтверждение удаления -->
-              <template v-if="deleteConfirmId === partner.id">
-                <span class="pl-confirm-text">Удалить?</span>
-                <button class="pl-icon-btn pl-icon-btn--danger" :disabled="deleting" @click="doDelete(partner.id)" title="Подтвердить">
-                  <svg viewBox="0 0 20 20" fill="none"><path d="M5 10h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-                </button>
-                <button class="pl-icon-btn" @click="cancelDelete" title="Отмена">
-                  <svg viewBox="0 0 20 20" fill="none"><path d="M6 6l8 8M14 6l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-                </button>
-              </template>
+    <!-- Удалённая запись — только restore -->
+    <template v-else-if="!partner.checked">
+      <span class="pl-deleted-badge">удалён</span>
+      <button
+        class="pl-icon-btn pl-icon-btn--restore"
+        :disabled="restoring === partner.id"
+        @click="doRestore(partner.id)"
+        title="Восстановить"
+      >
+        <svg viewBox="0 0 20 20" fill="none">
+          <path d="M4 10a6 6 0 1 0 1.5-3.9M4 10V6M4 10H8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </template>
 
-              <!-- Удалённая запись — только restore -->
-              <template v-else-if="!partner.checked">
-                <span class="pl-deleted-badge">удалён</span>
-                <button
-                  class="pl-icon-btn pl-icon-btn--restore"
-                  :disabled="restoring === partner.id"
-                  @click="doRestore(partner.id)"
-                  title="Восстановить"
-                >
-                  <svg viewBox="0 0 20 20" fill="none">
-                    <path d="M4 10a6 6 0 1 0 1.5-3.9M4 10V6M4 10H8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                </button>
-              </template>
+    <!-- Активная запись -->
+    <template v-else>
+      <button class="pl-icon-btn" @click="openEdit(partner)" title="Редактировать">
+        <svg viewBox="0 0 20 20" fill="none">
+          <path d="M13.586 3.586a2 2 0 112.828 2.828L7 15.828 3 17l1.172-4L13.586 3.586z" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <button class="pl-icon-btn pl-icon-btn--danger" @click="confirmDelete(partner.id)" title="Удалить">
+        <svg viewBox="0 0 20 20" fill="none">
+          <path d="M4 6h12M8 6V4h4v2M9 10v5M11 10v5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+          <rect x="5" y="6" width="10" height="10" rx="1.5" stroke="currentColor" stroke-width="1.3"/>
+        </svg>
+      </button>
+    </template>
+  </div>
 
-              <!-- Активная запись -->
-              <template v-else>
-                <button class="pl-icon-btn" @click="openEdit(partner)" title="Редактировать">
-                  <svg viewBox="0 0 20 20" fill="none">
-                    <path d="M13.586 3.586a2 2 0 112.828 2.828L7 15.828 3 17l1.172-4L13.586 3.586z" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                </button>
-                <button class="pl-icon-btn pl-icon-btn--danger" @click="confirmDelete(partner.id)" title="Удалить">
-                  <svg viewBox="0 0 20 20" fill="none">
-                    <path d="M4 6h12M8 6V4h4v2M9 10v5M11 10v5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
-                    <rect x="5" y="6" width="10" height="10" rx="1.5" stroke="currentColor" stroke-width="1.3"/>
-                  </svg>
-                </button>
-              </template>
-            </div>
+</div>
           </div>
         </div>
       </template>
@@ -708,7 +710,7 @@ const doRestore = async (id: number) => {
 /* ── Сетка ─────────────────────────────────────────────────────── */
 .pl-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 16px;
 }
 
@@ -716,7 +718,7 @@ const doRestore = async (id: number) => {
 .pl-card {
   display: flex; flex-direction: column; justify-content: space-between;
   gap: 14px; padding: 18px 16px;
-  background: var(--bg-card);
+  background: rgba(96,165,250,0.05); animation: shimmer 3s infinite;
   border: 1px solid var(--border); border-radius: 12px;
   transition: border-color 0.2s, box-shadow 0.2s, opacity 0.2s;
 }
@@ -725,6 +727,11 @@ const doRestore = async (id: number) => {
 .pl-card--deleted:hover { opacity: 0.55; box-shadow: none; }
 
 .pl-card-top { display: flex; align-items: flex-start; gap: 12px; }
+.pl-card-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
 
 .pl-card-logo-wrap {
   width: 44px; height: 44px; flex-shrink: 0; border-radius: 10px;

@@ -49,21 +49,61 @@ const galleryItems = [
   { src: '/gallery/cal-detail.png',   label: 'Алфавитный указатель',          size: 'sm' },
 ]
 
-// Участники
-/*const members = [
-  { name: 'Новая стоматология',         role: 'Государственное управление',    logo: '/partners/newstomatology.jpg', initials: 'АК' },
-  { name: 'КузбассРазрезУголь',         role: 'Горнодобывающая промышленность', logo: '/partners/inarm.jpg',          initials: 'КРУ' },
-  { name: 'Банк «Кузнецкий»',           role: 'Финансовый сектор',             logo: '/partners/yurproject.jpg',     initials: 'БК' },
-  { name: 'СГК — Сибирская генерация',  role: 'Энергетика',                    logo: '/partners/sgk.jpg',            initials: 'СГК' },
-  { name: 'Кемеровская ГРЭС',           role: 'Электроэнергетика',             logo: '',                             initials: 'КГ' },
-  { name: 'ТЦ «Лапландия»',             role: 'Торговля и услуги',             logo: '',                             initials: 'ТЛ' },
-  { name: 'МКБ Инвестиции',             role: 'Инвестиционный бизнес',         logo: '',                             initials: 'МКБ' },
-  { name: 'РЖД — Западно-Сибирская',    role: 'Транспорт и логистика',         logo: '',                             initials: 'РЖД' },
-  { name: 'Кузбасская ТПП',             role: 'Деловое сообщество',            logo: '',                             initials: 'ТПП' },
-  { name: 'Novaplast',                  role: 'Производство',                  logo: '',                             initials: 'NP' },
-  { name: 'Медицинский центр «Авиценна»', role: 'Здравоохранение',             logo: '',                             initials: 'АВ' },
-  { name: 'Кузбасс FM',                 role: 'Медиа и реклама',               logo: '',                             initials: 'КФМ' },
-]*/
+// ─── Типы ──────────────────────────────────────────────────────────────────
+interface PersonPreview {
+  id: number;
+  short_name: string;
+  first_name: string;
+  last_name: string;
+  middle_name: string | null;
+  photo_path: string | null;
+  photo_thumb_path: string | null;
+  position_short: string | null;
+  phone: string | null;
+  email: string | null;
+  birth_day: number | null;
+  birth_month: string | null;
+}
+
+interface Member {
+  id: number;
+  name: string;
+  logo: string | null;
+  site: string | null;
+  initials: string;
+  role?: string;
+  persons?: PersonPreview[];
+}
+
+// ─── Модалка партнёра ──────────────────────────────────────────────────────
+const partnerModalOpen = ref(false);
+const selectedMember   = ref<Member | null>(null);
+const memberPersons    = ref<PersonPreview[]>([]);
+const memberPersonsLoading = ref(false);
+
+const openPartnerModal = async (member: Member) => {
+  selectedMember.value = member;
+  partnerModalOpen.value = true;
+
+  // Данные уже есть в member.persons
+  memberPersons.value = Array.isArray(member.persons) ? member.persons : [];
+};
+
+const closePartnerModal = () => {
+  partnerModalOpen.value = false;
+  selectedMember.value = null;
+  memberPersons.value = [];
+};
+
+const personInitials = (p: PersonPreview) =>
+  ((p.first_name?.[0] || '') + (p.last_name?.[0] || '')).toUpperCase() || '?';
+
+const monthNames = ['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
+const formatBirthday = (day: number | null, month: string | null) => {
+  if (!day || !month) return null;
+  const m = parseInt(String(month));
+  return `${day} ${monthNames[m - 1] || ''}`;
+};
 
 
 const loadMembers = async () => {
@@ -544,8 +584,10 @@ onMounted(() => {
         </div>
         <div class="gl-members-track-wrap">
           <div class="gl-members-track">
-            <div v-for="(member, i) in [...members, ...members]" :key="`m-${i}`" class="gl-member">
-              <div class="gl-member-logo-wrap">
+            <div v-for="(member, i) in [...members, ...members]" :key="`m-${i}`" class="gl-member"
+                 @click="i < members.length && openPartnerModal(member)"
+                 style="cursor: pointer">
+            <div class="gl-member-logo-wrap">
                 <img v-if="member.logo" :src="member.logo" :alt="member.name" class="gl-member-logo" />
                 <span v-else class="gl-member-initials">{{ member.initials }}</span>
               </div>
@@ -554,7 +596,9 @@ onMounted(() => {
           </div>
         </div>
         <div class="gl-members-grid">
-          <div v-for="(member, i) in members" :key="`mg-${i}`" class="gl-member-card">
+          <div v-for="(member, i) in members" :key="`mg-${i}`" class="gl-member-card"
+               @click="openPartnerModal(member)"
+               style="cursor: pointer">
             <div class="gl-member-logo-wrap gl-member-logo-wrap--lg">
               <img v-if="member.logo" :src="member.logo" :alt="member.name" class="gl-member-logo" />
               <span v-else class="gl-member-initials">{{ member.initials }}</span>
@@ -730,6 +774,115 @@ onMounted(() => {
         </div>
         <div class="gl-lb-dots">
           <button v-for="(_, i) in galleryItems" :key="i" class="gl-lb-dot" :class="{ 'is-active': i === lightboxIndex }" @click="lightboxIndex = i" />
+        </div>
+      </div>
+    </Transition>
+
+    <!-- ═══════════════════════════════════════════════════════
+     МОДАЛКА ПАРТНЁРА
+═══════════════════════════════════════════════════════════ -->
+    <Transition name="modal">
+      <div v-if="partnerModalOpen" class="gl-modal-overlay" @click.self="closePartnerModal">
+        <div class="gl-partner-modal">
+          <button class="gl-modal-close" @click="closePartnerModal" aria-label="Закрыть">✕</button>
+
+          <!-- Шапка партнёра -->
+          <div class="gl-pm-header">
+            <div class="gl-pm-logo-wrap">
+              <img
+                v-if="selectedMember?.logo"
+                :src="selectedMember.logo"
+                :alt="selectedMember?.name"
+                class="gl-pm-logo"
+              />
+              <span v-else class="gl-pm-initials">{{ selectedMember?.initials }}</span>
+            </div>
+            <div class="gl-pm-meta">
+              <h2 class="gl-pm-name">{{ selectedMember?.name }}</h2>
+              <a
+              v-if="selectedMember?.site"
+              :href="selectedMember.site.startsWith('http') ? selectedMember.site : 'https://' + selectedMember.site"
+              target="_blank"
+              rel="noopener"
+              class="gl-pm-site"
+              >
+              {{ (selectedMember?.site || '').replace(/^https?:\/\//, '') }}
+              <svg viewBox="0 0 12 12" fill="none" width="10" height="10">
+                <path d="M2 10L10 2M10 2H5M10 2v5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+              </svg>
+              </a>
+            </div>
+          </div>
+
+          <!-- Персоны -->
+          <div class="gl-pm-persons-head">
+            <span class="gl-pm-section-label">Персоны организации</span>
+            <span class="gl-pm-count" v-if="!memberPersonsLoading">{{ memberPersons.length }}</span>
+          </div>
+
+          <!-- Загрузка -->
+          <div v-if="memberPersonsLoading" class="gl-pm-loading">
+            <span class="gl-pm-spinner" />
+            <span>Загрузка…</span>
+          </div>
+
+          <!-- Пусто -->
+          <div v-else-if="memberPersons.length === 0" class="gl-pm-empty">
+            <svg viewBox="0 0 48 48" fill="none" width="40" height="40">
+              <circle cx="24" cy="18" r="8" stroke="#3b82f6" stroke-width="1.3"/>
+              <path d="M8 40c0-8.837 7.163-14 16-14s16 5.163 16 14" stroke="#3b82f6" stroke-width="1.3" stroke-linecap="round"/>
+            </svg>
+            <span>Персоны не добавлены</span>
+          </div>
+
+          <!-- Список персон -->
+          <div v-else class="gl-pm-persons">
+            <div
+              v-for="person in memberPersons"
+              :key="person.id"
+              class="gl-pm-person"
+            >
+              <!-- Аватар -->
+              <div class="gl-pm-avatar">
+                <img
+                  v-if="person.photo_thumb_path || person.photo_path"
+                  :src="person.photo_thumb_path || person.photo_path"
+                  :alt="person.short_name"
+                  class="gl-pm-avatar-img"
+                  @error="($event.target as HTMLImageElement).style.display='none'"
+                />
+                <span v-else class="gl-pm-avatar-initials">{{ personInitials(person) }}</span>
+              </div>
+
+              <!-- Инфо -->
+              <div class="gl-pm-person-info">
+                <span class="gl-pm-person-name">{{ person.short_name }}</span>
+                <span v-if="person.position_short" class="gl-pm-person-pos">{{ person.position_short }}</span>
+                <div class="gl-pm-person-contacts">
+                  <a v-if="person.phone" :href="`tel:${person.phone}`" class="gl-pm-contact">
+                    <svg viewBox="0 0 14 14" fill="none" width="11" height="11">
+                      <path d="M2.6 5.7c.6 1.2 1.6 2.2 2.8 2.8l.9-.9c.1-.1.3-.2.4-.1.5.2 1 .3 1.5.3.2 0 .4.2.4.4v1.5c0 .2-.2.4-.4.4C4.3 10 1 6.7 1 2.7c0-.2.2-.4.4-.4h1.5c.2 0 .4.2.4.4 0 .5.1 1 .3 1.5 0 .1 0 .3-.1.4l-.9.6z" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    {{ person.phone }}
+                  </a>
+                  <a v-if="person.email" :href="`mailto:${person.email}`" class="gl-pm-contact">
+                    <svg viewBox="0 0 14 14" fill="none" width="11" height="11">
+                      <rect x="1" y="3" width="12" height="8" rx="1.2" stroke="currentColor" stroke-width="1"/>
+                      <path d="M1 4l6 4 6-4" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>
+                    </svg>
+                    {{ person.email }}
+                  </a>
+                  <span v-if="formatBirthday(person.birth_day, person.birth_month)" class="gl-pm-birthday">
+                <svg viewBox="0 0 14 14" fill="none" width="11" height="11">
+                  <rect x="1" y="2.5" width="12" height="10" rx="1.5" stroke="currentColor" stroke-width="1"/>
+                  <path d="M4 1v3M10 1v3M1 6h12" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>
+                </svg>
+                {{ formatBirthday(person.birth_day, person.birth_month) }}
+              </span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </Transition>
@@ -1257,6 +1410,179 @@ onMounted(() => {
 .gl-lb-dot.is-active { background: #93c5fd; transform: scale(1.3); }
 .lb-enter-active, .lb-leave-active { transition: opacity 0.25s; }
 .lb-enter-from, .lb-leave-to { opacity: 0; }
+
+/* ═══════════════════════════════════════
+   МОДАЛКА ПАРТНЁРА
+═══════════════════════════════════════ */
+.gl-partner-modal {
+  position: relative;
+  width: 100%; max-width: 560px;
+  max-height: 85vh;
+  background: linear-gradient(150deg, #0d1530 0%, #091220 100%);
+  border: 1px solid rgba(96,165,250,0.18);
+  border-radius: 20px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.03),
+    0 40px 100px rgba(0,0,0,0.7),
+    inset 0 1px 0 rgba(147,197,253,0.08);
+}
+
+/* Шапка партнёра */
+.gl-pm-header {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 28px 28px 20px;
+  border-bottom: 1px solid rgba(96,165,250,0.1);
+  flex-shrink: 0;
+}
+.gl-pm-logo-wrap {
+  width: 64px; height: 64px;
+  border-radius: 14px;
+  background: #ffffff;
+  border: 1px solid rgba(96,165,250,0.15);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; overflow: hidden;
+  padding: 8px;
+}
+.gl-pm-logo { width: 100%; height: 100%; object-fit: contain; }
+.gl-pm-initials {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px; font-weight: 700;
+  color: #93c5fd; letter-spacing: 0.04em;
+}
+.gl-pm-meta { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.gl-pm-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 26px; font-weight: 600;
+  color: #e2edf8; margin: 0; line-height: 1.1;
+}
+.gl-pm-site {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 12px; color: #3b82f6;
+  text-decoration: none; transition: color 0.2s;
+}
+.gl-pm-site:hover { color: #93c5fd; }
+
+/* Заголовок секции персон */
+.gl-pm-persons-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 28px 10px;
+  flex-shrink: 0;
+}
+.gl-pm-section-label {
+  font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: #3b82f6; font-weight: 400;
+}
+.gl-pm-count {
+  font-size: 11px; color: #2e4a73;
+  background: rgba(96,165,250,0.08);
+  border: 1px solid rgba(96,165,250,0.12);
+  padding: 2px 9px; border-radius: 20px;
+}
+
+/* Загрузка */
+.gl-pm-loading {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  padding: 40px;
+  font-size: 13px; color: #2e4a73;
+  flex-shrink: 0;
+}
+.gl-pm-spinner {
+  display: inline-block; width: 16px; height: 16px;
+  border: 2px solid rgba(96,165,250,0.2);
+  border-top-color: #3b82f6;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Пусто */
+.gl-pm-empty {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 12px; padding: 40px 28px;
+  font-size: 13px; color: #2e4a73;
+  flex-shrink: 0;
+}
+.gl-pm-empty svg { opacity: 0.4; }
+
+/* Список персон */
+.gl-pm-persons {
+  overflow-y: auto;
+  padding: 0 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(96,165,250,0.2) transparent;
+}
+.gl-pm-persons::-webkit-scrollbar { width: 4px; }
+.gl-pm-persons::-webkit-scrollbar-track { background: transparent; }
+.gl-pm-persons::-webkit-scrollbar-thumb { background: rgba(96,165,250,0.2); border-radius: 4px; }
+
+/* Карточка персоны */
+.gl-pm-person {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 16px;
+  border: 1px solid rgba(96,165,250,0.08);
+  border-radius: 12px;
+  background: rgba(13,21,48,0.4);
+  transition: border-color 0.2s, background 0.2s;
+}
+.gl-pm-person:hover {
+  border-color: rgba(96,165,250,0.2);
+  background: rgba(13,21,48,0.7);
+}
+
+/* Аватар */
+.gl-pm-avatar {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1e3a8a, #2563eb);
+  border: 1px solid rgba(96,165,250,0.2);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; overflow: hidden;
+  box-shadow: 0 0 12px rgba(37,99,235,0.2);
+}
+.gl-pm-avatar-img { width: 100%; height: 100%; object-fit: cover; }
+.gl-pm-avatar-initials {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 16px; font-weight: 600;
+  color: #bfdbfe; letter-spacing: 0.02em;
+}
+
+/* Инфо персоны */
+.gl-pm-person-info {
+  display: flex; flex-direction: column; gap: 4px;
+  min-width: 0; flex: 1;
+}
+.gl-pm-person-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 17px; font-weight: 600;
+  color: #e2edf8; white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis;
+}
+.gl-pm-person-pos {
+  font-size: 11px; color: #3d5a8a;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.gl-pm-person-contacts {
+  display: flex; align-items: center; gap: 12px;
+  flex-wrap: wrap; margin-top: 2px;
+}
+.gl-pm-contact {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 11px; color: #3b82f6;
+  text-decoration: none; transition: color 0.2s; white-space: nowrap;
+}
+.gl-pm-contact:hover { color: #93c5fd; }
+.gl-pm-birthday {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 11px; color: #2e4a73; white-space: nowrap;
+}
 
 /* ═══════════════════════════════════════
    МОДАЛЬНОЕ ОКНО

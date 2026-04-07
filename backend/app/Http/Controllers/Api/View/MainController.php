@@ -14,6 +14,7 @@ class MainController
             'logo' => $p->logo,
             'site' => $p->url,
             'role' => $p->profile?->name,
+            'persons' => $p->persons
         ]);
 
         return response()->json([

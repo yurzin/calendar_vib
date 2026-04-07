@@ -46,4 +46,9 @@ class Partner extends Model
     {
         return $this->belongsTo(Profile::class);
     }
+
+    public function persons()
+    {
+        return $this->hasMany(Person::class);
+    }
 }

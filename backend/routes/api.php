@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\Admin\AdminController;
 use App\Http\Controllers\Api\Admin\PartnerController;
+use App\Http\Controllers\Api\Admin\PersonController;
 use App\Http\Controllers\Api\Admin\ProfileController;
 use App\Http\Controllers\Api\View\MainController;
 use App\Http\Controllers\Auth\AuthController;
@@ -32,6 +33,9 @@ Route::domain(env('ADMIN_DOMAIN', 'admin.calendar.local'))->group(function () {
         // restore должен быть ДО apiResource
         Route::post('/partners/{id}/restore', [PartnerController::class, 'restore']);
         Route::apiResource('partners', PartnerController::class);
+
+        /*Route::post('/persons/{id}/restore', [PersonController::class, 'restore']);*/
+        Route::apiResource('persons', PersonController::class);
     });
 });
 
