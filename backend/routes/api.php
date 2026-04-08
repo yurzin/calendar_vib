@@ -23,6 +23,7 @@ Route::middleware(['auth:sanctum', 'role:admin|editor'])->group(function () {
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/main', [MainController::class, 'index']);
+Route::post('/members', [MainController::class, 'members']);
 
 Route::domain(env('ADMIN_DOMAIN', 'admin.calendar.local'))->group(function () {
     Route::middleware(['auth:sanctum'])->group(function () {

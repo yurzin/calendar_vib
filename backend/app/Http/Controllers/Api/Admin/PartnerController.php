@@ -18,6 +18,7 @@ class PartnerController extends Controller
             'site' => $p->url,
             'profile_id' => $p->profile_id,
             'profile'    => $p->profile ? ['id' => $p->profile->id, 'name' => $p->profile->name] : null,
+            'is_paid' => (bool)$p->is_paid,
             'checked' => $p->deleted_at === null,
         ]);
 
@@ -29,6 +30,7 @@ class PartnerController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'url' => 'required|url|max:255',
+            'is_paid' => 'nullable|boolean',
             'logo' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
@@ -37,6 +39,7 @@ class PartnerController extends Controller
         $partner = Partner::create([
             'name' => $validated['name'],
             'url' => $validated['url'],
+            'is_paid' =>  $validated['is_paid'],
             'logo' => $logoPath,
             'profile_id' => $request->input('profile_id') ?: null,
         ]);
@@ -46,6 +49,7 @@ class PartnerController extends Controller
             'name' => $partner->name,
             'logo' => $partner->logo,
             'site' => $partner->url,
+            'is_paid' => $partner->is_paid,
             'checked' => true,
         ], 201);
     }
@@ -55,6 +59,7 @@ class PartnerController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'url' => 'required|url|max:255',
+            'is_paid' => 'nullable|boolean',
             'logo' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
@@ -64,6 +69,7 @@ class PartnerController extends Controller
         $partner->update([
             'name' => $validated['name'],
             'url' => $validated['url'],
+            'is_paid' =>  $validated['is_paid'],
             'logo' => $logoPath ?? $partner->logo,
             'profile_id' => $request->input('profile_id') ?: null,
         ]);
@@ -73,6 +79,9 @@ class PartnerController extends Controller
             'name' => $partner->name,
             'logo' => $partner->logo,
             'site' => $partner->url,
+            'is_paid' => (bool)$partner->is_paid,
+            'profile_id' => $partner->profile_id,
+            'profile'    => $partner->profile,
             'checked' => $partner->deleted_at === null,
         ]);
     }
@@ -95,6 +104,7 @@ class PartnerController extends Controller
             'name'    => $partner->name,
             'logo'    => $partner->logo,
             'site'    => $partner->url,
+            'is_paid' => $partner->is_paid,
             'checked' => true,
         ]);
     }

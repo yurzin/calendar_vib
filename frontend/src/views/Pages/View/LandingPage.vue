@@ -1,7 +1,10 @@
 <script setup lang="ts">
-import {computed, onMounted, ref} from 'vue'
+import {computed, onMounted, onUnmounted, ref} from 'vue'
 import { useRouter } from 'vue-router';
 import { useAuth } from '@/composable/useAuth';
+import axios from "axios";
+import Footer from "@/views/Pages/View/Components/Footer.vue";
+import Grid from '@/views/Pages/View/Components/Grid.vue'
 
 const { user, logout, checkAuth } = useAuth();
 const router = useRouter();
@@ -15,6 +18,7 @@ const lightboxIndex = ref<number | null>(null)
 // Модальное окно формы регистрации
 const modalOpen = ref(false)
 const formSent = ref(false)
+const membersExpanded = ref(false)
 const form = ref({ name: '', company: '', phone: '' })
 const members    = ref<Member[]>([]);
 const membersLoading  = ref(false);
@@ -29,7 +33,6 @@ const handleLogout = async () => {
     console.error('Logout failed:', error);
   }
 };
-
 
 function openModal() { modalOpen.value = true; formSent.value = false }
 function closeModal() { modalOpen.value = false }
@@ -116,6 +119,24 @@ const loadMembers = async () => {
     membersLoading.value = false;
   }
 };
+
+const loadAllMembers = async () => {
+  try {
+    if (membersExpanded.value) {
+      // Свернуть — загрузить обратно краткий список
+      await loadMembers()
+      membersExpanded.value = false
+      return
+    }
+    const { data } = await axios.post('/api/members')
+    members.value = Array.isArray(data?.partners) ? data.partners : []
+    membersExpanded.value = true
+  } catch {
+    members.value = []
+  } finally {
+    membersLoading.value = false
+  }
+}
 
 const calendarPages = [
   { src: '/calendar/vib_01.jpg', label: 'Обложка календаря 2026', size: 'lg' },
@@ -222,11 +243,7 @@ const stopAutoplay = () => {
   }
 }
 
-
-
 // Очищаем интервал при размонтировании
-import { onUnmounted } from 'vue'
-import axios from "axios";
 onUnmounted(() => {
   stopAutoplay()
 })
@@ -349,7 +366,7 @@ onMounted(() => {
         </p>
         <div class="gl-hero-cta">
           <a href="#integration" class="gl-btn-primary">Интеграция в проект</a>
-          <a href="#about"       class="gl-btn-ghost">Узнать больше</a>
+          <a href="#about" class="gl-btn-ghost">Узнать больше</a>
         </div>
       </div>
 
@@ -597,6 +614,7 @@ onMounted(() => {
         </div>
         <div class="gl-members-grid">
           <div v-for="(member, i) in members" :key="`mg-${i}`" class="gl-member-card"
+               :class="{ 'gl-member-card-paid': member.is_paid }"
                @click="openPartnerModal(member)"
                style="cursor: pointer">
             <div class="gl-member-logo-wrap gl-member-logo-wrap--lg">
@@ -610,7 +628,15 @@ onMounted(() => {
           </div>
         </div>
         <div class="gl-members-cta">
-          <router-link to="#members" class="gl-btn-ghost">Все участники →</router-link>
+          <button @click="loadAllMembers()" class="gl-btn-ghost gl-members-btn">
+            <span>{{ membersExpanded ? 'Свернуть' : 'Все участники' }}</span>
+            <svg
+              viewBox="0 0 16 16" fill="none" width="12" height="12"
+              :style="{ transform: membersExpanded ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s ease' }"
+            >
+              <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </button>
         </div>
       </div>
     </section>
@@ -717,48 +743,8 @@ onMounted(() => {
         </div>
       </div>
     </section>
-
-    <!-- ─── Footer ───────────────────────────────────────── -->
-    <footer class="gl-footer">
-      <div class="gl-footer-inner">
-        <div class="gl-footer-contacts">
-          <a href="tel:+73842755555" class="gl-footer-contact">
-            <div class="gl-footer-contact-icon">
-              <svg viewBox="0 0 24 24" fill="none" width="16" height="16">
-                <path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </div>
-            <div class="gl-footer-contact-text">
-              <span class="gl-footer-contact-label">Звоните нам</span>
-              <span class="gl-footer-contact-value">+7 3842 75-55-55</span>
-            </div>
-          </a>
-          <a href="mailto:pr@vse42.ru" class="gl-footer-contact">
-            <div class="gl-footer-contact-icon">
-              <svg viewBox="0 0 24 24" fill="none" width="16" height="16">
-                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M22 6l-10 7L2 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </div>
-            <div class="gl-footer-contact-text">
-              <span class="gl-footer-contact-label">Пишите нам</span>
-              <span class="gl-footer-contact-value">pr@vse42.ru</span>
-            </div>
-          </a>
-        </div>
-        <div class="gl-footer-copy">
-          <router-link to="/" class="gl-footer-brand">
-            <span class="gl-footer-brand-name">Власть и Бизнес</span>
-          </router-link>
-          <span class="gl-footer-copy-text">© 2017 – {{ new Date().getFullYear() }}</span>
-        </div>
-        <div class="gl-footer-links">
-          <a href="#" class="gl-footer-link">Политика конфиденциальности</a>
-          <span class="gl-sep">·</span>
-          <a href="#" class="gl-footer-link">Поддержка</a>
-        </div>
-      </div>
-    </footer>
+<Grid/>
+    <Footer/>
 
     <!-- ═══════════════════════════════════════════════════════
          LIGHTBOX
@@ -817,7 +803,6 @@ onMounted(() => {
           <!-- Персоны -->
           <div class="gl-pm-persons-head">
             <span class="gl-pm-section-label">Персоны организации</span>
-            <span class="gl-pm-count" v-if="!memberPersonsLoading">{{ memberPersons.length }}</span>
           </div>
 
           <!-- Загрузка -->
@@ -859,7 +844,7 @@ onMounted(() => {
                 <span class="gl-pm-person-name">{{ person.short_name }}</span>
                 <span v-if="person.position_short" class="gl-pm-person-pos">{{ person.position_short }}</span>
                 <div class="gl-pm-person-contacts">
-                  <a v-if="person.phone" :href="`tel:${person.phone}`" class="gl-pm-contact">
+<!--                  <a v-if="person.phone" :href="`tel:${person.phone}`" class="gl-pm-contact">
                     <svg viewBox="0 0 14 14" fill="none" width="11" height="11">
                       <path d="M2.6 5.7c.6 1.2 1.6 2.2 2.8 2.8l.9-.9c.1-.1.3-.2.4-.1.5.2 1 .3 1.5.3.2 0 .4.2.4.4v1.5c0 .2-.2.4-.4.4C4.3 10 1 6.7 1 2.7c0-.2.2-.4.4-.4h1.5c.2 0 .4.2.4.4 0 .5.1 1 .3 1.5 0 .1 0 .3-.1.4l-.9.6z" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
@@ -871,17 +856,20 @@ onMounted(() => {
                       <path d="M1 4l6 4 6-4" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>
                     </svg>
                     {{ person.email }}
-                  </a>
-                  <span v-if="formatBirthday(person.birth_day, person.birth_month)" class="gl-pm-birthday">
+                  </a>-->
+                </div>
+              </div>
+              <div>
+              <span v-if="formatBirthday(person.birth_day, person.birth_month)" class="gl-pm-birthday">
                 <svg viewBox="0 0 14 14" fill="none" width="11" height="11">
                   <rect x="1" y="2.5" width="12" height="10" rx="1.5" stroke="currentColor" stroke-width="1"/>
                   <path d="M4 1v3M10 1v3M1 6h12" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>
                 </svg>
                 {{ formatBirthday(person.birth_day, person.birth_month) }}
               </span>
-                </div>
               </div>
             </div>
+
           </div>
         </div>
       </div>
@@ -1214,8 +1202,24 @@ onMounted(() => {
 ═══════════════════════════════════════ */
 .gl-btn-primary { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #06091a; font-weight: 500; padding: 13px 28px; border-radius: 8px; background: #93c5fd; text-decoration: none; transition: background 0.2s, transform 0.15s; }
 .gl-btn-primary:hover { background: #bfdbfe; transform: translateY(-1px); }
-.gl-btn-ghost { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #4a6fa5; padding: 13px 24px; border-radius: 8px; border: 1px solid rgba(96,165,250,0.2); text-decoration: none; transition: all 0.2s; display: inline-block; }
-.gl-btn-ghost:hover { color: #93c5fd; border-color: rgba(147,197,253,0.4); background: rgba(147,197,253,0.05); }
+
+.gl-btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #4a6fa5;
+  padding: 13px 24px;
+  border-radius: 8px;
+  border: 1px solid rgba(96, 165, 250, 0.2);
+  text-decoration: none;
+  transition: all 0.2s;
+  background: transparent;
+}
+
+.gl-btn-ghost:hover { cursor: pointer; color: #93c5fd; border-color: rgba(147,197,253,0.4); background: rgba(147,197,253,0.05); }
 
 /* ═══════════════════════════════════════
    СЕКЦИИ
@@ -1297,6 +1301,8 @@ onMounted(() => {
 .gl-member { display: flex; align-items: center; gap: 10px; padding: 0 28px; border-right: 1px solid rgba(96,165,250,0.1); white-space: nowrap; flex-shrink: 0; }
 .gl-members-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
 .gl-member-card { display: flex; align-items: center; gap: 14px; padding: 18px 20px; border: 1px solid rgba(96,165,250,0.1); border-radius: 12px; background: rgba(13,21,48,0.4); transition: border-color 0.2s, background 0.2s; }
+.gl-member-card-paid { animation: shimmer 3s infinite; }
+@keyframes shimmer { 0%,100% { opacity:.6; } 50% { opacity:1; } }
 .gl-member-card:hover { border-color: rgba(96,165,250,0.25); background: rgba(13,21,48,0.7); }
 .gl-member-logo-wrap { width: 36px; height: 36px; border-radius: 8px; background: rgba(37,99,235,0.12); border: 1px solid rgba(96,165,250,0.15); display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden; }
 .gl-member-logo-wrap--lg { width: 75px; height: 75px; border-radius: 10px; padding: 10px; background: #ffffff; }
@@ -1368,28 +1374,6 @@ onMounted(() => {
 .gl-archive-btn--primary:hover { background: #93c5fd; border-color: #93c5fd; color: #06091a; }
 .gl-archive-btn--ghost { background: transparent; border: 1px solid rgba(96,165,250,0.12); color: #3d5a8a; }
 .gl-archive-btn--ghost:hover { border-color: rgba(96,165,250,0.28); color: #93c5fd; background: rgba(96,165,250,0.05); }
-
-/* ═══════════════════════════════════════
-   FOOTER
-═══════════════════════════════════════ */
-.gl-footer { position: relative; z-index: 10; border-top: 1px solid rgba(96,165,250,0.08); background: rgba(6,9,26,0.6); backdrop-filter: blur(12px); }
-.gl-footer-inner { max-width: 1180px; margin: 0 auto; padding: 28px 64px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 24px; }
-.gl-footer-contacts { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
-.gl-footer-contact { display: flex; align-items: center; gap: 12px; text-decoration: none; transition: opacity 0.2s; }
-.gl-footer-contact:hover { opacity: 0.75; }
-.gl-footer-contact-icon { width: 36px; height: 36px; border-radius: 9px; background: rgba(59,130,246,0.1); border: 1px solid rgba(96,165,250,0.18); display: flex; align-items: center; justify-content: center; color: #93c5fd; flex-shrink: 0; }
-.gl-footer-contact-text { display: flex; flex-direction: column; gap: 1px; }
-.gl-footer-contact-label { font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: #2e4a73; font-weight: 300; }
-.gl-footer-contact-value { font-size: 14px; font-weight: 500; color: #a8c4e8; letter-spacing: 0.02em; }
-.gl-footer-copy { display: flex; flex-direction: column; align-items: center; gap: 4px; }
-.gl-footer-brand { text-decoration: none; }
-.gl-footer-brand-name { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 600; color: #4a6fa5; letter-spacing: 0.04em; transition: color 0.2s; }
-.gl-footer-brand:hover .gl-footer-brand-name { color: #93c5fd; }
-.gl-footer-copy-text { font-size: 10px; color: #1e2d4a; letter-spacing: 0.08em; }
-.gl-footer-links { display: flex; align-items: center; justify-content: flex-end; gap: 10px; font-size: 11px; color: #2a3f65; letter-spacing: 0.04em; }
-.gl-sep { color: #1e2d4a; }
-.gl-footer-link { color: #2a3f65; text-decoration: none; transition: color 0.2s; }
-.gl-footer-link:hover { color: #4a7fd4; }
 
 /* ═══════════════════════════════════════
    LIGHTBOX
@@ -1566,8 +1550,9 @@ onMounted(() => {
   overflow: hidden; text-overflow: ellipsis;
 }
 .gl-pm-person-pos {
+  display: block;
   font-size: 11px; color: #3d5a8a;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  overflow: hidden; text-overflow: ellipsis;
 }
 .gl-pm-person-contacts {
   display: flex; align-items: center; gap: 12px;
@@ -1581,7 +1566,7 @@ onMounted(() => {
 .gl-pm-contact:hover { color: #93c5fd; }
 .gl-pm-birthday {
   display: inline-flex; align-items: center; gap: 4px;
-  font-size: 11px; color: #2e4a73; white-space: nowrap;
+  font-size: 14px; color: #ffffff; white-space: nowrap;
 }
 
 /* ═══════════════════════════════════════

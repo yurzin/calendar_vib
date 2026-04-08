@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import { useAuth } from '@/composable/useAuth';
 import { useRouter } from 'vue-router';
-import Header from "@/views/Components/Header.vue";
+import Header from "@/views/Pages/Admin/Components/Header.vue";
 
 const { user, logout, loading } = useAuth();
 const router = useRouter();

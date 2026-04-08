@@ -17,6 +17,16 @@ const routes = [
     name: 'main'
   },
   {
+    path: '/members',
+    component: () => import('../views/Pages/View/Members.vue'),
+    name: 'members'
+  },
+  {
+    path: '/grid',
+    component: () => import('../views/Pages/View/Components/Grid.vue'),
+    name: 'grid'
+  },
+  {
     path: '/login',
     component: () => import('../views/Pages/Auth/Login.vue'),
     name: 'login'

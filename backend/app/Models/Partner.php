@@ -15,7 +15,7 @@ class Partner extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['logo', 'name', 'url', 'profile_id'];
+    protected $fillable = ['logo', 'name', 'url', 'profile_id', 'is_paid'];
 
     public static function uploadImage(Request $request, ?string $oldPath = null): ?string
     {

@@ -17,7 +17,8 @@ interface Partner {
   name: string;
   logo: string | null;
   site: string;
-  checked: boolean;       // false = soft deleted
+  checked: boolean;
+  is_paid: boolean;
   profile_id: number | null;
   profile: Profile | null;
 }
@@ -70,11 +71,12 @@ type FormState = {
   id: number | null;
   name: string;
   site: string;
+  is_paid: boolean;
   logo: string | null;
   profile_id: number | null;
 };
 
-const emptyForm = (): FormState => ({ id: null, name: '', site: '', logo: null, profile_id: null });
+const emptyForm = (): FormState => ({ id: null, name: '', site: '', is_paid: null, logo: null, profile_id: null });
 
 const modalOpen = ref(false);
 const modalMode = ref<'create' | 'edit'>('create');
@@ -189,6 +191,7 @@ const openEdit = (p: Partner) => {
     id:         p.id,
     name:       p.name,
     site:       p.site,
+    is_paid:    p.is_paid,
     logo:       p.logo,
     profile_id: p.profile_id,
   };
@@ -198,7 +201,7 @@ const openEdit = (p: Partner) => {
   modalMode.value = 'edit';
   formErrors.value = {};
   logoFile.value   = null;
-  fetchProfiles();
+  p.profile_id || fetchProfiles();
   modalOpen.value = true;
 };
 
@@ -223,6 +226,7 @@ const save = async () => {
   try {
     const fd = new FormData();
     fd.append('name', form.value.name.trim());
+    fd.append('is_paid', form.value.is_paid ? '1' : '0');
     fd.append('url',  normalizeUrl(form.value.site.trim()));
     if (logoFile.value)          fd.append('logo',       logoFile.value);
     if (form.value.profile_id)   fd.append('profile_id', String(form.value.profile_id));
@@ -472,6 +476,11 @@ const doRestore = async (id: number) => {
                 <p class="pl-preview-meta">{{ stripProtocol(form.site) || 'site.ru' }}</p>
                 <p v-if="selectedProfile" class="pl-preview-meta">{{ selectedProfile.name }}</p>
               </div>
+              <div>
+              <label class="pl-label">Платное </label>
+              <input v-model="form.is_paid" class="pl-input" type="checkbox">
+              <span v-if="formErrors.is_paid" class="pl-field-err">{{ formErrors.is_paid }}</span>
+            </div>
             </div>
 
             <!-- Форма -->
@@ -801,7 +810,7 @@ const doRestore = async (id: number) => {
 
 /* Превью в модалке */
 .pl-modal-preview {
-  display: flex; align-items: center; gap: 14px;
+  display: grid; grid-template-columns: 40px 1fr 60px; align-items: center; gap: 14px;
   padding: 14px 24px;
   background: rgba(59,130,246,0.04); border-bottom: 1px solid var(--border);
 }
