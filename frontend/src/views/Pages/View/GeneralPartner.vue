@@ -68,19 +68,6 @@ const selectedMember   = ref<Member | null>(null);
 const memberPersons    = ref<PersonPreview[]>([]);
 const memberPersonsLoading = ref(false);
 
-const openPartnerModal = async (member: Member) => {
-  selectedMember.value = member;
-  partnerModalOpen.value = true;
-
-  // Данные уже есть в member.persons
-  memberPersons.value = Array.isArray(member.persons) ? member.persons : [];
-};
-
-const closePartnerModal = () => {
-  partnerModalOpen.value = false;
-  selectedMember.value = null;
-  memberPersons.value = [];
-};
 
 const personInitials = (p: PersonPreview) =>
   ((p.first_name?.[0] || '') + (p.last_name?.[0] || '')).toUpperCase() || '?';
@@ -91,22 +78,6 @@ const formatBirthday = (day: number | null, month: string | null) => {
   const m = parseInt(String(month));
   return `${day} ${monthNames[m - 1] || ''}`;
 };
-
-
-const loadAllMembers = async () => {
-  try {
-    const { data } = await axios.post('/api/members');
-    members.value = Array.isArray(data?.partners) ? data.partners : [];
-  } catch {
-    members.value = [];
-  } finally {
-    membersLoading.value = false;
-  }
-};
-
-onMounted(() => {
-  loadAllMembers();
-})
 
 </script>
 

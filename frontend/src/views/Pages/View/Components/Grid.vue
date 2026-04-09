@@ -24,13 +24,11 @@
             <div class="ad-icon-inner">▲</div>
           </div>
           <div class="ad-title">{{ currentPageInfo.adName }}</div>
-          <div class="ad-sub">Место для рекламного макета партнёра. Размер полосы — A4 (210 × 297 мм).</div>
-          <div class="ad-dims">210 × 297 мм · 300 dpi · CMYK</div>
+          <div class="ad-sub">Размер полосы — A4 (145 × 255 мм).</div>
         </div>
 
         <!-- Страница с календарём -->
         <div v-else class="calendar-grid">
-          <!-- Дни недели — реальные названия для каждой строки текущего месяца -->
           <div class="weekdays-vertical">
             <div
               class="weekday-vertical"
@@ -46,12 +44,29 @@
                 :key="rowIdx"
                 class="calendar-day"
                 :class="{
-                  'is-today': day && isToday(day.date),
-                  'is-weekend': day && isWeekend(day.date),
-                  'empty': !day
+                  'is-today':     day && isToday(day.date),
+                  'is-weekend':   day && isWeekend(day.date),
+                  'is-special':   day && isSpecialDay(day.date),
+                  'is-placement': !day && placementKey(rowIdx, ci) !== null,
+                  'placement-first':  !day && placementKey(rowIdx, ci) !== null && isPlacementFirst(rowIdx, ci),
+                  'placement-last':   !day && placementKey(rowIdx, ci) !== null && isPlacementLast(rowIdx, ci),
+                  'placement-middle': !day && placementKey(rowIdx, ci) !== null && !isPlacementFirst(rowIdx, ci) && !isPlacementLast(rowIdx, ci),
+                  'empty': !day && placementKey(rowIdx, ci) === null && activeWeekdays[rowIdx] !== '',
+                  'spacer': activeWeekdays[rowIdx] === ''
                 }"
               >
                 <span v-if="day" class="day-number">{{ day.day }}</span>
+
+                <div v-if="day && isSpecialDay(day.date)" class="special-tooltip">
+                  <span class="special-tooltip-count">10 размещений</span>
+                  Знаменательная дата — день рождения компании, руководителя, сотрудников, профессионального праздника
+                </div>
+
+                <!-- Тултип только на первой ячейке группы -->
+                <div v-if="!day && isPlacementFirst(rowIdx, ci)" class="placement-tooltip">
+                  <span class="placement-tooltip-count">3 размещения</span>
+                  Макет компании на страницах календаря
+                </div>
               </div>
             </div>
           </div>
@@ -80,6 +95,12 @@ interface PageInfo {
   year?: number
 }
 
+// Группа размещения: колонка + непрерывный диапазон строк
+interface PlacementGroup {
+  colIdx: number
+  rows: number[] // строки входящие в группу, по порядку
+}
+
 const START_YEAR = 2027
 const TOTAL_MONTHS = 12
 
@@ -88,58 +109,50 @@ const monthNames = [
   'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
 ]
 
-// Пн–Вс в порядке отображения строк (индекс 0 = верхняя строка)
 const weekdayNames = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье']
 
-// Структура страниц:
-// 0            — реклама «Обложка»
-// 1            — Январь (календарь)
-// 2            — реклама «Январь»
-// 3            — Февраль (календарь)
-// 4            — реклама «Февраль»
-// ...
-// итого 1 + 12×2 = 25 страниц
 const totalPages = 1 + TOTAL_MONTHS * 2
-
 const currentPage = ref(0)
 
 const currentPageInfo = computed<PageInfo>(() => {
   const page = currentPage.value
   if (page === 0) {
-    return { type: 'ad', label: 'Обложка', adName: 'Обложка' }
+    return { type: 'ad', label: 'Обложка', adName: 'Обложка - место для рекламного макета генерального партнёра' }
   }
   const idx = page - 1
   const monthIdx = Math.floor(idx / 2)
   const isAd = idx % 2 === 1
   if (isAd) {
-    return { type: 'ad', label: monthNames[monthIdx], adName: monthNames[monthIdx] }
+    return { type: 'ad', label: `${monthNames[monthIdx]} ${START_YEAR}`, adName: 'Размещение 3 макетов компании на страницах месяца' }
   }
-  return {
-    type: 'calendar',
-    label: `${monthNames[monthIdx]} ${START_YEAR}`,
-    month: monthIdx,
-    year: START_YEAR
-  }
+  return { type: 'calendar', label: `${monthNames[monthIdx]} ${START_YEAR}`, month: monthIdx, year: START_YEAR }
 })
 
 const pageLabel = computed(() => currentPageInfo.value.label)
 
-// Строит 6 колонок по 7 строк (колонка = неделя, строка = день недели пн–вс)
 const getMonthColumns = (year: number, month: number): (CalendarDay | null)[][] => {
   const firstDay = new Date(year, month, 1)
   const daysInMonth = new Date(year, month + 1, 0).getDate()
 
-  // смещение: сколько пустых строк в первой колонке (пн=0, вс=6)
   let startOffset = firstDay.getDay()
   if (startOffset === 0) startOffset = 7
   startOffset--
 
-  const cols: (CalendarDay | null)[][] = Array.from({ length: 6 }, () => Array(7).fill(null))
+  const TOTAL_CELLS = 42
+  const usedCells = startOffset + daysInMonth
+  const freeCells = TOTAL_CELLS - usedCells
 
+  let colOffset = 0
+  while (freeCells - colOffset * 7 > startOffset + colOffset * 7 + 6) {
+    colOffset++
+  }
+
+  const cols: (CalendarDay | null)[][] = Array.from({ length: 6 }, () => Array(7).fill(null))
   let day = 1
   for (let c = 0; c < 6; c++) {
     for (let r = 0; r < 7; r++) {
-      if (c === 0 && r < startOffset) continue
+      if (c < colOffset) continue
+      if (c === colOffset && r < startOffset) continue
       if (day <= daysInMonth) {
         cols[c][r] = { day, date: new Date(year, month, day) }
         day++
@@ -155,17 +168,14 @@ const columns = computed(() => {
   return getMonthColumns(info.year!, info.month!)
 })
 
-// Динамические названия дней недели: для каждой строки (0–6) берём реальный
-// день недели первой непустой даты в этой строке — корректно для любого месяца
 const activeWeekdays = computed(() => {
   const cols = columns.value
   if (!cols.length) return weekdayNames
-
   return Array.from({ length: 7 }, (_, rowIdx) => {
     for (const col of cols) {
       if (col[rowIdx]) {
-        const jsDay = col[rowIdx]!.date.getDay() // 0=вс, 1=пн, ..., 6=сб
-        const monBased = jsDay === 0 ? 6 : jsDay - 1  // 0=пн, ..., 6=вс
+        const jsDay = col[rowIdx]!.date.getDay()
+        const monBased = jsDay === 0 ? 6 : jsDay - 1
         return weekdayNames[monBased]
       }
     }
@@ -174,18 +184,128 @@ const activeWeekdays = computed(() => {
 })
 
 const isToday = (date: Date): boolean => {
-  const today = new Date()
-  return (
-    date.getDate() === today.getDate() &&
-    date.getMonth() === today.getMonth() &&
-    date.getFullYear() === today.getFullYear()
-  )
+  const t = new Date()
+  return date.getDate() === t.getDate() && date.getMonth() === t.getMonth() && date.getFullYear() === t.getFullYear()
 }
 
-// Суббота (6) и воскресенье (0)
 const isWeekend = (date: Date): boolean => {
   const d = date.getDay()
   return d === 0 || d === 6
+}
+
+// ─── Знаменательная дата ──────────────────────────────────────────────────
+const specialDayCache = new Map<string, number>()
+
+const specialDay = computed(() => {
+  const info = currentPageInfo.value
+  if (info.type !== 'calendar') return null
+  const key = `${info.year}-${info.month}`
+  if (specialDayCache.has(key)) return specialDayCache.get(key)!
+  const daysInMonth = new Date(info.year!, info.month! + 1, 0).getDate()
+  let candidate = 1
+  let attempts = 0
+  do {
+    candidate = Math.floor(Math.random() * daysInMonth) + 1
+    const dow = new Date(info.year!, info.month!, candidate).getDay()
+    if (dow !== 0 && dow !== 6) break
+    attempts++
+  } while (attempts < 50)
+  specialDayCache.set(key, candidate)
+  return candidate
+})
+
+const isSpecialDay = (date: Date): boolean => {
+  const info = currentPageInfo.value
+  if (info.type !== 'calendar') return false
+  return date.getDate() === specialDay.value && date.getMonth() === info.month && date.getFullYear() === info.year
+}
+
+// ─── Размещения макета ────────────────────────────────────────────────────
+//
+// Алгоритм:
+// 1. Смотрим на первую и последнюю колонки (columns[0] и columns[5]).
+// 2. Собираем непрерывные группы пустых ячеек в каждой из них.
+// 3. Из всех найденных групп случайно выбираем одну с размером 3 или 4.
+//    Если группы с нужным размером нет — берём ближайшую по размеру.
+// 4. Сохраняем выбранную группу в кэш.
+//
+// "Группа" — это непрерывная цепочка null-ячеек в одной колонке.
+// Объединённая рамка реализована через CSS-классы:
+//   placement-first  → верхняя ячейка группы  (скруглены только верхние углы, нет нижней границы)
+//   placement-middle → средние ячейки          (нет скруглений, нет верхней и нижней границы)
+//   placement-last   → нижняя ячейка группы    (скруглены только нижние углы, нет верхней границы)
+
+const placementCache = new Map<string, PlacementGroup | null>()
+
+function getEmptyGroups(cols: (CalendarDay | null)[][], colIdx: number): number[][] {
+  const col = cols[colIdx]
+  if (!col) return []
+
+  const groups: number[][] = []
+  let current: number[] = []
+
+  for (let r = 0; r < col.length; r++) {
+    if (col[r] === null) {
+      current.push(r)
+    } else {
+      if (current.length >= 2) groups.push([...current])
+      current = []
+    }
+  }
+  if (current.length >= 2) groups.push(current)
+  return groups
+}
+
+const placementGroup = computed<PlacementGroup | null>(() => {
+  const info = currentPageInfo.value
+  if (info.type !== 'calendar') return null
+
+  const key = `${info.year}-${info.month}`
+  if (placementCache.has(key)) return placementCache.get(key)!
+
+  const cols = columns.value
+  // Кандидаты: пустые группы из первой (0) и последней (5) колонок
+  const candidates: PlacementGroup[] = []
+  for (const ci of [0, 5]) {
+    const groups = getEmptyGroups(cols, ci)
+    for (const g of groups) {
+      candidates.push({ colIdx: ci, rows: g })
+    }
+  }
+
+  if (!candidates.length) {
+    placementCache.set(key, null)
+    return null
+  }
+
+  // Предпочитаем группы размером 3 или 4, иначе берём любую максимальную
+  const preferred = candidates.filter(g => g.rows.length === 3 || g.rows.length === 4)
+  const pool = preferred.length ? preferred : candidates
+
+  // Из подходящих берём случайную
+  const chosen = pool[Math.floor(Math.random() * pool.length)]
+
+  // Если группа длиннее 4 — обрезаем до 3 или 4 (случайно), начиная с начала
+  const targetSize = chosen.rows.length >= 4 ? (Math.random() < 0.5 ? 3 : 4) : chosen.rows.length
+  const result: PlacementGroup = { colIdx: chosen.colIdx, rows: chosen.rows.slice(0, targetSize) }
+
+  placementCache.set(key, result)
+  return result
+})
+
+// Возвращает индекс ячейки внутри группы (0, 1, 2, …) или null если не в группе
+const placementKey = (rowIdx: number, colIdx: number): number | null => {
+  const g = placementGroup.value
+  if (!g || g.colIdx !== colIdx) return null
+  const pos = g.rows.indexOf(rowIdx)
+  return pos === -1 ? null : pos
+}
+
+const isPlacementFirst = (rowIdx: number, colIdx: number): boolean => placementKey(rowIdx, colIdx) === 0
+const isPlacementLast  = (rowIdx: number, colIdx: number): boolean => {
+  const g = placementGroup.value
+  if (!g) return false
+  return placementKey(rowIdx, colIdx) === g.rows.length - 1
 }
 
 const prevPage = () => { if (currentPage.value > 0) currentPage.value-- }
@@ -203,7 +323,6 @@ const nextPage = () => { if (currentPage.value < totalPages - 1) currentPage.val
 @media (max-width: 900px) { .gl-container { padding: 0 32px; } }
 @media (max-width: 480px) { .gl-container { padding: 0 20px; } }
 
-/* Соотношение сторон 3:5 (ширина:высота) */
 .grid-wrapper {
   aspect-ratio: 5 / 3;
   background: rgba(13, 21, 48, 0.4);
@@ -251,16 +370,8 @@ const nextPage = () => { if (currentPage.value < totalPages - 1) currentPage.val
   border-radius: 20px;
   transition: all 0.2s;
 }
-
-.month-nav:hover:not(:disabled) {
-  background: rgba(147, 197, 253, 0.1);
-  color: #bfdbfe;
-}
-
-.month-nav:disabled {
-  opacity: 0.3;
-  cursor: default;
-}
+.month-nav:hover:not(:disabled) { background: rgba(147, 197, 253, 0.1); color: #bfdbfe; }
+.month-nav:disabled { opacity: 0.3; cursor: default; }
 
 .current-month {
   font-size: 15px;
@@ -329,17 +440,7 @@ const nextPage = () => { if (currentPage.value < totalPages - 1) currentPage.val
   font-size: 13px;
   color: #64748b;
   text-align: center;
-  max-width: 280px;
   line-height: 1.6;
-}
-
-.ad-dims {
-  font-size: 12px;
-  color: #475569;
-  border: 1px solid rgba(96, 165, 250, 0.1);
-  border-radius: 8px;
-  padding: 6px 16px;
-  letter-spacing: 0.05em;
 }
 
 /* ─── Календарная сетка ──────────────────────────── */
@@ -385,23 +486,28 @@ const nextPage = () => { if (currentPage.value < totalPages - 1) currentPage.val
 .calendar-col {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 0; /* gap убран — нужен для слияния рамок placement */
   flex: 1;
   min-width: 0;
 }
 
+/* Обычные ячейки получают gap через margin-bottom */
 .calendar-day {
   flex: 1;
   background: rgba(13, 21, 48, 0.5);
   border: 1px solid rgba(96, 165, 250, 0.1);
   border-radius: 10px;
+  margin-bottom: 6px;
   transition: all 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
 }
 
-.calendar-day:hover:not(.empty) {
+.calendar-day:last-child { margin-bottom: 0; }
+
+.calendar-day:hover:not(.empty):not(.spacer):not(.is-placement) {
   border-color: rgba(96, 165, 250, 0.3);
   background: rgba(13, 21, 48, 0.7);
   transform: translateY(-1px);
@@ -413,26 +519,194 @@ const nextPage = () => { if (currentPage.value < totalPages - 1) currentPage.val
   box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.2);
 }
 
-.calendar-day.is-weekend .day-number {
-  color: #f87171;
-}
+.calendar-day.is-weekend .day-number { color: #f87171; }
 
 .calendar-day.empty {
-  flex: 1;
-  background: rgba(13, 21, 48, 0.5);
-  border: 1px solid rgba(96, 165, 250, 0.1);
-  border-radius: 10px;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  opacity: 0.15;
+  background: rgba(13, 21, 48, 0.2);
 }
 
+.calendar-day.spacer {
+  opacity: 0;
+  background: transparent;
+  border-color: transparent;
+  pointer-events: none;
+}
+
+/* ─── Знаменательная дата ────────────────────────── */
+@keyframes special-pulse {
+  0%   { box-shadow: 0 0 0 0px rgba(139, 92, 246, 0.6), 0 0 0 1px rgba(139, 92, 246, 0.4); }
+  60%  { box-shadow: 0 0 0 6px rgba(139, 92, 246, 0),   0 0 0 1px rgba(139, 92, 246, 0.4); }
+  100% { box-shadow: 0 0 0 0px rgba(139, 92, 246, 0),   0 0 0 1px rgba(139, 92, 246, 0.4); }
+}
+
+.calendar-day.is-special {
+  border-color: #8b5cf6;
+  background: rgba(139, 92, 246, 0.15);
+  overflow: visible;
+  z-index: 1;
+  animation: special-pulse 2s ease-out infinite;
+}
+
+.calendar-day.is-special .day-number { color: #c4b5fd; font-weight: 500; }
+
+.calendar-day.is-special::after {
+  content: '★';
+  position: absolute;
+  top: 2px; right: 4px;
+  font-size: 9px;
+  color: #8b5cf6;
+  line-height: 1;
+}
+
+.special-tooltip {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200px;
+  background: #1e1b4b;
+  border: 1px solid rgba(139, 92, 246, 0.4);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 11px;
+  line-height: 1.5;
+  color: #cbd5e1;
+  z-index: 100;
+  pointer-events: none;
+  text-align: left;
+}
+
+.special-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%; left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: rgba(139, 92, 246, 0.4);
+}
+
+.special-tooltip-count {
+  display: block;
+  font-size: 10px;
+  font-weight: 600;
+  color: #a78bfa;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+}
+
+.calendar-day.is-special:hover { animation-play-state: paused; }
+.calendar-day.is-special:hover .special-tooltip { display: block; }
+
+/* ─── Размещение макета компании ─────────────────── */
+/*
+  Объединённая рамка: gap между ячейками внутри группы убран через margin-bottom: 0,
+  а border-radius и border-top/bottom управляются по позиции в группе.
+*/
+
+@keyframes placement-pulse {
+  0%   { box-shadow: 0 0 0 0px rgba(236, 72, 153, 0.5); }
+  60%  { box-shadow: 0 0 0 6px rgba(236, 72, 153, 0); }
+  100% { box-shadow: 0 0 0 0px rgba(236, 72, 153, 0); }
+}
+
+/* Все ячейки группы */
+.calendar-day.is-placement {
+  background: rgba(236, 72, 153, 0.1);
+  border-color: #ec4899;
+  border-radius: 0;
+  margin-bottom: 0;         /* убираем зазор внутри группы */
+  overflow: visible;
+  z-index: 1;
+  cursor: default;
+  /*animation: placement-pulse 2.4s ease-out infinite;
+  animation-delay: 0.4s;*/
+}
+
+/* Верхняя ячейка группы */
+.calendar-day.placement-first {
+  border-radius: 10px 10px 0 0;
+  border-bottom: none;      /* граница между first и middle/last убрана */
+  margin-top: 0;
+}
+
+/* Средние ячейки */
+.calendar-day.placement-middle {
+  border-top: none;
+  border-bottom: none;
+}
+
+/* Нижняя ячейка группы */
+.calendar-day.placement-last {
+  border-radius: 0 0 10px 10px;
+  border-top: none;
+  margin-bottom: 6px;        /* восстанавливаем зазор после группы */
+}
+
+/* Если группа из 2 ячеек — first одновременно не last */
+/* Если группа из 1 ячейки — не бывает (минимум 2) */
+
+.calendar-day.is-placement::after {
+  content: '◆';
+  position: absolute;
+  top: 2px; right: 4px;
+  font-size: 8px;
+  color: #ec4899;
+  line-height: 1;
+}
+
+/* Маркер только на первой ячейке, не на остальных */
+.calendar-day.placement-middle::after,
+.calendar-day.placement-last::after { display: none; }
+
+.placement-tooltip {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200px;
+  background: #2d1b2e;
+  border: 1px solid rgba(236, 72, 153, 0.4);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 11px;
+  line-height: 1.5;
+  color: #cbd5e1;
+  z-index: 100;
+  pointer-events: none;
+  text-align: left;
+}
+
+.placement-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%; left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: rgba(236, 72, 153, 0.4);
+}
+
+.placement-tooltip-count {
+  display: block;
+  font-size: 10px;
+  font-weight: 600;
+  color: #f472b6;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+}
+
+.calendar-day.placement-first:hover { animation-play-state: paused; }
+.calendar-day.placement-first:hover .placement-tooltip { display: block; }
+
+/* ─── Числа ──────────────────────────────────────── */
 .day-number {
   font-size: 15px;
   font-weight: 500;
   color: #dce8f5;
-  text-align: center;
 }
 
 /* ─── Адаптивность ───────────────────────────────── */
@@ -454,7 +728,6 @@ const nextPage = () => { if (currentPage.value < totalPages - 1) currentPage.val
   .weekday-vertical { font-size: 8px; border-radius: 8px; }
   .calendar-grid { gap: 4px; }
   .calendar-days-vertical { gap: 4px; }
-  .calendar-col { gap: 4px; }
   .day-number { font-size: 11px; }
 }
 
