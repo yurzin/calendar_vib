@@ -1,9 +1,9 @@
 <template>
-  <div class="gl-section gl-section--dark" id="calendar-2027">
+  <div class="gl-section gl-section--dark" id="general-partner">
     <div class="gl-container">
       <div class="gl-section-head">
         <div class="gl-section-line" />
-        <h2 class="gl-section-title">Календарь 2027</h2>
+        <h2 class="gl-section-title">Генеральный партнер</h2>
         <p class="gl-section-sub">Настольный календарь-справочник</p>
       </div>
 
@@ -258,7 +258,7 @@ const nextMonth = () => {
   flex: 1;
   min-height: 50px;
   text-align: center;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   color: #3b82f6;
   letter-spacing: 0.05em;
@@ -313,7 +313,7 @@ const nextMonth = () => {
 }
 
 .calendar-day.is-weekend .day-number {
-  color: #fbbf24;
+  color: #ff0000;
 }
 
 .day-number {

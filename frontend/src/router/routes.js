@@ -27,6 +27,11 @@ const routes = [
     name: 'grid'
   },
   {
+    path: '/general-partner',
+    component: () => import('../views/Pages/View/GeneralPartner.vue'),
+    name: 'general-partner'
+  },
+  {
     path: '/login',
     component: () => import('../views/Pages/Auth/Login.vue'),
     name: 'login'
