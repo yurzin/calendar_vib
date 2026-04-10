@@ -17,14 +17,78 @@
           <span class="page-indicator">Стр. {{ currentPage + 1 }} / {{ totalPages }}</span>
         </div>
 
-        <!-- Рекламная страница-заглушка -->
         <div v-if="currentPageInfo.type === 'ad'" class="ad-page">
-          <div class="ad-badge">Рекламная страница</div>
-          <div class="ad-icon">
-            <div class="ad-icon-inner">▲</div>
+          <div class="ad-left">
+            <div class="ad-eyebrow">Генеральный партнёр</div>
+            <div class="ad-headline">
+              Ваш бренд<br>на каждой<br><span class="ad-headline-accent">странице</span>
+            </div>
+            <p class="ad-body">
+              Рекламная полоса в настольном календаре-справочнике.
+              12 месяцев присутствия в рабочей зоне вашей аудитории.
+            </p>
+            <div class="ad-footer">
+              <div class="ad-btn">{{ currentPageInfo.adName }}</div>
+              <span class="ad-link">company.ru</span>
+            </div>
           </div>
-          <div class="ad-title">{{ currentPageInfo.adName }}</div>
-          <div class="ad-sub">Размер полосы — A4 (145 × 255 мм).</div>
+
+          <div class="ad-divider" />
+
+          <div class="ad-right">
+            <svg class="ad-geo" viewBox="0 0 400 240" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+              <rect width="400" height="240" fill="#0b1225"/>
+              <circle cx="320" cy="60" r="130" fill="none" stroke="rgba(129,140,248,0.08)" stroke-width="1"/>
+              <circle cx="320" cy="60" r="95"  fill="none" stroke="rgba(129,140,248,0.07)" stroke-width="1"/>
+              <circle cx="320" cy="60" r="60"  fill="none" stroke="rgba(129,140,248,0.10)" stroke-width="1"/>
+              <circle cx="320" cy="60" r="30"  fill="rgba(129,140,248,0.06)" stroke="rgba(129,140,248,0.20)" stroke-width="1"/>
+              <rect x="60" y="40" width="120" height="70" rx="8" fill="rgba(129,140,248,0.07)" stroke="rgba(129,140,248,0.15)" stroke-width="1"/>
+              <rect x="68" y="52" width="60" height="6" rx="3" fill="rgba(129,140,248,0.25)"/>
+              <rect x="68" y="64" width="90" height="4" rx="2" fill="rgba(255,255,255,0.06)"/>
+              <rect x="68" y="74" width="75" height="4" rx="2" fill="rgba(255,255,255,0.06)"/>
+              <rect x="68" y="92" width="40" height="10" rx="4" fill="rgba(236,72,153,0.30)" stroke="rgba(236,72,153,0.40)" stroke-width="0.5"/>
+              <rect x="200" y="100" width="110" height="65" rx="8" fill="rgba(129,140,248,0.07)" stroke="rgba(129,140,248,0.15)" stroke-width="1"/>
+              <rect x="209" y="113" width="50" height="5" rx="2.5" fill="rgba(129,140,248,0.30)"/>
+              <rect x="209" y="123" width="85" height="3" rx="1.5" fill="rgba(255,255,255,0.05)"/>
+              <rect x="209" y="131" width="70" height="3" rx="1.5" fill="rgba(255,255,255,0.05)"/>
+              <rect x="209" y="148" width="36" height="8" rx="3" fill="rgba(129,140,248,0.25)" stroke="rgba(129,140,248,0.30)" stroke-width="0.5"/>
+              <rect x="50" y="150" width="130" height="55" rx="8" fill="rgba(129,140,248,0.05)" stroke="rgba(129,140,248,0.10)" stroke-width="1"/>
+              <rect x="60" y="162" width="45" height="5" rx="2.5" fill="rgba(129,140,248,0.20)"/>
+              <rect x="60" y="172" width="100" height="3" rx="1.5" fill="rgba(255,255,255,0.05)"/>
+              <rect x="60" y="180" width="80" height="3" rx="1.5" fill="rgba(255,255,255,0.05)"/>
+              <line x1="180" y1="75" x2="204" y2="104" stroke="rgba(129,140,248,0.20)" stroke-width="0.8" stroke-dasharray="3 3"/>
+              <line x1="120" y1="145" x2="110" y2="153" stroke="rgba(129,140,248,0.15)" stroke-width="0.8" stroke-dasharray="3 3"/>
+              <circle cx="180" cy="75"  r="3"   fill="#818cf8" opacity="0.6"/>
+              <circle cx="204" cy="104" r="2"   fill="#818cf8" opacity="0.4"/>
+              <circle cx="120" cy="145" r="2.5" fill="#ec4899" opacity="0.5"/>
+              <circle cx="350" cy="190" r="18" fill="rgba(236,72,153,0.08)" stroke="rgba(236,72,153,0.20)" stroke-width="1"/>
+              <circle cx="350" cy="190" r="9"  fill="rgba(236,72,153,0.15)" stroke="rgba(236,72,153,0.30)" stroke-width="0.8"/>
+              <circle cx="350" cy="190" r="3"  fill="#ec4899" opacity="0.7"/>
+            </svg>
+
+            <div class="ad-logo-area">
+              <div class="ad-logo-mark">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                  <rect x="1" y="1" width="5" height="5" rx="1.5" fill="#818cf8" opacity="0.9"/>
+                  <rect x="8" y="1" width="5" height="5" rx="1.5" fill="#818cf8" opacity="0.5"/>
+                  <rect x="1" y="8" width="5" height="5" rx="1.5" fill="#818cf8" opacity="0.5"/>
+                  <rect x="8" y="8" width="5" height="5" rx="1.5" fill="#ec4899" opacity="0.7"/>
+                </svg>
+              </div>
+              <span class="ad-logo-name">Company Name</span>
+            </div>
+
+            <div class="ad-stats">
+              <div class="ad-stat">
+                <div class="ad-stat-val">12×</div>
+                <div class="ad-stat-lbl">месяцев</div>
+              </div>
+              <div class="ad-stat">
+                <div class="ad-stat-val">3000+</div>
+                <div class="ad-stat-lbl">экземпляров</div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- Страница с календарём -->
@@ -330,6 +394,7 @@ const nextPage = () => { if (currentPage.value < totalPages - 1) currentPage.val
   border-radius: 16px;
   padding: 24px;
   margin-top: 20px;
+  margin-bottom: 20px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -385,62 +450,161 @@ const nextPage = () => { if (currentPage.value < totalPages - 1) currentPage.val
 .ad-page {
   flex: 1;
   display: flex;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #0b1225;
+  position: relative;
+}
+
+.ad-left {
+  width: 42%;
+  display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 20px;
-  border: 2px dashed rgba(96, 165, 250, 0.25);
-  border-radius: 16px;
-  background: rgba(13, 21, 48, 0.3);
+  justify-content: space-between;
+  padding: 28px 24px;
+  position: relative;
+  z-index: 2;
+  flex-shrink: 0;
 }
 
-.ad-badge {
-  font-size: 11px;
+.ad-right {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+.ad-divider {
+  width: 1px;
+  background: rgba(129, 140, 248, 0.12);
+  flex-shrink: 0;
+}
+
+.ad-eyebrow {
+  font-size: 10px;
   font-weight: 600;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #3b82f6;
-  background: rgba(59, 130, 246, 0.1);
-  border: 1px solid rgba(59, 130, 246, 0.2);
-  border-radius: 20px;
-  padding: 4px 14px;
-}
-
-.ad-icon {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  border: 2px dashed rgba(96, 165, 250, 0.2);
+  color: #ec4899;
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 8px;
 }
 
-.ad-icon-inner {
-  width: 48px;
-  height: 48px;
-  border-radius: 8px;
-  background: rgba(59, 130, 246, 0.1);
-  border: 1px solid rgba(59, 130, 246, 0.2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-  color: #3b82f6;
+.ad-eyebrow::before {
+  content: '';
+  display: block;
+  width: 20px;
+  height: 1.5px;
+  background: #ec4899;
+  flex-shrink: 0;
 }
 
-.ad-title {
-  font-size: 22px;
+.ad-headline {
+  font-size: clamp(16px, 2vw, 24px);
   font-weight: 500;
-  color: #dce8f5;
-  text-align: center;
+  color: #f0f4ff;
+  line-height: 1.3;
+  margin: 0;
 }
 
-.ad-sub {
-  font-size: 13px;
+.ad-headline-accent {
+  color: #818cf8;
+}
+
+.ad-body {
+  font-size: 11px;
   color: #64748b;
-  text-align: center;
   line-height: 1.6;
+  margin: 0;
+}
+
+.ad-footer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ad-btn {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: #0b1225;
+  background: #818cf8;
+  border-radius: 6px;
+  padding: 6px 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 160px;
+}
+
+.ad-link {
+  font-size: 11px;
+  color: #475569;
+  letter-spacing: 0.04em;
+}
+
+.ad-geo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.ad-logo-area {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  z-index: 4;
+}
+
+.ad-logo-mark {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  background: rgba(129, 140, 248, 0.12);
+  border: 1px solid rgba(129, 140, 248, 0.22);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ad-logo-name {
+  font-size: 11px;
+  font-weight: 500;
+  color: #94a3b8;
+  letter-spacing: 0.04em;
+}
+
+.ad-stats {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 18px;
+  z-index: 4;
+}
+
+.ad-stat {
+  text-align: right;
+}
+
+.ad-stat-val {
+  font-size: 17px;
+  font-weight: 500;
+  color: #f0f4ff;
+  line-height: 1;
+}
+
+.ad-stat-lbl {
+  font-size: 9px;
+  color: #475569;
+  margin-top: 3px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
 /* ─── Календарная сетка ──────────────────────────── */
