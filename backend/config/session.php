@@ -156,7 +156,7 @@ return [
     |
     */
 
-    'domain' => env('SESSION_DOMAIN', '.calendar.local'),
+    'domain' => env('SESSION_DOMAIN', null),
 
     /*
     |--------------------------------------------------------------------------

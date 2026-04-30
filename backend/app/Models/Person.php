@@ -25,7 +25,7 @@ class Person extends Model
         'short_name',
         'phone',
         'email',
-        'sait',
+        'web',
         'position_short',
         'position_full',
         'photo_path',
@@ -69,9 +69,9 @@ class Person extends Model
         }
 
         $file = $request->file('photo');
-        $slug = Str::slug(($request->first_name ?? 'person') . '_' . ($request->last_name ?? Str::random(6)));
+        $slug = Str::slug(($request->last_name) . '_' . ($request->first_name) . '_' . ($request->middle_name));
         $path      = "uploads/persons/{$slug}.jpg";
-        $thumbPath = "uploads/persons/{$slug}_thumb.jpg";
+        $thumbPath = "uploads/persons/thumb/{$slug}_thumb.jpg";
 
         $manager = new ImageManager(new Driver());
 

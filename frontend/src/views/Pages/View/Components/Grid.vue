@@ -135,7 +135,6 @@
             </div>
           </div>
         </div>
-
       </div>
     </div>
   </div>
@@ -350,7 +349,16 @@ const placementGroup = computed<PlacementGroup | null>(() => {
   const chosen = pool[Math.floor(Math.random() * pool.length)]
 
   // Если группа длиннее 4 — обрезаем до 3 или 4 (случайно), начиная с начала
-  const targetSize = chosen.rows.length >= 4 ? (Math.random() < 0.5 ? 3 : 4) : chosen.rows.length
+  let targetSize;
+  if (chosen.rows.length === 4) {
+    targetSize = 4;
+  } else if (chosen.rows.length >= 5) {
+    targetSize = Math.random() < 0.5 ? 3 : 4;
+  } else {
+    targetSize = chosen.rows.length;
+  }
+
+  /*const targetSize = chosen.rows.length >= 4 ? (Math.random() < 0.5 ? 3 : 4) : chosen.rows.length*/
   const result: PlacementGroup = { colIdx: chosen.colIdx, rows: chosen.rows.slice(0, targetSize) }
 
   placementCache.set(key, result)
@@ -781,7 +789,8 @@ const nextPage = () => { if (currentPage.value < totalPages - 1) currentPage.val
   background: rgba(236, 72, 153, 0.1);
   border-color: #ec4899;
   border-radius: 0;
-  margin-bottom: 0;         /* убираем зазор внутри группы */
+  margin-bottom: 0; /* убираем зазор внутри группы */
+  padding-bottom: 6px;
   overflow: visible;
   z-index: 1;
   cursor: default;

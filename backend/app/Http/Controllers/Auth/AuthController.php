@@ -91,9 +91,9 @@ class AuthController extends Controller
 
         if (!$user) {
             return response()->json([
-                'success' => false,
-                'message' => 'Unauthenticated'
-            ], 401);
+                'success' => true,
+                'data' => null
+            ], 200); // 200 вместо 401 — браузер не рисует красную ошибку
         }
 
         return response()->json([

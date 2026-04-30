@@ -1,13 +1,22 @@
 import axios from 'axios';
 
 const axiosInstance = axios.create({
-  baseURL: '/',  // относительный путь — всё идёт через Nginx
+  baseURL: '/',
   withCredentials: true,
   headers: {
     'X-Requested-With': 'XMLHttpRequest',
     'Accept': 'application/json',
-    'Content-Type': 'application/json'
+  },
+});
+
+// CSRF-токен через заголовок — работает и для JSON и для FormData
+axiosInstance.interceptors.request.use((config) => {
+  const token = document.querySelector('meta[name="csrf-token"]')
+    ?.getAttribute('content');
+  if (token) {
+    config.headers['X-CSRF-TOKEN'] = token;
   }
+  return config;
 });
 
 export default axiosInstance;

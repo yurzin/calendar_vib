@@ -120,7 +120,7 @@ const handleLogin = async () => {
     <!-- Ссылка на регистрацию -->
     <div class="lf-footer">
       <span>Нет аккаунта?</span>
-      <router-link to="/register" class="lf-link">Зарегистрироваться →</router-link>
+      <a href="http://calendar.local/register" class="lf-link">Зарегистрироваться →</a>
     </div>
 
   </GuestLayout>

@@ -12,10 +12,12 @@ export function useAuth() {
 
     try {
       const response = await axios.get('/api/user');
-      user.value = response.data.data || response.data;
+      user.value = response.data?.success && response.data?.data
+        ? response.data.data
+        : null;
       return user.value;
     } catch (error) {
-      console.error('Auth check failed:', error);
+      // 401 — нормально, пользователь не авторизован
       user.value = null;
       return null;
     } finally {
@@ -54,7 +56,7 @@ export function useAuth() {
 
   const logout = async () => {
     loading.value = true;
-
+    console.log(loading)
     try {
       await axios.post('/api/logout');
       user.value = null;

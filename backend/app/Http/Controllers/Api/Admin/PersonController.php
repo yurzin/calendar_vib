@@ -55,7 +55,7 @@ class PersonController extends Controller
             'photo_thumb_path' => $p->photo_thumb_path,
             'phone' => $p->phone,
             'email' => $p->email,
-            'site' => $p->site,
+            'web' => $p->web,
             'checked' => $p->deleted_at === null,
         ]);
 
@@ -71,7 +71,7 @@ class PersonController extends Controller
             'middle_name'    => 'nullable|string|max:80',
             'phone'          => 'nullable|string|max:80',
             'email'          => 'nullable|email|max:80',
-            'site'           => 'nullable|string|max:80',
+            'web'           => 'nullable|string|max:80',
             'position_short' => 'nullable|string|max:255',
             'position_full'  => 'nullable|string|max:500',
             'birth_day'      => 'nullable|integer|min:1|max:31',
@@ -113,7 +113,7 @@ class PersonController extends Controller
             'photo_thumb_path' => $person->photo_thumb_path,
             'phone'          => $person->phone,
             'email'          => $person->email,
-            'site'           => $person->site,
+            'web'           => $person->web,
             'checked'        => true,
         ], 201);
     }
@@ -151,7 +151,7 @@ class PersonController extends Controller
             'middle_name'    => 'nullable|string|max:80',
             'phone'          => 'nullable|string|max:80',
             'email'          => 'nullable|email|max:80',
-            'site'           => 'nullable|string|max:80',
+            'web'           => 'nullable|string|max:80',
             'position_short' => 'nullable|string|max:255',
             'position_full'  => 'nullable|string|max:500',
             'birth_day'      => 'nullable|integer|min:1|max:31',
@@ -201,7 +201,7 @@ class PersonController extends Controller
             'photo_thumb_path' => $person->photo_thumb_path,
             'phone'          => $person->phone,
             'email'          => $person->email,
-            'site'           => $person->site,
+            'web'           => $person->web,
             'checked'        => $person->deleted_at === null,
         ]);
     }
