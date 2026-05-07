@@ -33,11 +33,18 @@ export function useAuth() {
       await axios.get('/sanctum/csrf-cookie');
       const response = await axios.post('/api/login', credentials);
 
-      console.log('Login response:', response.data);
-      user.value = response.data.data || response.data;
-      console.log(user.value);
+      user.value = response.data.data || null;
 
-      return response.data;
+      const allowedRoles = ['admin', 'editor'];
+      const hasAccess = user.value?.roles?.some(role => allowedRoles.includes(role));
+
+      if (!hasAccess) {
+        user.value = null;
+        window.location.href = import.meta.env.VITE_MAIN_URL ?? 'http://calendar.local';
+        return; // ← undefined, компонент увидит !result и остановится
+      }
+
+      return response.data; // ← только для admin/editor
     } catch (error) {
       console.error('Login error:', error);
 
@@ -77,7 +84,7 @@ export function useAuth() {
       await axios.get('/sanctum/csrf-cookie');
       const response = await axios.post('/api/register', data);
 
-      user.value = response.data.user || response.data;
+      user.value = response.data.data || null;
 
       return response.data;
     } catch (error) {

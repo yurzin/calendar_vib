@@ -9,7 +9,7 @@ use App\Http\Controllers\Api\View\MainController;
 use App\Http\Controllers\Auth\AuthController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/user', [AuthController::class, 'user']);
+Route::middleware('auth:sanctum')->get('/user', [AuthController::class, 'user']);
 
 // Только авторизация, без проверки роли
 Route::middleware('auth:sanctum')->group(function () {
@@ -50,5 +50,6 @@ Route::domain(env('ADMIN_DOMAIN', 'admin.calendar.local'))->group(function () {
             // Скачать JSON-файл
             Route::get('download', [CalendarExportController::class, 'downloadJson']);
         });
+        Route::get('/export/persons/txt', [CalendarExportController::class, 'downloadTxt']);
     });
 });

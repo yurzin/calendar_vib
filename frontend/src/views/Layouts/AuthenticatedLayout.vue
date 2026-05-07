@@ -117,7 +117,7 @@ const initials = (name: string = '') =>
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap');
-.gl-section { position: relative; z-index: 9; padding: 0; border-top: 1px solid rgba(96,165,250,0.08); }
+.gl-section { width: 100%; position: relative; z-index: 9; padding: 0; border-top: 1px solid rgba(96,165,250,0.08); }
 .gl-container {
   width: 100%;
   display: flex;

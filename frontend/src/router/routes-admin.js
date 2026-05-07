@@ -56,21 +56,40 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to) => {
-  // Публичные маршруты пропускаем
   if (to.meta.public) {
+    // Уже залогинен — не показываем страницу логина
+    if (to.name === 'login') {
+      const { checkAuth, user } = useAuth();
+      if (!user.value) await checkAuth();
+
+      if (user.value) {
+        const allowedRoles = ['admin', 'editor'];
+        const hasAccess = user.value?.roles?.some(r => allowedRoles.includes(r));
+
+        // Есть доступ — в дашборд, нет — на основной сайт
+        return hasAccess
+          ? { name: 'admin' }
+          : { path: window.location.href = import.meta.env.VITE_MAIN_URL ?? 'http://calendar.local' };
+      }
+    }
     return true;
   }
 
-  // Только защищённые маршруты проверяем
   if (to.meta.requiresAuth) {
     const { checkAuth, user } = useAuth();
-
-    if (!user.value) {
-      await checkAuth();
-    }
+    if (!user.value) await checkAuth();
 
     if (!user.value) {
       return { name: 'login' };
+    }
+
+    const allowedRoles = ['admin', 'editor'];
+    const hasAccess = user.value?.roles?.some(r => allowedRoles.includes(r));
+
+    if (!hasAccess) {
+      // Залогинен, но не админ — на основной сайт, не на логин
+      window.location.href = import.meta.env.VITE_MAIN_URL ?? 'http://calendar.local';
+      return false;
     }
   }
 

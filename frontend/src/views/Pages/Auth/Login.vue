@@ -13,13 +13,18 @@ const showPass = ref(false);
 
 const handleLogin = async () => {
   try {
-    await login(form.value);
+    const result = await login(form.value);
+
+    // login() вернул undefined — значит уже делает редирект на calendar.local
+    if (!result) return;
+
     const redirectTo = route.query.redirect as string || '/';
     await router.push(redirectTo);
   } catch (error) {
     console.error('Login failed:', error);
   }
 };
+
 </script>
 
 <template>

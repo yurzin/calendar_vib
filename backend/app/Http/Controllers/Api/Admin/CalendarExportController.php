@@ -129,7 +129,7 @@ class CalendarExportController extends Controller
         $filename = $this->transliterate($filename);
 
         return response(
-            json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT),
+            json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES),
             200,
             [
                 'Content-Type'        => 'application/json; charset=UTF-8',
@@ -153,6 +153,7 @@ class CalendarExportController extends Controller
             'position_short' => $p->position_short,
             'position_full'  => $p->position_full,
             'company'        => $p->partner?->name ?? '',
+            'abs_path'       => basename($p->photo_path) ? 'D:/work/calendar_ViB/2027/unloaded/' . basename($p->photo_path) : '',
         ];
     }
 
@@ -168,4 +169,74 @@ class CalendarExportController extends Controller
         ];
         return strtr(mb_strtolower($str), $map);
     }
+
+    // ─────────────────────────────────────────────────────────────────────
+// GET /api/export/persons/txt
+// Скачивает TXT-файл со списком персон в алфавитном порядке
+// ─────────────────────────────────────────────────────────────────────
+    public function downloadTxt(): Response
+    {
+        $persons = Person::whereNull('deleted_at')
+            ->orderBy('last_name')
+            ->orderBy('first_name')
+            ->orderBy('middle_name')
+            ->with('partner')
+            ->get();
+
+        $lines = [];
+
+        foreach ($persons as $p) {
+            // ФИО заглавными + дата рождения
+            $fullName = mb_strtoupper(
+                trim("{$p->last_name} {$p->first_name} " . ($p->middle_name ?? ''))
+            );
+
+            $datePart = '';
+            if ($p->birth_day && $p->birth_month) {
+                $datePart = ' (' . sprintf('%02d.%02d', $p->birth_day, $p->birth_month) . ')';
+            }
+
+            $lines[] = $fullName . $datePart;
+
+            // Должность
+            if ($p->position_full) {
+                $lines[] = $p->position_full;
+            }
+
+            // Контакты
+            $contacts = [];
+            if ($p->phone) {
+                $contacts[] = 'Тел.: ' . $p->phone;
+            }
+            if ($p->email) {
+                $contacts[] = 'e-mail: ' . $p->email;
+            }
+            if ($p->web) {
+                $url = $p->web;
+                if (!str_starts_with($url, 'http')) {
+                    $url = 'https://' . $url;
+                }
+                /*$display = preg_replace('#^https?://#', '', rtrim($p->web, '/'));
+                $contacts[] = 'сайт: [' . $display . '](' . $url . ')';*/
+                $contacts[] = 'сайт: ' . preg_replace('#^https?://#', '', rtrim($p->web, '/'));
+            }
+            if ($contacts) {
+                $lines[] = implode(', ', $contacts);
+            }
+
+            $lines[] = ''; // пустая строка между персонами
+        }
+
+        $content = implode("\n", $lines);
+
+        return response(
+            $content,
+            200,
+            [
+                'Content-Type'        => 'text/plain; charset=UTF-8',
+                'Content-Disposition' => 'attachment; filename="persons_list.txt"',
+            ]
+        );
+    }
+
 }

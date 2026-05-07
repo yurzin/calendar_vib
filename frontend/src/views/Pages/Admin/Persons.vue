@@ -164,9 +164,9 @@ const selectedPartner = ref<Partner | null>(null);
 const creatingPartner = ref(false);
 
 // ─── Экспорт календаря ────────────────────────────────────────────────────
-const exportOpen      = ref(false);
-const exportMonths    = ref<{month:number, name:string, short_name:string, count:number}[]>([]);
-const exportLoading   = ref(false);
+const exportOpen = ref(false);
+const exportMonths = ref<{ month: number, name: string, short_name: string, count: number }[]>([]);
+const exportLoading = ref(false);
 const exportDownloading = ref<number | null>(null);
 
 const partnerExactMatch = computed(() =>
@@ -223,15 +223,15 @@ const MONTH_NAMES_SHORT = [
 
 // Строгие SVG-иконки для каждого месяца (путь внутри viewBox 0 0 16 16)
 const MONTH_SVG_PATHS: Record<number, string> = {
-  1:  `<path d="M8 2v12M5 5l3-3 3 3M5 11l3 3 3-3M2 8h12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>`, // снежинка-стрелки
-  2:  `<path d="M8 3a5 5 0 1 0 0 10A5 5 0 0 0 8 3zM8 6v2l1.5 1.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>`, // часы
-  3:  `<path d="M8 13V7M5 10l3-3 3 3M4 13h8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>`, // росток
-  4:  `<circle cx="8" cy="8" r="2.5" stroke="currentColor" stroke-width="1.2"/><path d="M8 2v1.5M8 12.5V14M2 8h1.5M12.5 8H14M3.9 3.9l1.1 1.1M11 11l1.1 1.1M3.9 12.1l1.1-1.1M11 5l1.1-1.1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>`, // солнце
-  5:  `<path d="M5 9c0-3 6-3 6 0M4 12c0-5 8-5 8 0" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M8 4v3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>`, // дерево
-  6:  `<circle cx="8" cy="8" r="3.5" stroke="currentColor" stroke-width="1.2"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.1 3.1l1.4 1.4M11.5 11.5l1.4 1.4M3.1 12.9l1.4-1.4M11.5 4.5l1.4-1.4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>`, // большое солнце
-  7:  `<path d="M5 3h6l-1 5h-4L5 3zM6 8l-2 5h8l-2-5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>`, // песочные часы/лето
-  8:  `<path d="M4 13l2-4 2 2 2-5 2 7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 13h10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>`, // диаграмма/урожай
-  9:  `<path d="M5 4c0 5 6 5 6 0" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M8 9v5M6 14h4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>`, // листок
+  1: `<path d="M8 2v12M5 5l3-3 3 3M5 11l3 3 3-3M2 8h12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>`, // снежинка-стрелки
+  2: `<path d="M8 3a5 5 0 1 0 0 10A5 5 0 0 0 8 3zM8 6v2l1.5 1.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>`, // часы
+  3: `<path d="M8 13V7M5 10l3-3 3 3M4 13h8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>`, // росток
+  4: `<circle cx="8" cy="8" r="2.5" stroke="currentColor" stroke-width="1.2"/><path d="M8 2v1.5M8 12.5V14M2 8h1.5M12.5 8H14M3.9 3.9l1.1 1.1M11 11l1.1 1.1M3.9 12.1l1.1-1.1M11 5l1.1-1.1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>`, // солнце
+  5: `<path d="M5 9c0-3 6-3 6 0M4 12c0-5 8-5 8 0" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M8 4v3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>`, // дерево
+  6: `<circle cx="8" cy="8" r="3.5" stroke="currentColor" stroke-width="1.2"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.1 3.1l1.4 1.4M11.5 11.5l1.4 1.4M3.1 12.9l1.4-1.4M11.5 4.5l1.4-1.4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>`, // большое солнце
+  7: `<path d="M5 3h6l-1 5h-4L5 3zM6 8l-2 5h8l-2-5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>`, // песочные часы/лето
+  8: `<path d="M4 13l2-4 2 2 2-5 2 7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 13h10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>`, // диаграмма/урожай
+  9: `<path d="M5 4c0 5 6 5 6 0" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M8 9v5M6 14h4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>`, // листок
   10: `<rect x="3" y="3" width="10" height="10" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M6 3v10M10 3v10M3 7h10M3 10h10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>`, // сетка/календарь
   11: `<path d="M4 14V6l4-4 4 4v8M6 14v-4h4v4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>`, // дом
   12: `<path d="M8 2L8 14M5 5L8 2L11 5M5 11L8 14L11 11M2 8L14 8M2 8L5 5M2 8L5 11M14 8L11 5M14 8L11 11" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>`, // снежинка
@@ -249,13 +249,33 @@ const groupedByMonth = computed(() => {
   }
   return [...map.entries()]
     .sort(([a], [b]) => a - b)
-    .map(([month, list]) => ({
-      month,
-      name: MONTH_NAMES[month - 1],
-      short: MONTH_NAMES_SHORT[month - 1],
-      svgPath: MONTH_SVG_PATHS[month],
-      persons: list.slice().sort((a, b) => Number(a.birth_day) - Number(b.birth_day)),
-    }));
+    .map(([month, list]) => {
+      // Группировка по дням внутри месяца
+      const byDay = new Map<number, Person[]>();
+      for (const person of list) {
+        const day = Number(person.birth_day);
+        if (!day || day < 1 || day > 31) continue;
+        if (!byDay.has(day)) byDay.set(day, []);
+        byDay.get(day)!.push(person);
+      }
+
+      // Преобразуем в массив, сортируем по дням
+      const days = [...byDay.entries()]
+        .sort(([a], [b]) => a - b)
+        .map(([day, persons]) => ({
+          day,
+          persons: persons.sort((a, b) => a.last_name.localeCompare(b.last_name)),
+        }));
+
+      return {
+        month,
+        name: MONTH_NAMES[month - 1],
+        short: MONTH_NAMES_SHORT[month - 1],
+        svgPath: MONTH_SVG_PATHS[month],
+        persons: list.slice().sort((a, b) => Number(a.birth_day) - Number(b.birth_day)),
+        days, // добавляем группировку по дням
+      };
+    });
 });
 
 const availableMonths = computed(() =>
@@ -427,8 +447,12 @@ const save = async () => {
 const deleteConfirmId = ref<number | null>(null);
 const deleting = ref(false);
 
-const confirmDelete = (id: number) => { deleteConfirmId.value = id; };
-const cancelDelete = () => { deleteConfirmId.value = null; };
+const confirmDelete = (id: number) => {
+  deleteConfirmId.value = id;
+};
+const cancelDelete = () => {
+  deleteConfirmId.value = null;
+};
 
 const doDelete = async (id: number) => {
   deleting.value = true;
@@ -464,7 +488,7 @@ const loadExportStats = async () => {
   if (exportMonths.value.length) return;
   exportLoading.value = true;
   try {
-    const { data } = await axios.get('/api/export/calendar/stats');
+    const {data} = await axios.get('/api/export/calendar/stats');
     exportMonths.value = data.months;
   } finally {
     exportLoading.value = false;
@@ -489,7 +513,18 @@ const downloadMonth = (month: number | null) => {
   a.click();
   document.body.removeChild(a);
 
-  setTimeout(() => { exportDownloading.value = null; }, 1500);
+  setTimeout(() => {
+    exportDownloading.value = null;
+  }, 1500);
+};
+
+const downloadPersonsTxt = () => {
+  const a = document.createElement('a');
+  a.href = '/api/export/persons/txt';
+  a.download = 'persons_list.txt';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
 };
 </script>
 
@@ -519,9 +554,16 @@ const downloadMonth = (month: number | null) => {
             </svg>
             Экспорт JSON
           </button>
-
+          <button class="pl-btn pl-btn--export" @click="downloadPersonsTxt">
+            <svg viewBox="0 0 20 20" fill="none" class="pl-btn-icon">
+              <path d="M4 6h12M4 10h8M4 14h6" stroke="currentColor"
+                    stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+            Экспорт TXT
+          </button>
           <Transition name="drop">
-            <div v-if="exportOpen" class="pl-export-drop" v-click-outside="() => exportOpen = false">
+            <div v-if="exportOpen" class="pl-export-drop"
+                 v-click-outside="() => exportOpen = false">
               <div class="pl-export-head">
                 <span>Выгрузка для InDesign</span>
                 <button class="pl-icon-btn" @click="exportOpen = false">
@@ -536,7 +578,8 @@ const downloadMonth = (month: number | null) => {
                       :disabled="exportDownloading === -1"
                       @click="downloadMonth(null)">
                 <svg viewBox="0 0 16 16" fill="none" class="pl-icon-xs">
-                  <rect x="2" y="2" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.2"/>
+                  <rect x="2" y="2" width="12" height="12" rx="2" stroke="currentColor"
+                        stroke-width="1.2"/>
                   <path d="M8 5v6M5 8l3 3 3-3" stroke="currentColor" stroke-width="1.2"
                         stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
@@ -614,7 +657,8 @@ const downloadMonth = (month: number | null) => {
               @click="switchGroupMode('alpha')"
             >
               <svg viewBox="0 0 16 16" fill="none" class="pl-icon-xs">
-                <path d="M3 12L6 4l3 8M4.5 9.5h3M10 4v8M13 4h-3M13 12h-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M3 12L6 4l3 8M4.5 9.5h3M10 4v8M13 4h-3M13 12h-3" stroke="currentColor"
+                      stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
               По алфавиту
             </button>
@@ -624,8 +668,10 @@ const downloadMonth = (month: number | null) => {
               @click="switchGroupMode('month')"
             >
               <svg viewBox="0 0 16 16" fill="none" class="pl-icon-xs">
-                <rect x="2" y="3" width="12" height="11" rx="1.5" stroke="currentColor" stroke-width="1.2"/>
-                <path d="M5 1v4M11 1v4M2 7h12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                <rect x="2" y="3" width="12" height="11" rx="1.5" stroke="currentColor"
+                      stroke-width="1.2"/>
+                <path d="M5 1v4M11 1v4M2 7h12" stroke="currentColor" stroke-width="1.2"
+                      stroke-linecap="round"/>
                 <circle cx="8" cy="10.5" r="1" fill="currentColor"/>
               </svg>
               По месяцам
@@ -656,7 +702,8 @@ const downloadMonth = (month: number | null) => {
               class="pl-alpha-nav-btn"
               :class="{ 'pl-alpha-nav-btn--active': activeLetter === null }"
               @click="activeLetter = null"
-            >Все</button>
+            >Все
+            </button>
             <button
               v-for="letter in allLetters"
               :key="letter"
@@ -667,7 +714,8 @@ const downloadMonth = (month: number | null) => {
               }"
               :disabled="!availableLetters.has(letter)"
               @click="activeLetter = letter"
-            >{{ letter }}</button>
+            >{{ letter }}
+            </button>
           </div>
 
           <!-- Группы по буквам -->
@@ -706,8 +754,10 @@ const downloadMonth = (month: number | null) => {
                           @error="($event.target as HTMLImageElement).style.display = 'none'"
                         />
                         <svg v-else viewBox="0 0 16 16" fill="none" class="pl-icon-xs">
-                          <rect x="2" y="7" width="12" height="8" rx="1" stroke="currentColor" stroke-width="1.2"/>
-                          <path d="M5 7V5a3 3 0 0 1 6 0v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                          <rect x="2" y="7" width="12" height="8" rx="1" stroke="currentColor"
+                                stroke-width="1.2"/>
+                          <path d="M5 7V5a3 3 0 0 1 6 0v2" stroke="currentColor" stroke-width="1.2"
+                                stroke-linecap="round"/>
                         </svg>
                         {{ person.partner.name }}
                       </span>
@@ -718,8 +768,10 @@ const downloadMonth = (month: number | null) => {
                     <div class="pl-card-details">
                       <div v-if="person.birth_day" class="pl-card-detail">
                         <svg viewBox="0 0 16 16" fill="none" class="pl-icon-xs">
-                          <rect x="2" y="3" width="12" height="11" rx="1.5" stroke="currentColor" stroke-width="1.2"/>
-                          <path d="M5 1v4M11 1v4M2 7h12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                          <rect x="2" y="3" width="12" height="11" rx="1.5" stroke="currentColor"
+                                stroke-width="1.2"/>
+                          <path d="M5 1v4M11 1v4M2 7h12" stroke="currentColor" stroke-width="1.2"
+                                stroke-linecap="round"/>
                         </svg>
                         <span>{{ formatDate(person.birth_day, person.birth_month) }}</span>
                       </div>
@@ -727,25 +779,48 @@ const downloadMonth = (month: number | null) => {
                     <div class="pl-card-actions">
                       <template v-if="deleteConfirmId === person.id">
                         <span class="pl-confirm-text">Удалить?</span>
-                        <button class="pl-icon-btn pl-icon-btn--danger" :disabled="deleting" @click="doDelete(person.id)">
-                          <svg viewBox="0 0 20 20" fill="none"><path d="M5 10h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                        <button class="pl-icon-btn pl-icon-btn--danger" :disabled="deleting"
+                                @click="doDelete(person.id)">
+                          <svg viewBox="0 0 20 20" fill="none">
+                            <path d="M5 10h10" stroke="currentColor" stroke-width="1.8"
+                                  stroke-linecap="round"/>
+                          </svg>
                         </button>
                         <button class="pl-icon-btn" @click="cancelDelete">
-                          <svg viewBox="0 0 20 20" fill="none"><path d="M6 6l8 8M14 6l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                          <svg viewBox="0 0 20 20" fill="none">
+                            <path d="M6 6l8 8M14 6l-8 8" stroke="currentColor" stroke-width="1.5"
+                                  stroke-linecap="round"/>
+                          </svg>
                         </button>
                       </template>
                       <template v-else-if="!person.checked">
                         <span class="pl-deleted-badge">удалён</span>
-                        <button class="pl-icon-btn pl-icon-btn--restore" :disabled="restoring === person.id" @click="doRestore(person.id)">
-                          <svg viewBox="0 0 20 20" fill="none"><path d="M4 10a6 6 0 1 0 1.5-3.9M4 10V6M4 10H8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        <button class="pl-icon-btn pl-icon-btn--restore"
+                                :disabled="restoring === person.id" @click="doRestore(person.id)">
+                          <svg viewBox="0 0 20 20" fill="none">
+                            <path d="M4 10a6 6 0 1 0 1.5-3.9M4 10V6M4 10H8" stroke="currentColor"
+                                  stroke-width="1.5" stroke-linecap="round"
+                                  stroke-linejoin="round"/>
+                          </svg>
                         </button>
                       </template>
                       <template v-else>
                         <button class="pl-icon-btn" @click="openEdit(person)">
-                          <svg viewBox="0 0 20 20" fill="none"><path d="M13.586 3.586a2 2 0 112.828 2.828L7 15.828 3 17l1.172-4L13.586 3.586z" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                          <svg viewBox="0 0 20 20" fill="none">
+                            <path
+                              d="M13.586 3.586a2 2 0 112.828 2.828L7 15.828 3 17l1.172-4L13.586 3.586z"
+                              stroke="currentColor" stroke-width="1.3" stroke-linecap="round"
+                              stroke-linejoin="round"/>
+                          </svg>
                         </button>
-                        <button class="pl-icon-btn pl-icon-btn--danger" @click="confirmDelete(person.id)">
-                          <svg viewBox="0 0 20 20" fill="none"><path d="M4 6h12M8 6V4h4v2M9 10v5M11 10v5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><rect x="5" y="6" width="10" height="10" rx="1.5" stroke="currentColor" stroke-width="1.3"/></svg>
+                        <button class="pl-icon-btn pl-icon-btn--danger"
+                                @click="confirmDelete(person.id)">
+                          <svg viewBox="0 0 20 20" fill="none">
+                            <path d="M4 6h12M8 6V4h4v2M9 10v5M11 10v5" stroke="currentColor"
+                                  stroke-width="1.3" stroke-linecap="round"/>
+                            <rect x="5" y="6" width="10" height="10" rx="1.5" stroke="currentColor"
+                                  stroke-width="1.3"/>
+                          </svg>
                         </button>
                       </template>
                     </div>
@@ -767,8 +842,10 @@ const downloadMonth = (month: number | null) => {
               @click="activeMonth = null"
             >
               <svg viewBox="0 0 16 16" fill="none" class="pl-month-nav-icon">
-                <rect x="2" y="3" width="12" height="11" rx="1.5" stroke="currentColor" stroke-width="1.2"/>
-                <path d="M5 1v4M11 1v4M2 7h12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                <rect x="2" y="3" width="12" height="11" rx="1.5" stroke="currentColor"
+                      stroke-width="1.2"/>
+                <path d="M5 1v4M11 1v4M2 7h12" stroke="currentColor" stroke-width="1.2"
+                      stroke-linecap="round"/>
               </svg>
               <span>Все</span>
             </button>
@@ -783,45 +860,48 @@ const downloadMonth = (month: number | null) => {
               :disabled="!availableMonths.has(n)"
               @click="activeMonth = n"
             >
-              <svg viewBox="0 0 16 16" fill="none" class="pl-month-nav-icon" v-html="MONTH_SVG_PATHS[n]"/>
+              <svg viewBox="0 0 16 16" fill="none" class="pl-month-nav-icon"
+                   v-html="MONTH_SVG_PATHS[n]"/>
               <span>{{ MONTH_NAMES_SHORT[n - 1] }}</span>
             </button>
           </div>
 
-          <div class="pl-groups">
+          <div class="pl-groups-days">
             <!-- Месяцы с днями рождения -->
-            <template v-for="{ month, name, svgPath, persons: monthPersons } in visibleMonthGroups" :key="month">
-              <div class="pl-month-header">
-                <div class="pl-month-header-left">
-                  <div class="pl-month-header-icon">
-                    <svg viewBox="0 0 16 16" fill="none" v-html="svgPath"/>
+            <template
+              v-for="{ month, name, svgPath, days, persons: monthPersons } in visibleMonthGroups"
+              :key="month">
+              <!-- Группировка по дням -->
+              <template v-for="{ day, persons } in days" :key="day">
+                <div class="pl-grid-days">
+                  <div class="pl-day-header">
+                    <span class="pl-day-number">{{
+                        `${String(day).padStart(2, '0')}.${String(month).padStart(2, '0')}`
+                      }}</span>
                   </div>
-                  <span class="pl-month-name">{{ name }}</span>
-                  <span class="pl-month-num">{{ String(month).padStart(2, '0') }}</span>
-                </div>
-                <span class="pl-alpha-count">{{ monthPersons.length }}</span>
-              </div>
-              <div class="pl-grid">
-                <div
-                  v-for="person in monthPersons"
-                  :key="person.id"
-                  class="pl-card"
-                  :class="{ 'pl-card--deleted': !person.checked }"
-                >
-                  <div class="pl-card-top">
-                    <div class="pl-card-avatar">
-                      <img
-                        v-if="person.photo_thumb_path"
-                        :src="person.photo_thumb_path"
-                        :alt="initials(person)"
-                        class="pl-card-avatar-img"
-                        @error="($event.target as HTMLImageElement).style.display='none'"
-                      />
-                      <span v-else>{{ initials(person) }}</span>
-                    </div>
-                    <div class="pl-card-body">
-                      <h2 class="pl-card-name">{{ person.last_name }} {{ person.first_name }}</h2>
-                      <span v-if="person.partner" class="pl-card-partner">
+                  <div class="card-persons-wrap">
+                    <div
+                      v-for="person in persons"
+                      :key="person.id"
+                      class="pl-card"
+                      :class="{ 'pl-card--deleted': !person.checked }"
+                    >
+                      <div class="pl-card-top">
+                        <div class="pl-card-avatar">
+                          <img
+                            v-if="person.photo_thumb_path"
+                            :src="person.photo_thumb_path"
+                            :alt="initials(person)"
+                            class="pl-card-avatar-img"
+                            @error="($event.target as HTMLImageElement).style.display='none'"
+                          />
+                          <span v-else>{{ initials(person) }}</span>
+                        </div>
+                        <div class="pl-card-body">
+                          <h2 class="pl-card-name">{{ person.last_name }} {{
+                              person.first_name
+                            }}</h2>
+                          <span v-if="person.partner" class="pl-card-partner">
                         <img
                           v-if="person.partner.logo"
                           :src="person.partner.logo"
@@ -830,48 +910,73 @@ const downloadMonth = (month: number | null) => {
                           @error="($event.target as HTMLImageElement).style.display = 'none'"
                         />
                         <svg v-else viewBox="0 0 16 16" fill="none" class="pl-icon-xs">
-                          <rect x="2" y="7" width="12" height="8" rx="1" stroke="currentColor" stroke-width="1.2"/>
-                          <path d="M5 7V5a3 3 0 0 1 6 0v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                          <rect x="2" y="7" width="12" height="8" rx="1" stroke="currentColor"
+                                stroke-width="1.2"/>
+                          <path d="M5 7V5a3 3 0 0 1 6 0v2" stroke="currentColor" stroke-width="1.2"
+                                stroke-linecap="round"/>
                         </svg>
                         {{ person.partner.name }}
                       </span>
-                    </div>
-                  </div>
-
-                  <div class="pl-card-bottom">
-                    <div class="pl-card-details">
-                      <div v-if="person.birth_day" class="pl-card-detail pl-card-detail--day">
-                        <span class="pl-card-day-badge">{{  `${ String(person.birth_day).padStart(2,0)}.${ String(person.birth_month).padStart(2,0)}`  }}</span>
+                        </div>
                       </div>
-                    </div>
-                    <div class="pl-card-actions">
-                      <template v-if="deleteConfirmId === person.id">
-                        <span class="pl-confirm-text">Удалить?</span>
-                        <button class="pl-icon-btn pl-icon-btn--danger" :disabled="deleting" @click="doDelete(person.id)">
-                          <svg viewBox="0 0 20 20" fill="none"><path d="M5 10h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-                        </button>
-                        <button class="pl-icon-btn" @click="cancelDelete">
-                          <svg viewBox="0 0 20 20" fill="none"><path d="M6 6l8 8M14 6l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-                        </button>
-                      </template>
-                      <template v-else-if="!person.checked">
-                        <span class="pl-deleted-badge">удалён</span>
-                        <button class="pl-icon-btn pl-icon-btn--restore" :disabled="restoring === person.id" @click="doRestore(person.id)">
-                          <svg viewBox="0 0 20 20" fill="none"><path d="M4 10a6 6 0 1 0 1.5-3.9M4 10V6M4 10H8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                        </button>
-                      </template>
-                      <template v-else>
-                        <button class="pl-icon-btn" @click="openEdit(person)">
-                          <svg viewBox="0 0 20 20" fill="none"><path d="M13.586 3.586a2 2 0 112.828 2.828L7 15.828 3 17l1.172-4L13.586 3.586z" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                        </button>
-                        <button class="pl-icon-btn pl-icon-btn--danger" @click="confirmDelete(person.id)">
-                          <svg viewBox="0 0 20 20" fill="none"><path d="M4 6h12M8 6V4h4v2M9 10v5M11 10v5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><rect x="5" y="6" width="10" height="10" rx="1.5" stroke="currentColor" stroke-width="1.3"/></svg>
-                        </button>
-                      </template>
+
+                      <div class="pl-card-bottom">
+                        <div class="pl-card-actions">
+                          <template v-if="deleteConfirmId === person.id">
+                            <span class="pl-confirm-text">Удалить?</span>
+                            <button class="pl-icon-btn pl-icon-btn--danger" :disabled="deleting"
+                                    @click="doDelete(person.id)">
+                              <svg viewBox="0 0 20 20" fill="none">
+                                <path d="M5 10h10" stroke="currentColor" stroke-width="1.8"
+                                      stroke-linecap="round"/>
+                              </svg>
+                            </button>
+                            <button class="pl-icon-btn" @click="cancelDelete">
+                              <svg viewBox="0 0 20 20" fill="none">
+                                <path d="M6 6l8 8M14 6l-8 8" stroke="currentColor"
+                                      stroke-width="1.5"
+                                      stroke-linecap="round"/>
+                              </svg>
+                            </button>
+                          </template>
+                          <template v-else-if="!person.checked">
+                            <span class="pl-deleted-badge">удалён</span>
+                            <button class="pl-icon-btn pl-icon-btn--restore"
+                                    :disabled="restoring === person.id"
+                                    @click="doRestore(person.id)">
+                              <svg viewBox="0 0 20 20" fill="none">
+                                <path d="M4 10a6 6 0 1 0 1.5-3.9M4 10V6M4 10H8"
+                                      stroke="currentColor"
+                                      stroke-width="1.5" stroke-linecap="round"
+                                      stroke-linejoin="round"/>
+                              </svg>
+                            </button>
+                          </template>
+                          <template v-else>
+                            <button class="pl-icon-btn" @click="openEdit(person)">
+                              <svg viewBox="0 0 20 20" fill="none">
+                                <path
+                                  d="M13.586 3.586a2 2 0 112.828 2.828L7 15.828 3 17l1.172-4L13.586 3.586z"
+                                  stroke="currentColor" stroke-width="1.3" stroke-linecap="round"
+                                  stroke-linejoin="round"/>
+                              </svg>
+                            </button>
+                            <button class="pl-icon-btn pl-icon-btn--danger"
+                                    @click="confirmDelete(person.id)">
+                              <svg viewBox="0 0 20 20" fill="none">
+                                <path d="M4 6h12M8 6V4h4v2M9 10v5M11 10v5" stroke="currentColor"
+                                      stroke-width="1.3" stroke-linecap="round"/>
+                                <rect x="5" y="6" width="10" height="10" rx="1.5"
+                                      stroke="currentColor" stroke-width="1.3"/>
+                              </svg>
+                            </button>
+                          </template>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              </template>
             </template>
 
             <!-- Персоны без месяца рождения (только в режиме "Все") -->
@@ -880,9 +985,12 @@ const downloadMonth = (month: number | null) => {
                 <div class="pl-month-header-left">
                   <div class="pl-month-header-icon pl-month-header-icon--mute">
                     <svg viewBox="0 0 16 16" fill="none">
-                      <rect x="2" y="3" width="12" height="11" rx="1.5" stroke="currentColor" stroke-width="1.2"/>
-                      <path d="M5 1v4M11 1v4M2 7h12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
-                      <path d="M7 10h2M8 10v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                      <rect x="2" y="3" width="12" height="11" rx="1.5" stroke="currentColor"
+                            stroke-width="1.2"/>
+                      <path d="M5 1v4M11 1v4M2 7h12" stroke="currentColor" stroke-width="1.2"
+                            stroke-linecap="round"/>
+                      <path d="M7 10h2M8 10v2" stroke="currentColor" stroke-width="1.2"
+                            stroke-linecap="round"/>
                     </svg>
                   </div>
                   <span class="pl-month-name">Без даты рождения</span>
@@ -910,10 +1018,14 @@ const downloadMonth = (month: number | null) => {
                     <div class="pl-card-body">
                       <h2 class="pl-card-name">{{ person.last_name }} {{ person.first_name }}</h2>
                       <span v-if="person.partner" class="pl-card-partner">
-                        <img v-if="person.partner.logo" :src="person.partner.logo" :alt="person.partner.name" class="pl-card-partner-logo" @error="($event.target as HTMLImageElement).style.display = 'none'"/>
+                        <img v-if="person.partner.logo" :src="person.partner.logo"
+                             :alt="person.partner.name" class="pl-card-partner-logo"
+                             @error="($event.target as HTMLImageElement).style.display = 'none'"/>
                         <svg v-else viewBox="0 0 16 16" fill="none" class="pl-icon-xs">
-                          <rect x="2" y="7" width="12" height="8" rx="1" stroke="currentColor" stroke-width="1.2"/>
-                          <path d="M5 7V5a3 3 0 0 1 6 0v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                          <rect x="2" y="7" width="12" height="8" rx="1" stroke="currentColor"
+                                stroke-width="1.2"/>
+                          <path d="M5 7V5a3 3 0 0 1 6 0v2" stroke="currentColor" stroke-width="1.2"
+                                stroke-linecap="round"/>
                         </svg>
                         {{ person.partner.name }}
                       </span>
@@ -924,25 +1036,48 @@ const downloadMonth = (month: number | null) => {
                     <div class="pl-card-actions">
                       <template v-if="deleteConfirmId === person.id">
                         <span class="pl-confirm-text">Удалить?</span>
-                        <button class="pl-icon-btn pl-icon-btn--danger" :disabled="deleting" @click="doDelete(person.id)">
-                          <svg viewBox="0 0 20 20" fill="none"><path d="M5 10h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                        <button class="pl-icon-btn pl-icon-btn--danger" :disabled="deleting"
+                                @click="doDelete(person.id)">
+                          <svg viewBox="0 0 20 20" fill="none">
+                            <path d="M5 10h10" stroke="currentColor" stroke-width="1.8"
+                                  stroke-linecap="round"/>
+                          </svg>
                         </button>
                         <button class="pl-icon-btn" @click="cancelDelete">
-                          <svg viewBox="0 0 20 20" fill="none"><path d="M6 6l8 8M14 6l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                          <svg viewBox="0 0 20 20" fill="none">
+                            <path d="M6 6l8 8M14 6l-8 8" stroke="currentColor" stroke-width="1.5"
+                                  stroke-linecap="round"/>
+                          </svg>
                         </button>
                       </template>
                       <template v-else-if="!person.checked">
                         <span class="pl-deleted-badge">удалён</span>
-                        <button class="pl-icon-btn pl-icon-btn--restore" :disabled="restoring === person.id" @click="doRestore(person.id)">
-                          <svg viewBox="0 0 20 20" fill="none"><path d="M4 10a6 6 0 1 0 1.5-3.9M4 10V6M4 10H8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        <button class="pl-icon-btn pl-icon-btn--restore"
+                                :disabled="restoring === person.id" @click="doRestore(person.id)">
+                          <svg viewBox="0 0 20 20" fill="none">
+                            <path d="M4 10a6 6 0 1 0 1.5-3.9M4 10V6M4 10H8" stroke="currentColor"
+                                  stroke-width="1.5" stroke-linecap="round"
+                                  stroke-linejoin="round"/>
+                          </svg>
                         </button>
                       </template>
                       <template v-else>
                         <button class="pl-icon-btn" @click="openEdit(person)">
-                          <svg viewBox="0 0 20 20" fill="none"><path d="M13.586 3.586a2 2 0 112.828 2.828L7 15.828 3 17l1.172-4L13.586 3.586z" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                          <svg viewBox="0 0 20 20" fill="none">
+                            <path
+                              d="M13.586 3.586a2 2 0 112.828 2.828L7 15.828 3 17l1.172-4L13.586 3.586z"
+                              stroke="currentColor" stroke-width="1.3" stroke-linecap="round"
+                              stroke-linejoin="round"/>
+                          </svg>
                         </button>
-                        <button class="pl-icon-btn pl-icon-btn--danger" @click="confirmDelete(person.id)">
-                          <svg viewBox="0 0 20 20" fill="none"><path d="M4 6h12M8 6V4h4v2M9 10v5M11 10v5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><rect x="5" y="6" width="10" height="10" rx="1.5" stroke="currentColor" stroke-width="1.3"/></svg>
+                        <button class="pl-icon-btn pl-icon-btn--danger"
+                                @click="confirmDelete(person.id)">
+                          <svg viewBox="0 0 20 20" fill="none">
+                            <path d="M4 6h12M8 6V4h4v2M9 10v5M11 10v5" stroke="currentColor"
+                                  stroke-width="1.3" stroke-linecap="round"/>
+                            <rect x="5" y="6" width="10" height="10" rx="1.5" stroke="currentColor"
+                                  stroke-width="1.3"/>
+                          </svg>
                         </button>
                       </template>
                     </div>
@@ -1016,13 +1151,17 @@ const downloadMonth = (month: number | null) => {
                      :class="{ 'pl-field--err': formErrors.last_name }">
                   <label class="pl-label">Фамилия *</label>
                   <input v-model="form.last_name" class="pl-input" placeholder="Иванов"/>
-                  <span v-if="formErrors.last_name" class="pl-field-err">{{ formErrors.last_name }}</span>
+                  <span v-if="formErrors.last_name" class="pl-field-err">{{
+                      formErrors.last_name
+                    }}</span>
                 </div>
                 <div class="pl-field pl-field--grow"
                      :class="{ 'pl-field--err': formErrors.first_name }">
                   <label class="pl-label">Имя *</label>
                   <input v-model="form.first_name" class="pl-input" placeholder="Иван"/>
-                  <span v-if="formErrors.first_name" class="pl-field-err">{{ formErrors.first_name }}</span>
+                  <span v-if="formErrors.first_name" class="pl-field-err">{{
+                      formErrors.first_name
+                    }}</span>
                 </div>
               </div>
               <div class="pl-field">
@@ -1045,19 +1184,26 @@ const downloadMonth = (month: number | null) => {
                       { value: 4, name: 'Апрель' },{ value: 5, name: 'Май' },{ value: 6, name: 'Июнь' },
                       { value: 7, name: 'Июль' },{ value: 8, name: 'Август' },{ value: 9, name: 'Сентябрь' },
                       { value: 10, name: 'Октябрь' },{ value: 11, name: 'Ноябрь' },{ value: 12, name: 'Декабрь' }
-                    ]" :key="month.value" :value="month.value">{{ month.name }}</option>
+                    ]" :key="month.value" :value="month.value">{{ month.name }}
+                    </option>
                   </select>
                 </div>
               </div>
-              <div class="pl-field pl-field--grow" :class="{ 'pl-field--err': formErrors.position_short }">
+              <div class="pl-field pl-field--grow"
+                   :class="{ 'pl-field--err': formErrors.position_short }">
                 <label class="pl-label">Краткое описание должности *</label>
-                <input v-model="form.position_short" class="pl-input" placeholder="Руководитель компании"/>
-                <span v-if="formErrors.position_short" class="pl-field-err">{{ formErrors.position_short }}</span>
+                <input v-model="form.position_short" class="pl-input"
+                       placeholder="Руководитель компании"/>
+                <span v-if="formErrors.position_short"
+                      class="pl-field-err">{{ formErrors.position_short }}</span>
               </div>
-              <div class="pl-field pl-field--grow" :class="{ 'pl-field--err': formErrors.position_full }">
+              <div class="pl-field pl-field--grow"
+                   :class="{ 'pl-field--err': formErrors.position_full }">
                 <label class="pl-label">Полное описание должности *</label>
-                <input v-model="form.position_full" class="pl-input" placeholder="Генеральный директор ООО 'Название компании'"/>
-                <span v-if="formErrors.position_full" class="pl-field-err">{{ formErrors.position_full }}</span>
+                <input v-model="form.position_full" class="pl-input"
+                       placeholder="Генеральный директор ООО 'Название компании'"/>
+                <span v-if="formErrors.position_full"
+                      class="pl-field-err">{{ formErrors.position_full }}</span>
               </div>
 
               <p class="pl-section-label">Контакты</p>
@@ -1065,19 +1211,26 @@ const downloadMonth = (month: number | null) => {
                 <label class="pl-label">Телефон</label>
                 <div class="pl-input-icon-wrap">
                   <svg viewBox="0 0 16 16" fill="none" class="pl-input-icon">
-                    <path d="M3 2h3l1.5 3.5-1.8 1.1a8 8 0 0 0 3.7 3.7l1.1-1.8L14 10v3c0 .6-.4 1-1 1C6 14 2 10 2 3c0-.6.4-1 1-1z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path
+                      d="M3 2h3l1.5 3.5-1.8 1.1a8 8 0 0 0 3.7 3.7l1.1-1.8L14 10v3c0 .6-.4 1-1 1C6 14 2 10 2 3c0-.6.4-1 1-1z"
+                      stroke="currentColor" stroke-width="1.2" stroke-linecap="round"
+                      stroke-linejoin="round"/>
                   </svg>
-                  <input v-model="form.phone" class="pl-input pl-input--padded" placeholder="+7 (999) 000-00-00" type="tel"/>
+                  <input v-model="form.phone" class="pl-input pl-input--padded"
+                         placeholder="+7 (999) 000-00-00" type="tel"/>
                 </div>
               </div>
               <div class="pl-field" :class="{ 'pl-field--err': formErrors.email }">
                 <label class="pl-label">E-mail</label>
                 <div class="pl-input-icon-wrap">
                   <svg viewBox="0 0 16 16" fill="none" class="pl-input-icon">
-                    <rect x="2" y="4" width="12" height="9" rx="1.5" stroke="currentColor" stroke-width="1.2"/>
-                    <path d="M2 5l6 5 6-5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                    <rect x="2" y="4" width="12" height="9" rx="1.5" stroke="currentColor"
+                          stroke-width="1.2"/>
+                    <path d="M2 5l6 5 6-5" stroke="currentColor" stroke-width="1.2"
+                          stroke-linecap="round"/>
                   </svg>
-                  <input v-model="form.email" class="pl-input pl-input--padded" placeholder="ivan@example.ru" type="email"/>
+                  <input v-model="form.email" class="pl-input pl-input--padded"
+                         placeholder="ivan@example.ru" type="email"/>
                 </div>
                 <span v-if="formErrors.email" class="pl-field-err">{{ formErrors.email }}</span>
               </div>
@@ -1086,9 +1239,12 @@ const downloadMonth = (month: number | null) => {
                 <div class="pl-input-icon-wrap">
                   <svg viewBox="0 0 16 16" fill="none" class="pl-input-icon">
                     <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.2"/>
-                    <path d="M8 2c0 0-2.5 2.5-2.5 6s2.5 6 2.5 6M8 2c0 0 2.5 2.5 2.5 6S8 14 8 14M2 8h12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                    <path
+                      d="M8 2c0 0-2.5 2.5-2.5 6s2.5 6 2.5 6M8 2c0 0 2.5 2.5 2.5 6S8 14 8 14M2 8h12"
+                      stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
                   </svg>
-                  <input v-model="form.web" class="pl-input pl-input--padded" placeholder="example.ru" type="url"/>
+                  <input v-model="form.web" class="pl-input pl-input--padded"
+                         placeholder="example.ru" type="url"/>
                 </div>
                 <span v-if="formErrors.web" class="pl-field-err">{{ formErrors.web }}</span>
               </div>
@@ -1099,15 +1255,21 @@ const downloadMonth = (month: number | null) => {
                 <div class="pl-partner-wrap">
                   <div class="pl-partner-input-wrap">
                     <div class="pl-partner-preview" v-if="selectedPartner">
-                      <img v-if="selectedPartner.logo" :src="selectedPartner.logo" :alt="selectedPartner.name" class="pl-partner-preview-logo" @error="($event.target as HTMLImageElement).style.display = 'none'"/>
+                      <img v-if="selectedPartner.logo" :src="selectedPartner.logo"
+                           :alt="selectedPartner.name" class="pl-partner-preview-logo"
+                           @error="($event.target as HTMLImageElement).style.display = 'none'"/>
                       <svg v-else viewBox="0 0 16 16" fill="none" class="pl-icon-xs">
-                        <rect x="2" y="7" width="12" height="8" rx="1" stroke="currentColor" stroke-width="1.2"/>
-                        <path d="M5 7V5a3 3 0 0 1 6 0v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                        <rect x="2" y="7" width="12" height="8" rx="1" stroke="currentColor"
+                              stroke-width="1.2"/>
+                        <path d="M5 7V5a3 3 0 0 1 6 0v2" stroke="currentColor" stroke-width="1.2"
+                              stroke-linecap="round"/>
                       </svg>
                     </div>
                     <svg v-else viewBox="0 0 16 16" fill="none" class="pl-input-icon">
-                      <rect x="2" y="7" width="12" height="8" rx="1" stroke="currentColor" stroke-width="1.2"/>
-                      <path d="M5 7V5a3 3 0 0 1 6 0v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                      <rect x="2" y="7" width="12" height="8" rx="1" stroke="currentColor"
+                            stroke-width="1.2"/>
+                      <path d="M5 7V5a3 3 0 0 1 6 0v2" stroke="currentColor" stroke-width="1.2"
+                            stroke-linecap="round"/>
                     </svg>
                     <input
                       v-model="partnerSearch"
@@ -1117,7 +1279,9 @@ const downloadMonth = (month: number | null) => {
                       @focus="onPartnerFocus"
                       @blur="setTimeout(() => { partnerDropOpen = false }, 150)"
                     />
-                    <button v-if="selectedPartner" class="pl-partner-clear" type="button" @click="clearPartner">×</button>
+                    <button v-if="selectedPartner" class="pl-partner-clear" type="button"
+                            @click="clearPartner">×
+                    </button>
                   </div>
 
                   <Transition name="drop">
@@ -1126,12 +1290,17 @@ const downloadMonth = (month: number | null) => {
                         <span class="pl-spinner pl-spinner--sm"/> Поиск…
                       </div>
                       <template v-else>
-                        <button v-for="p in partners" :key="p.id" class="pl-drop-item" :class="{ 'pl-drop-item--active': selectedPartner?.id === p.id }" type="button" @mousedown.prevent="selectPartner(p)">
+                        <button v-for="p in partners" :key="p.id" class="pl-drop-item"
+                                :class="{ 'pl-drop-item--active': selectedPartner?.id === p.id }"
+                                type="button" @mousedown.prevent="selectPartner(p)">
                           <span class="pl-drop-logo">
-                            <img v-if="p.logo" :src="p.logo" :alt="p.name" class="pl-drop-logo-img" @error="($event.target as HTMLImageElement).style.display = 'none'"/>
+                            <img v-if="p.logo" :src="p.logo" :alt="p.name" class="pl-drop-logo-img"
+                                 @error="($event.target as HTMLImageElement).style.display = 'none'"/>
                             <svg v-else viewBox="0 0 16 16" fill="none" class="pl-icon-xs">
-                              <rect x="2" y="7" width="12" height="8" rx="1" stroke="currentColor" stroke-width="1.2"/>
-                              <path d="M5 7V5a3 3 0 0 1 6 0v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                              <rect x="2" y="7" width="12" height="8" rx="1" stroke="currentColor"
+                                    stroke-width="1.2"/>
+                              <path d="M5 7V5a3 3 0 0 1 6 0v2" stroke="currentColor"
+                                    stroke-width="1.2" stroke-linecap="round"/>
                             </svg>
                           </span>
                           <span class="pl-drop-info">
@@ -1139,11 +1308,19 @@ const downloadMonth = (month: number | null) => {
                             <span class="pl-drop-site">{{ stripProtocol(p.site) }}</span>
                           </span>
                         </button>
-                        <div v-if="!partners.length && !partnerSearch.trim()" class="pl-drop-item pl-drop-item--mute">Начните вводить название…</div>
-                        <div v-if="!partners.length && partnerSearch.trim() && partnerExactMatch" class="pl-drop-item pl-drop-item--mute">Партнёров не найдено</div>
-                        <button v-if="partnerSearch.trim() && !partnerExactMatch" class="pl-drop-item pl-drop-item--create" type="button" :disabled="creatingPartner" @mousedown.prevent="createAndSelectPartner">
+                        <div v-if="!partners.length && !partnerSearch.trim()"
+                             class="pl-drop-item pl-drop-item--mute">Начните вводить название…
+                        </div>
+                        <div v-if="!partners.length && partnerSearch.trim() && partnerExactMatch"
+                             class="pl-drop-item pl-drop-item--mute">Партнёров не найдено
+                        </div>
+                        <button v-if="partnerSearch.trim() && !partnerExactMatch"
+                                class="pl-drop-item pl-drop-item--create" type="button"
+                                :disabled="creatingPartner"
+                                @mousedown.prevent="createAndSelectPartner">
                           <svg viewBox="0 0 16 16" fill="none" class="pl-icon-xs">
-                            <path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                            <path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.5"
+                                  stroke-linecap="round"/>
                           </svg>
                           {{ creatingPartner ? 'Создание…' : `Создать «${partnerSearch.trim()}»` }}
                         </button>
@@ -1151,10 +1328,14 @@ const downloadMonth = (month: number | null) => {
                     </div>
                   </Transition>
                 </div>
-                <span class="pl-field-hint">Привяжите существующего партнёра или создайте нового</span>
+                <span
+                  class="pl-field-hint">Привяжите существующего партнёра или создайте нового</span>
               </div>
 
-              <div v-if="formErrors.global" class="pl-alert pl-alert--sm">{{ formErrors.global }}</div>
+              <div v-if="formErrors.global" class="pl-alert pl-alert--sm">{{
+                  formErrors.global
+                }}
+              </div>
             </div>
 
             <div class="pl-modal-foot">
@@ -1204,6 +1385,27 @@ const downloadMonth = (month: number | null) => {
   justify-content: space-between;
   gap: 16px;
   flex-wrap: wrap;
+}
+
+.pl-day-header {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 8px 12px;
+  margin-left: 16px;
+  border-left: 2px solid var(--border);
+}
+
+.pl-day-number {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--accent-hi);
+}
+
+.pl-day-count {
+  font-size: 11px;
+  color: var(--text-mute);
 }
 
 .pl-title {
@@ -1267,8 +1469,14 @@ const downloadMonth = (month: number | null) => {
   min-height: 90px;
 }
 
-.pl-upload:hover { border-color: var(--border-hi); }
-.pl-upload--has { border-style: solid; padding: 6px; }
+.pl-upload:hover {
+  border-color: var(--border-hi);
+}
+
+.pl-upload--has {
+  border-style: solid;
+  padding: 6px;
+}
 
 .pl-upload-preview {
   max-height: 80px;
@@ -1285,9 +1493,19 @@ const downloadMonth = (month: number | null) => {
   color: var(--text-mute);
 }
 
-.pl-upload-placeholder svg { width: 28px; height: 28px; }
-.pl-upload-placeholder span { font-size: 13px; }
-.pl-upload-hint { font-size: 11px !important; opacity: 0.6; }
+.pl-upload-placeholder svg {
+  width: 28px;
+  height: 28px;
+}
+
+.pl-upload-placeholder span {
+  font-size: 13px;
+}
+
+.pl-upload-hint {
+  font-size: 11px !important;
+  opacity: 0.6;
+}
 
 .pl-upload-input {
   position: absolute;
@@ -1305,7 +1523,9 @@ const downloadMonth = (month: number | null) => {
   padding: 4px 0;
 }
 
-.pl-upload-clear:hover { text-decoration: underline; }
+.pl-upload-clear:hover {
+  text-decoration: underline;
+}
 
 /* Кнопки */
 .pl-btn {
@@ -1330,8 +1550,15 @@ const downloadMonth = (month: number | null) => {
   box-shadow: 0 0 20px rgba(59, 130, 246, 0.25);
 }
 
-.pl-btn--primary:hover { background: #2563eb; box-shadow: 0 0 28px rgba(59, 130, 246, 0.35); }
-.pl-btn--primary:disabled { opacity: 0.55; cursor: not-allowed; }
+.pl-btn--primary:hover {
+  background: #2563eb;
+  box-shadow: 0 0 28px rgba(59, 130, 246, 0.35);
+}
+
+.pl-btn--primary:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
 
 .pl-btn--ghost {
   background: rgba(96, 165, 250, 0.07);
@@ -1339,8 +1566,15 @@ const downloadMonth = (month: number | null) => {
   border: 1px solid var(--border);
 }
 
-.pl-btn--ghost:hover { background: rgba(96, 165, 250, 0.13); border-color: var(--border-hi); }
-.pl-btn-icon { width: 16px; height: 16px; }
+.pl-btn--ghost:hover {
+  background: rgba(96, 165, 250, 0.13);
+  border-color: var(--border-hi);
+}
+
+.pl-btn-icon {
+  width: 16px;
+  height: 16px;
+}
 
 .pl-icon-btn {
   width: 32px;
@@ -1358,14 +1592,44 @@ const downloadMonth = (month: number | null) => {
   transition: all 0.15s;
 }
 
-.pl-icon-btn svg { width: 15px; height: 15px; }
-.pl-icon-btn:hover { background: rgba(96, 165, 250, 0.15); color: var(--text-h); }
-.pl-icon-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-.pl-icon-btn--danger { background: var(--danger-bg); color: var(--danger); }
-.pl-icon-btn--danger:hover { background: rgba(239, 68, 68, 0.2); }
-.pl-icon-btn--restore { background: rgba(34, 197, 94, 0.1); color: #86efac; }
-.pl-icon-btn--restore:hover { background: rgba(34, 197, 94, 0.2); }
-.pl-icon-xs { width: 12px; height: 12px; flex-shrink: 0; }
+.pl-icon-btn svg {
+  width: 15px;
+  height: 15px;
+}
+
+.pl-icon-btn:hover {
+  background: rgba(96, 165, 250, 0.15);
+  color: var(--text-h);
+}
+
+.pl-icon-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pl-icon-btn--danger {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+.pl-icon-btn--danger:hover {
+  background: rgba(239, 68, 68, 0.2);
+}
+
+.pl-icon-btn--restore {
+  background: rgba(34, 197, 94, 0.1);
+  color: #86efac;
+}
+
+.pl-icon-btn--restore:hover {
+  background: rgba(34, 197, 94, 0.2);
+}
+
+.pl-icon-xs {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+}
 
 /* Алерт */
 .pl-alert {
@@ -1380,8 +1644,15 @@ const downloadMonth = (month: number | null) => {
   color: #fca5a5;
 }
 
-.pl-alert--sm { padding: 10px 14px; }
-.pl-alert svg { width: 18px; height: 18px; flex-shrink: 0; }
+.pl-alert--sm {
+  padding: 10px 14px;
+}
+
+.pl-alert svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
 
 .pl-retry {
   margin-left: auto;
@@ -1394,10 +1665,16 @@ const downloadMonth = (month: number | null) => {
   cursor: pointer;
 }
 
-.pl-retry:hover { background: rgba(239, 68, 68, 0.08); }
+.pl-retry:hover {
+  background: rgba(239, 68, 68, 0.08);
+}
 
 /* Скелетон */
-.pl-skeleton { display: flex; flex-direction: column; gap: 16px; }
+.pl-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
 
 .sk-bar {
   border-radius: 6px;
@@ -1405,7 +1682,10 @@ const downloadMonth = (month: number | null) => {
   animation: shimmer 1.4s infinite;
 }
 
-.sk-bar--search { height: 40px; width: 360px; }
+.sk-bar--search {
+  height: 40px;
+  width: 360px;
+}
 
 .sk-grid {
   display: grid;
@@ -1421,8 +1701,12 @@ const downloadMonth = (month: number | null) => {
 }
 
 @keyframes shimmer {
-  0%, 100% { opacity: .6; }
-  50% { opacity: 1; }
+  0%, 100% {
+    opacity: .6;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
 /* Тулбар */
@@ -1465,8 +1749,13 @@ const downloadMonth = (month: number | null) => {
   transition: border-color 0.2s;
 }
 
-.pl-search::placeholder { color: var(--text-mute); }
-.pl-search:focus { border-color: var(--border-hi); }
+.pl-search::placeholder {
+  color: var(--text-mute);
+}
+
+.pl-search:focus {
+  border-color: var(--border-hi);
+}
 
 /* Переключатель группировки */
 .pl-group-toggle {
@@ -1531,8 +1820,17 @@ const downloadMonth = (month: number | null) => {
   text-align: center;
 }
 
-.pl-empty-icon { width: 48px; height: 48px; opacity: 0.4; }
-.pl-empty-text { font-size: 15px; color: var(--text-mute); margin: 0; }
+.pl-empty-icon {
+  width: 48px;
+  height: 48px;
+  opacity: 0.4;
+}
+
+.pl-empty-text {
+  font-size: 15px;
+  color: var(--text-mute);
+  margin: 0;
+}
 
 /* Сетка */
 .pl-grid {
@@ -1541,7 +1839,30 @@ const downloadMonth = (month: number | null) => {
   gap: 16px;
 }
 
-.pl-groups { display: flex; flex-direction: column; gap: 16px; }
+.pl-grid-days {
+}
+
+.pl-grid-days .pl-card {
+  margin-bottom: 10px;
+  margin-right: 10px;
+}
+
+.pl-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.pl-groups-days {
+  /*display: grid;*/
+  /*grid-template-columns: repeat(5, 1fr);*/
+}
+
+.card-persons-wrap {
+  display: flex;
+  justify-content: flex-start;
+  /*border-bottom: 1px solid #ffffff;*/
+}
 
 /* Алфавитная навигация */
 .pl-alpha-nav {
@@ -1558,7 +1879,7 @@ const downloadMonth = (month: number | null) => {
   padding: 0 6px;
   border: 1px solid var(--border);
   border-radius: 6px;
-  background: rgba(96,165,250,0.04);
+  background: rgba(96, 165, 250, 0.04);
   color: var(--text-b);
   font-family: 'Cormorant Garamond', serif;
   font-size: 15px;
@@ -1569,7 +1890,7 @@ const downloadMonth = (month: number | null) => {
 }
 
 .pl-alpha-nav-btn:hover:not(:disabled) {
-  background: rgba(96,165,250,0.12);
+  background: rgba(96, 165, 250, 0.12);
   border-color: var(--border-hi);
   color: var(--text-h);
 }
@@ -1580,7 +1901,10 @@ const downloadMonth = (month: number | null) => {
   color: #fff;
 }
 
-.pl-alpha-nav-btn--disabled { opacity: 0.2; cursor: default; }
+.pl-alpha-nav-btn--disabled {
+  opacity: 0.2;
+  cursor: default;
+}
 
 /* Заголовки групп (алфавит) */
 .pl-alpha-header {
@@ -1599,7 +1923,10 @@ const downloadMonth = (month: number | null) => {
   line-height: 1;
 }
 
-.pl-alpha-count { font-size: 12px; color: var(--text-mute); }
+.pl-alpha-count {
+  font-size: 12px;
+  color: var(--text-mute);
+}
 
 /* Навигация по месяцам */
 .pl-month-nav {
@@ -1765,9 +2092,16 @@ const downloadMonth = (month: number | null) => {
   border-style: dashed;
 }
 
-.pl-card--deleted:hover { opacity: 0.55; box-shadow: none; }
+.pl-card--deleted:hover {
+  opacity: 0.55;
+  box-shadow: none;
+}
 
-.pl-card-top { display: flex; align-items: flex-start; gap: 12px; }
+.pl-card-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
 
 .pl-card-avatar {
   width: 44px;
@@ -1834,17 +2168,24 @@ const downloadMonth = (month: number | null) => {
   flex-shrink: 0;
 }
 
-.pl-card-details { display: flex; justify-content: flex-end; }
+.pl-card-details {
+  display: flex;
+  justify-content: flex-end;
+  margin-right: 50px;
+}
 
 .pl-card-detail {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 18px;
+  font-size: 14px;
   color: var(--text-mute);
 }
 
-.pl-card-detail .pl-icon-xs { opacity: 0.6; flex-shrink: 0; }
+.pl-card-detail .pl-icon-xs {
+  opacity: 0.6;
+  flex-shrink: 0;
+}
 
 .pl-card-link {
   color: var(--accent);
@@ -1856,7 +2197,9 @@ const downloadMonth = (month: number | null) => {
   min-width: 0;
 }
 
-.pl-card-link:hover { color: var(--accent-hi); }
+.pl-card-link:hover {
+  color: var(--accent-hi);
+}
 
 .pl-card-bottom {
   margin-top: auto;
@@ -1874,8 +2217,20 @@ const downloadMonth = (month: number | null) => {
   padding-top: 10px;
 }
 
-.pl-confirm-text { font-size: 12px; color: var(--danger); white-space: nowrap; margin-right: auto; }
-.pl-deleted-badge { font-size: 11px; color: var(--text-mute); letter-spacing: 0.06em; text-transform: uppercase; margin-right: auto; }
+.pl-confirm-text {
+  font-size: 12px;
+  color: var(--danger);
+  white-space: nowrap;
+  margin-right: auto;
+}
+
+.pl-deleted-badge {
+  font-size: 11px;
+  color: var(--text-mute);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-right: auto;
+}
 
 /* Модалка */
 .pl-overlay {
@@ -1949,10 +2304,25 @@ const downloadMonth = (month: number | null) => {
   padding-bottom: 6px;
 }
 
-.pl-row { display: flex; gap: 12px; }
-.pl-field { display: flex; flex-direction: column; gap: 6px; }
-.pl-field--grow { flex: 1; min-width: 0; }
-.pl-field--err .pl-input { border-color: rgba(239, 68, 68, 0.5); }
+.pl-row {
+  display: flex;
+  gap: 12px;
+}
+
+.pl-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.pl-field--grow {
+  flex: 1;
+  min-width: 0;
+}
+
+.pl-field--err .pl-input {
+  border-color: rgba(239, 68, 68, 0.5);
+}
 
 .pl-label {
   font-size: 11px;
@@ -1975,13 +2345,33 @@ const downloadMonth = (month: number | null) => {
   box-sizing: border-box;
 }
 
-.pl-input::placeholder { color: var(--text-mute); opacity: 0.5; }
-.pl-input:focus { border-color: var(--border-hi); background: rgba(255, 255, 255, 0.06); }
-.pl-input--padded { padding-left: 36px; }
-.pl-field-err { font-size: 12px; color: #fca5a5; }
-.pl-field-hint { font-size: 11px; color: var(--text-mute); }
+.pl-input::placeholder {
+  color: var(--text-mute);
+  opacity: 0.5;
+}
 
-.pl-input-icon-wrap { position: relative; }
+.pl-input:focus {
+  border-color: var(--border-hi);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.pl-input--padded {
+  padding-left: 36px;
+}
+
+.pl-field-err {
+  font-size: 12px;
+  color: #fca5a5;
+}
+
+.pl-field-hint {
+  font-size: 11px;
+  color: var(--text-mute);
+}
+
+.pl-input-icon-wrap {
+  position: relative;
+}
 
 .pl-input-icon {
   position: absolute;
@@ -2007,8 +2397,13 @@ const downloadMonth = (month: number | null) => {
 }
 
 /* Партнёр */
-.pl-partner-wrap { position: relative; }
-.pl-partner-input-wrap { position: relative; }
+.pl-partner-wrap {
+  position: relative;
+}
+
+.pl-partner-input-wrap {
+  position: relative;
+}
 
 .pl-partner-preview {
   position: absolute;
@@ -2023,8 +2418,16 @@ const downloadMonth = (month: number | null) => {
   pointer-events: none;
 }
 
-.pl-partner-preview-logo { width: 16px; height: 16px; object-fit: contain; border-radius: 2px; }
-.pl-partner-input { padding-right: 30px !important; }
+.pl-partner-preview-logo {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  border-radius: 2px;
+}
+
+.pl-partner-input {
+  padding-right: 30px !important;
+}
 
 .pl-partner-clear {
   position: absolute;
@@ -2040,7 +2443,9 @@ const downloadMonth = (month: number | null) => {
   padding: 0;
 }
 
-.pl-partner-clear:hover { color: var(--danger); }
+.pl-partner-clear:hover {
+  color: var(--danger);
+}
 
 .pl-partner-drop {
   position: absolute;
@@ -2073,14 +2478,42 @@ const downloadMonth = (month: number | null) => {
   transition: background 0.15s;
 }
 
-.pl-drop-item:last-child { border-bottom: none; }
-.pl-drop-item:hover { background: rgba(96, 165, 250, 0.08); color: var(--text-h); }
-.pl-drop-item--active { background: rgba(59, 130, 246, 0.12); color: var(--accent-hi); }
-.pl-drop-item--mute { color: var(--text-mute); cursor: default; font-style: italic; }
-.pl-drop-item--mute:hover { background: none; }
-.pl-drop-item--create { color: #86efac; }
-.pl-drop-item--create:hover { background: rgba(34, 197, 94, 0.08); }
-.pl-drop-item--create:disabled { opacity: 0.6; cursor: not-allowed; }
+.pl-drop-item:last-child {
+  border-bottom: none;
+}
+
+.pl-drop-item:hover {
+  background: rgba(96, 165, 250, 0.08);
+  color: var(--text-h);
+}
+
+.pl-drop-item--active {
+  background: rgba(59, 130, 246, 0.12);
+  color: var(--accent-hi);
+}
+
+.pl-drop-item--mute {
+  color: var(--text-mute);
+  cursor: default;
+  font-style: italic;
+}
+
+.pl-drop-item--mute:hover {
+  background: none;
+}
+
+.pl-drop-item--create {
+  color: #86efac;
+}
+
+.pl-drop-item--create:hover {
+  background: rgba(34, 197, 94, 0.08);
+}
+
+.pl-drop-item--create:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
 
 .pl-drop-logo {
   width: 24px;
@@ -2094,11 +2527,35 @@ const downloadMonth = (month: number | null) => {
   overflow: hidden;
 }
 
-.pl-drop-logo-img { width: 100%; height: 100%; object-fit: contain; background: #fff; }
+.pl-drop-logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #fff;
+}
 
-.pl-drop-info { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
-.pl-drop-name { font-size: 13px; color: var(--text-h); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.pl-drop-site { font-size: 11px; color: var(--text-mute); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pl-drop-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.pl-drop-name {
+  font-size: 13px;
+  color: var(--text-h);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pl-drop-site {
+  font-size: 11px;
+  color: var(--text-mute);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
 /* Спиннер */
 .pl-spinner {
@@ -2111,19 +2568,47 @@ const downloadMonth = (month: number | null) => {
   animation: spin 0.6s linear infinite;
 }
 
-.pl-spinner--sm { width: 11px; height: 11px; border-width: 1.5px; }
+.pl-spinner--sm {
+  width: 11px;
+  height: 11px;
+  border-width: 1.5px;
+}
 
-@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
 
 /* Переходы */
-.modal-enter-active, .modal-leave-active { transition: opacity 0.2s; }
-.modal-enter-from, .modal-leave-to { opacity: 0; }
-.modal-enter-active .pl-modal, .modal-leave-active .pl-modal { transition: transform 0.2s; }
-.modal-enter-from .pl-modal { transform: translateY(14px); }
-.modal-leave-to .pl-modal { transform: translateY(8px); }
+.modal-enter-active, .modal-leave-active {
+  transition: opacity 0.2s;
+}
 
-.drop-enter-active, .drop-leave-active { transition: opacity 0.15s, transform 0.15s; }
-.drop-enter-from, .drop-leave-to { opacity: 0; transform: translateY(-4px); }
+.modal-enter-from, .modal-leave-to {
+  opacity: 0;
+}
+
+.modal-enter-active .pl-modal, .modal-leave-active .pl-modal {
+  transition: transform 0.2s;
+}
+
+.modal-enter-from .pl-modal {
+  transform: translateY(14px);
+}
+
+.modal-leave-to .pl-modal {
+  transform: translateY(8px);
+}
+
+.drop-enter-active, .drop-leave-active {
+  transition: opacity 0.15s, transform 0.15s;
+}
+
+.drop-enter-from, .drop-leave-to {
+  opacity: 0;
+  transform: translateY(-4px);
+}
 
 /* Экспорт */
 .pl-btn--export {
@@ -2131,9 +2616,14 @@ const downloadMonth = (month: number | null) => {
   color: var(--accent-hi);
   border: 1px solid var(--border-hi);
 }
-.pl-btn--export:hover { background: rgba(96, 165, 250, 0.18); }
 
-.pl-export-wrap { position: relative; }
+.pl-btn--export:hover {
+  background: rgba(96, 165, 250, 0.18);
+}
+
+.pl-export-wrap {
+  position: relative;
+}
 
 .pl-export-drop {
   position: absolute;
@@ -2144,7 +2634,7 @@ const downloadMonth = (month: number | null) => {
   background: #0d1a3a;
   border: 1px solid var(--border-hi);
   border-radius: 12px;
-  box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
   overflow: hidden;
 }
 
@@ -2161,7 +2651,11 @@ const downloadMonth = (month: number | null) => {
   border-bottom: 1px solid var(--border);
 }
 
-.pl-export-divider { height: 1px; background: var(--border); margin: 4px 0; }
+.pl-export-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 4px 0;
+}
 
 .pl-export-item {
   display: flex;
@@ -2179,10 +2673,24 @@ const downloadMonth = (month: number | null) => {
   transition: background 0.15s;
 }
 
-.pl-export-item:hover:not(:disabled) { background: rgba(96, 165, 250, 0.08); color: var(--text-h); }
-.pl-export-item:disabled { cursor: default; }
-.pl-export-item--all { font-weight: 500; color: var(--accent-hi); }
-.pl-export-item--empty { opacity: 0.35; }
+.pl-export-item:hover:not(:disabled) {
+  background: rgba(96, 165, 250, 0.08);
+  color: var(--text-h);
+}
+
+.pl-export-item:disabled {
+  cursor: default;
+}
+
+.pl-export-item--all {
+  font-weight: 500;
+  color: var(--accent-hi);
+}
+
+.pl-export-item--empty {
+  opacity: 0.35;
+}
+
 .pl-export-item--skeleton {
   height: 34px;
   background: rgba(96, 165, 250, 0.05);
@@ -2202,40 +2710,69 @@ const downloadMonth = (month: number | null) => {
   line-height: 1;
 }
 
-.pl-export-month-name { flex: 1; }
+.pl-export-month-name {
+  flex: 1;
+}
 
 .pl-export-badge {
   font-size: 11px;
   font-weight: 500;
   padding: 2px 7px;
   border-radius: 20px;
-  background: rgba(59,130,246,0.15);
+  background: rgba(59, 130, 246, 0.15);
   color: var(--accent-hi);
   min-width: 24px;
   text-align: center;
 }
 
-.pl-export-badge--zero { background: rgba(96, 165, 250, 0.05); color: var(--text-mute); }
+.pl-export-badge--zero {
+  background: rgba(96, 165, 250, 0.05);
+  color: var(--text-mute);
+}
 
 /* Адаптив */
 @media (max-width: 1200px) {
-  .pl-grid { grid-template-columns: repeat(3, 1fr); }
+  .pl-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 @media (max-width: 900px) {
-  .pl-grid { grid-template-columns: repeat(2, 1fr); }
+  .pl-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 @media (max-width: 768px) {
-  .pl-header { flex-direction: column; align-items: flex-start; }
-  .pl-toolbar { flex-wrap: wrap; }
-  .pl-search-wrap { max-width: 100%; }
+  .pl-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .pl-toolbar {
+    flex-wrap: wrap;
+  }
+
+  .pl-search-wrap {
+    max-width: 100%;
+  }
 }
 
 @media (max-width: 480px) {
-  .pl-grid { grid-template-columns: 1fr; }
-  .sk-grid { grid-template-columns: 1fr; }
-  .pl-row { flex-direction: column; }
-  .pl-group-toggle-btn span { display: none; }
+  .pl-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sk-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pl-row {
+    flex-direction: column;
+  }
+
+  .pl-group-toggle-btn span {
+    display: none;
+  }
 }
 </style>
