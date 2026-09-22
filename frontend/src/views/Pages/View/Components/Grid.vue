@@ -2,9 +2,11 @@
   <div class="gl-section gl-section--dark" id="general-partner">
     <div class="gl-container">
       <div class="gl-section-head">
-        <div class="gl-section-line" />
+        <div class="gl-section-line"/>
         <h2 class="gl-section-title">Генеральный партнер</h2>
-        <p class="gl-section-sub">Настольный календарь-справочник - {{ new Date().getFullYear() + 1 }}</p>
+        <p class="gl-section-sub">Настольный календарь-справочник - {{
+            new Date().getFullYear() + 1
+          }}</p>
       </div>
 
       <div class="grid-wrapper">
@@ -12,58 +14,75 @@
           <div class="month-selector">
             <button @click="prevPage" class="month-nav" :disabled="currentPage === 0">←</button>
             <span class="current-month">{{ pageLabel }}</span>
-            <button @click="nextPage" class="month-nav" :disabled="currentPage === totalPages - 1">→</button>
+            <button @click="nextPage" class="month-nav" :disabled="currentPage === totalPages - 1">
+              →
+            </button>
           </div>
           <span class="page-indicator">Стр. {{ currentPage + 1 }} / {{ totalPages }}</span>
         </div>
 
         <div v-if="currentPageInfo.type === 'ad'" class="ad-page">
           <div class="ad-left">
-            <div class="ad-eyebrow">Генеральный партнёр</div>
-            <div class="ad-headline">
-              Ваш бренд<br>на каждой<br><span class="ad-headline-accent">странице</span>
+            <div>
+              <div class="ad-eyebrow">Генеральный партнёр</div>
+              <div class="ad-footer">
+                <div class="ad-btn">{{ currentPageInfo.adName }}</div>
+              </div>
             </div>
+            <div>
+            <div class="ad-headline">
+                Ваш бренд<br>на каждой<br><span class="ad-headline-accent">странице</span>
+              </div>
             <p class="ad-body">
-              Рекламная полоса в настольном календаре-справочнике.
-              12 месяцев присутствия в рабочей зоне вашей аудитории.
-            </p>
-            <div class="ad-footer">
-              <div class="ad-btn">{{ currentPageInfo.adName }}</div>
-              <span class="ad-link">company.ru</span>
+              12 месяцев присутствия в рабочей зоне вашей аудитории.</p>
             </div>
           </div>
 
-          <div class="ad-divider" />
+          <div class="ad-divider"/>
 
           <div class="ad-right">
-            <svg class="ad-geo" viewBox="0 0 400 240" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+            <svg class="ad-geo" viewBox="0 0 400 240" xmlns="http://www.w3.org/2000/svg"
+                 preserveAspectRatio="xMidYMid slice">
               <rect width="400" height="240" fill="#0b1225"/>
-              <circle cx="320" cy="60" r="130" fill="none" stroke="rgba(129,140,248,0.08)" stroke-width="1"/>
-              <circle cx="320" cy="60" r="95"  fill="none" stroke="rgba(129,140,248,0.07)" stroke-width="1"/>
-              <circle cx="320" cy="60" r="60"  fill="none" stroke="rgba(129,140,248,0.10)" stroke-width="1"/>
-              <circle cx="320" cy="60" r="30"  fill="rgba(129,140,248,0.06)" stroke="rgba(129,140,248,0.20)" stroke-width="1"/>
-              <rect x="60" y="40" width="120" height="70" rx="8" fill="rgba(129,140,248,0.07)" stroke="rgba(129,140,248,0.15)" stroke-width="1"/>
+              <circle cx="320" cy="60" r="130" fill="none" stroke="rgba(129,140,248,0.08)"
+                      stroke-width="1"/>
+              <circle cx="320" cy="60" r="95" fill="none" stroke="rgba(129,140,248,0.07)"
+                      stroke-width="1"/>
+              <circle cx="320" cy="60" r="60" fill="none" stroke="rgba(129,140,248,0.10)"
+                      stroke-width="1"/>
+              <circle cx="320" cy="60" r="30" fill="rgba(129,140,248,0.06)"
+                      stroke="rgba(129,140,248,0.20)" stroke-width="1"/>
+              <rect x="60" y="40" width="120" height="70" rx="8" fill="rgba(129,140,248,0.07)"
+                    stroke="rgba(129,140,248,0.15)" stroke-width="1"/>
               <rect x="68" y="52" width="60" height="6" rx="3" fill="rgba(129,140,248,0.25)"/>
               <rect x="68" y="64" width="90" height="4" rx="2" fill="rgba(255,255,255,0.06)"/>
               <rect x="68" y="74" width="75" height="4" rx="2" fill="rgba(255,255,255,0.06)"/>
-              <rect x="68" y="92" width="40" height="10" rx="4" fill="rgba(236,72,153,0.30)" stroke="rgba(236,72,153,0.40)" stroke-width="0.5"/>
-              <rect x="200" y="100" width="110" height="65" rx="8" fill="rgba(129,140,248,0.07)" stroke="rgba(129,140,248,0.15)" stroke-width="1"/>
+              <rect x="68" y="92" width="40" height="10" rx="4" fill="rgba(236,72,153,0.30)"
+                    stroke="rgba(236,72,153,0.40)" stroke-width="0.5"/>
+              <rect x="200" y="100" width="110" height="65" rx="8" fill="rgba(129,140,248,0.07)"
+                    stroke="rgba(129,140,248,0.15)" stroke-width="1"/>
               <rect x="209" y="113" width="50" height="5" rx="2.5" fill="rgba(129,140,248,0.30)"/>
               <rect x="209" y="123" width="85" height="3" rx="1.5" fill="rgba(255,255,255,0.05)"/>
               <rect x="209" y="131" width="70" height="3" rx="1.5" fill="rgba(255,255,255,0.05)"/>
-              <rect x="209" y="148" width="36" height="8" rx="3" fill="rgba(129,140,248,0.25)" stroke="rgba(129,140,248,0.30)" stroke-width="0.5"/>
-              <rect x="50" y="150" width="130" height="55" rx="8" fill="rgba(129,140,248,0.05)" stroke="rgba(129,140,248,0.10)" stroke-width="1"/>
+              <rect x="209" y="148" width="36" height="8" rx="3" fill="rgba(129,140,248,0.25)"
+                    stroke="rgba(129,140,248,0.30)" stroke-width="0.5"/>
+              <rect x="50" y="150" width="130" height="55" rx="8" fill="rgba(129,140,248,0.05)"
+                    stroke="rgba(129,140,248,0.10)" stroke-width="1"/>
               <rect x="60" y="162" width="45" height="5" rx="2.5" fill="rgba(129,140,248,0.20)"/>
               <rect x="60" y="172" width="100" height="3" rx="1.5" fill="rgba(255,255,255,0.05)"/>
               <rect x="60" y="180" width="80" height="3" rx="1.5" fill="rgba(255,255,255,0.05)"/>
-              <line x1="180" y1="75" x2="204" y2="104" stroke="rgba(129,140,248,0.20)" stroke-width="0.8" stroke-dasharray="3 3"/>
-              <line x1="120" y1="145" x2="110" y2="153" stroke="rgba(129,140,248,0.15)" stroke-width="0.8" stroke-dasharray="3 3"/>
-              <circle cx="180" cy="75"  r="3"   fill="#818cf8" opacity="0.6"/>
-              <circle cx="204" cy="104" r="2"   fill="#818cf8" opacity="0.4"/>
+              <line x1="180" y1="75" x2="204" y2="104" stroke="rgba(129,140,248,0.20)"
+                    stroke-width="0.8" stroke-dasharray="3 3"/>
+              <line x1="120" y1="145" x2="110" y2="153" stroke="rgba(129,140,248,0.15)"
+                    stroke-width="0.8" stroke-dasharray="3 3"/>
+              <circle cx="180" cy="75" r="3" fill="#818cf8" opacity="0.6"/>
+              <circle cx="204" cy="104" r="2" fill="#818cf8" opacity="0.4"/>
               <circle cx="120" cy="145" r="2.5" fill="#ec4899" opacity="0.5"/>
-              <circle cx="350" cy="190" r="18" fill="rgba(236,72,153,0.08)" stroke="rgba(236,72,153,0.20)" stroke-width="1"/>
-              <circle cx="350" cy="190" r="9"  fill="rgba(236,72,153,0.15)" stroke="rgba(236,72,153,0.30)" stroke-width="0.8"/>
-              <circle cx="350" cy="190" r="3"  fill="#ec4899" opacity="0.7"/>
+              <circle cx="350" cy="190" r="18" fill="rgba(236,72,153,0.08)"
+                      stroke="rgba(236,72,153,0.20)" stroke-width="1"/>
+              <circle cx="350" cy="190" r="9" fill="rgba(236,72,153,0.15)"
+                      stroke="rgba(236,72,153,0.30)" stroke-width="0.8"/>
+              <circle cx="350" cy="190" r="3" fill="#ec4899" opacity="0.7"/>
             </svg>
 
             <div class="ad-logo-area">
@@ -75,7 +94,7 @@
                   <rect x="8" y="8" width="5" height="5" rx="1.5" fill="#ec4899" opacity="0.7"/>
                 </svg>
               </div>
-              <span class="ad-logo-name">Company Name</span>
+              <span class="ad-logo-name">Название организации</span>
             </div>
 
             <div class="ad-stats">
@@ -98,7 +117,8 @@
               class="weekday-vertical"
               v-for="(wd, idx) in activeWeekdays"
               :key="idx"
-            >{{ wd }}</div>
+            >{{ wd }}
+            </div>
           </div>
 
           <div class="calendar-days-vertical">
@@ -123,7 +143,8 @@
 
                 <div v-if="day && isSpecialDay(day.date)" class="special-tooltip">
                   <span class="special-tooltip-count">10 размещений</span>
-                  Знаменательная дата — день рождения компании, руководителя, сотрудников, профессионального праздника
+                  Знаменательная дата — день рождения компании, руководителя, сотрудников,
+                  профессионального праздника
                 </div>
 
                 <!-- Тултип только на первой ячейке группы -->
@@ -141,7 +162,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import {ref, computed} from 'vue'
 
 interface CalendarDay {
   day: number
@@ -165,7 +186,6 @@ interface PlacementGroup {
 }
 
 const START_YEAR = 2027
-const TOTAL_MONTHS = 12
 
 const monthNames = [
   'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
@@ -174,21 +194,40 @@ const monthNames = [
 
 const weekdayNames = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье']
 
-const totalPages = 1 + TOTAL_MONTHS * 2
+const totalPages = 15
 const currentPage = ref(0)
 
 const currentPageInfo = computed<PageInfo>(() => {
   const page = currentPage.value
   if (page === 0) {
-    return { type: 'ad', label: 'Обложка', adName: 'Обложка - место для рекламного макета генерального партнёра' }
+    return {
+      type: 'ad',
+      label: 'Обложка',
+      adName: 'Обложка - место для рекламного макета генерального партнёра'
+    }
   }
-  const idx = page - 1
-  const monthIdx = Math.floor(idx / 2)
-  const isAd = idx % 2 === 1
-  if (isAd) {
-    return { type: 'ad', label: `${monthNames[monthIdx]} ${START_YEAR}`, adName: 'Размещение 3 макетов компании на страницах месяца' }
+  if (page === 1) {
+    return {
+      type: 'ad',
+      label: 'Страница месяца',
+      adName: 'Размещение 1 макета компании на странице месяца'
+    }
   }
-  return { type: 'calendar', label: `${monthNames[monthIdx]} ${START_YEAR}`, month: monthIdx, year: START_YEAR }
+  if (page === 2) {
+    return {
+      type: 'ad',
+      label: 'Страница календаря',
+      adName: 'Размещение 3 макетов компании на страницах календаря'
+    }
+  }
+  const idx = page - 3
+
+  return {
+    type: 'calendar',
+    label: `${monthNames[idx]} ${START_YEAR}`,
+    month: idx,
+    year: START_YEAR
+  }
 })
 
 const pageLabel = computed(() => currentPageInfo.value.label)
@@ -210,14 +249,14 @@ const getMonthColumns = (year: number, month: number): (CalendarDay | null)[][] 
     colOffset++
   }
 
-  const cols: (CalendarDay | null)[][] = Array.from({ length: 6 }, () => Array(7).fill(null))
+  const cols: (CalendarDay | null)[][] = Array.from({length: 6}, () => Array(7).fill(null))
   let day = 1
   for (let c = 0; c < 6; c++) {
     for (let r = 0; r < 7; r++) {
       if (c < colOffset) continue
       if (c === colOffset && r < startOffset) continue
       if (day <= daysInMonth) {
-        cols[c][r] = { day, date: new Date(year, month, day) }
+        cols[c][r] = {day, date: new Date(year, month, day)}
         day++
       }
     }
@@ -234,7 +273,7 @@ const columns = computed(() => {
 const activeWeekdays = computed(() => {
   const cols = columns.value
   if (!cols.length) return weekdayNames
-  return Array.from({ length: 7 }, (_, rowIdx) => {
+  return Array.from({length: 7}, (_, rowIdx) => {
     for (const col of cols) {
       if (col[rowIdx]) {
         const jsDay = col[rowIdx]!.date.getDay()
@@ -265,7 +304,7 @@ const specialDay = computed(() => {
   const key = `${info.year}-${info.month}`
   if (specialDayCache.has(key)) return specialDayCache.get(key)!
   const daysInMonth = new Date(info.year!, info.month! + 1, 0).getDate()
-  let candidate = 1
+  let candidate: number
   let attempts = 0
   do {
     candidate = Math.floor(Math.random() * daysInMonth) + 1
@@ -332,7 +371,7 @@ const placementGroup = computed<PlacementGroup | null>(() => {
   for (const ci of [0, 5]) {
     const groups = getEmptyGroups(cols, ci)
     for (const g of groups) {
-      candidates.push({ colIdx: ci, rows: g })
+      candidates.push({colIdx: ci, rows: g})
     }
   }
 
@@ -359,7 +398,7 @@ const placementGroup = computed<PlacementGroup | null>(() => {
   }
 
   /*const targetSize = chosen.rows.length >= 4 ? (Math.random() < 0.5 ? 3 : 4) : chosen.rows.length*/
-  const result: PlacementGroup = { colIdx: chosen.colIdx, rows: chosen.rows.slice(0, targetSize) }
+  const result: PlacementGroup = {colIdx: chosen.colIdx, rows: chosen.rows.slice(0, targetSize)}
 
   placementCache.set(key, result)
   return result
@@ -374,14 +413,18 @@ const placementKey = (rowIdx: number, colIdx: number): number | null => {
 }
 
 const isPlacementFirst = (rowIdx: number, colIdx: number): boolean => placementKey(rowIdx, colIdx) === 0
-const isPlacementLast  = (rowIdx: number, colIdx: number): boolean => {
+const isPlacementLast = (rowIdx: number, colIdx: number): boolean => {
   const g = placementGroup.value
   if (!g) return false
   return placementKey(rowIdx, colIdx) === g.rows.length - 1
 }
 
-const prevPage = () => { if (currentPage.value > 0) currentPage.value-- }
-const nextPage = () => { if (currentPage.value < totalPages - 1) currentPage.value++ }
+const prevPage = () => {
+  if (currentPage.value > 0) currentPage.value--
+}
+const nextPage = () => {
+  if (currentPage.value < totalPages - 1) currentPage.value++
+}
 </script>
 
 <style scoped>
@@ -392,8 +435,17 @@ const nextPage = () => { if (currentPage.value < totalPages - 1) currentPage.val
   width: 100%;
 }
 
-@media (max-width: 900px) { .gl-container { padding: 0 32px; } }
-@media (max-width: 480px) { .gl-container { padding: 0 20px; } }
+@media (max-width: 900px) {
+  .gl-container {
+    padding: 0 32px;
+  }
+}
+
+@media (max-width: 480px) {
+  .gl-container {
+    padding: 0 20px;
+  }
+}
 
 .grid-wrapper {
   aspect-ratio: 5 / 3;
@@ -443,8 +495,16 @@ const nextPage = () => { if (currentPage.value < totalPages - 1) currentPage.val
   border-radius: 20px;
   transition: all 0.2s;
 }
-.month-nav:hover:not(:disabled) { background: rgba(147, 197, 253, 0.1); color: #bfdbfe; }
-.month-nav:disabled { opacity: 0.3; cursor: default; }
+
+.month-nav:hover:not(:disabled) {
+  background: rgba(147, 197, 253, 0.1);
+  color: #bfdbfe;
+}
+
+.month-nav:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
 
 .current-month {
   font-size: 15px;
@@ -512,7 +572,7 @@ const nextPage = () => { if (currentPage.value < totalPages - 1) currentPage.val
   font-weight: 500;
   color: #f0f4ff;
   line-height: 1.3;
-  margin: 0;
+  margin: 15px 0;
 }
 
 .ad-headline-accent {
@@ -520,34 +580,42 @@ const nextPage = () => { if (currentPage.value < totalPages - 1) currentPage.val
 }
 
 .ad-body {
-  font-size: 11px;
+  font-size: 18px;
+  color: #ffffff;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.ad-body-small {
+  font-size: 14px;
   color: #64748b;
   line-height: 1.6;
   margin: 0;
 }
 
 .ad-footer {
-  display: flex;
+  /*display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 12px;*/
 }
 
 .ad-btn {
-  font-size: 10px;
-  font-weight: 600;
+  font-size: 24px;
   letter-spacing: 0.05em;
-  color: #0b1225;
+  line-height: 1.6;
+  max-width: 300px;
+  color: #ffffff;
   background: #818cf8;
   border-radius: 6px;
-  padding: 6px 14px;
+  padding: 25px;
+  margin: 15px 0;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 160px;
 }
 
 .ad-link {
   font-size: 11px;
-  color: #475569;
+  color: #ffffff;
   letter-spacing: 0.04em;
 }
 
@@ -677,7 +745,9 @@ const nextPage = () => { if (currentPage.value < totalPages - 1) currentPage.val
   position: relative;
 }
 
-.calendar-day:last-child { margin-bottom: 0; }
+.calendar-day:last-child {
+  margin-bottom: 0;
+}
 
 .calendar-day:hover:not(.empty):not(.spacer):not(.is-placement) {
   border-color: rgba(96, 165, 250, 0.3);
@@ -691,7 +761,9 @@ const nextPage = () => { if (currentPage.value < totalPages - 1) currentPage.val
   box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.2);
 }
 
-.calendar-day.is-weekend .day-number { color: #f87171; }
+.calendar-day.is-weekend .day-number {
+  color: #f87171;
+}
 
 .calendar-day.empty {
   opacity: 0.15;
@@ -707,9 +779,15 @@ const nextPage = () => { if (currentPage.value < totalPages - 1) currentPage.val
 
 /* ─── Знаменательная дата ────────────────────────── */
 @keyframes special-pulse {
-  0%   { box-shadow: 0 0 0 0px rgba(139, 92, 246, 0.6), 0 0 0 1px rgba(139, 92, 246, 0.4); }
-  60%  { box-shadow: 0 0 0 6px rgba(139, 92, 246, 0),   0 0 0 1px rgba(139, 92, 246, 0.4); }
-  100% { box-shadow: 0 0 0 0px rgba(139, 92, 246, 0),   0 0 0 1px rgba(139, 92, 246, 0.4); }
+  0% {
+    box-shadow: 0 0 0 0px rgba(139, 92, 246, 0.6), 0 0 0 1px rgba(139, 92, 246, 0.4);
+  }
+  60% {
+    box-shadow: 0 0 0 6px rgba(139, 92, 246, 0), 0 0 0 1px rgba(139, 92, 246, 0.4);
+  }
+  100% {
+    box-shadow: 0 0 0 0px rgba(139, 92, 246, 0), 0 0 0 1px rgba(139, 92, 246, 0.4);
+  }
 }
 
 .calendar-day.is-special {
@@ -720,12 +798,16 @@ const nextPage = () => { if (currentPage.value < totalPages - 1) currentPage.val
   animation: special-pulse 2s ease-out infinite;
 }
 
-.calendar-day.is-special .day-number { color: #c4b5fd; font-weight: 500; }
+.calendar-day.is-special .day-number {
+  color: #c4b5fd;
+  font-weight: 500;
+}
 
 .calendar-day.is-special::after {
   content: '★';
   position: absolute;
-  top: 2px; right: 4px;
+  top: 2px;
+  right: 4px;
   font-size: 9px;
   color: #8b5cf6;
   line-height: 1;
@@ -753,7 +835,8 @@ const nextPage = () => { if (currentPage.value < totalPages - 1) currentPage.val
 .special-tooltip::after {
   content: '';
   position: absolute;
-  top: 100%; left: 50%;
+  top: 100%;
+  left: 50%;
   transform: translateX(-50%);
   border: 6px solid transparent;
   border-top-color: rgba(139, 92, 246, 0.4);
@@ -769,8 +852,13 @@ const nextPage = () => { if (currentPage.value < totalPages - 1) currentPage.val
   margin-bottom: 5px;
 }
 
-.calendar-day.is-special:hover { animation-play-state: paused; }
-.calendar-day.is-special:hover .special-tooltip { display: block; }
+.calendar-day.is-special:hover {
+  animation-play-state: paused;
+}
+
+.calendar-day.is-special:hover .special-tooltip {
+  display: block;
+}
 
 /* ─── Размещение макета компании ─────────────────── */
 /*
@@ -779,9 +867,15 @@ const nextPage = () => { if (currentPage.value < totalPages - 1) currentPage.val
 */
 
 @keyframes placement-pulse {
-  0%   { box-shadow: 0 0 0 0px rgba(236, 72, 153, 0.5); }
-  60%  { box-shadow: 0 0 0 6px rgba(236, 72, 153, 0); }
-  100% { box-shadow: 0 0 0 0px rgba(236, 72, 153, 0); }
+  0% {
+    box-shadow: 0 0 0 0px rgba(236, 72, 153, 0.5);
+  }
+  60% {
+    box-shadow: 0 0 0 6px rgba(236, 72, 153, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0px rgba(236, 72, 153, 0);
+  }
 }
 
 /* Все ячейки группы */
@@ -801,7 +895,7 @@ const nextPage = () => { if (currentPage.value < totalPages - 1) currentPage.val
 /* Верхняя ячейка группы */
 .calendar-day.placement-first {
   border-radius: 10px 10px 0 0;
-  border-bottom: none;      /* граница между first и middle/last убрана */
+  border-bottom: none; /* граница между first и middle/last убрана */
   margin-top: 0;
 }
 
@@ -815,7 +909,7 @@ const nextPage = () => { if (currentPage.value < totalPages - 1) currentPage.val
 .calendar-day.placement-last {
   border-radius: 0 0 10px 10px;
   border-top: none;
-  margin-bottom: 6px;        /* восстанавливаем зазор после группы */
+  margin-bottom: 6px; /* восстанавливаем зазор после группы */
 }
 
 /* Если группа из 2 ячеек — first одновременно не last */
@@ -824,7 +918,8 @@ const nextPage = () => { if (currentPage.value < totalPages - 1) currentPage.val
 .calendar-day.is-placement::after {
   content: '◆';
   position: absolute;
-  top: 2px; right: 4px;
+  top: 2px;
+  right: 4px;
   font-size: 8px;
   color: #ec4899;
   line-height: 1;
@@ -832,7 +927,9 @@ const nextPage = () => { if (currentPage.value < totalPages - 1) currentPage.val
 
 /* Маркер только на первой ячейке, не на остальных */
 .calendar-day.placement-middle::after,
-.calendar-day.placement-last::after { display: none; }
+.calendar-day.placement-last::after {
+  display: none;
+}
 
 .placement-tooltip {
   display: none;
@@ -856,7 +953,8 @@ const nextPage = () => { if (currentPage.value < totalPages - 1) currentPage.val
 .placement-tooltip::after {
   content: '';
   position: absolute;
-  top: 100%; left: 50%;
+  top: 100%;
+  left: 50%;
   transform: translateX(-50%);
   border: 6px solid transparent;
   border-top-color: rgba(236, 72, 153, 0.4);
@@ -872,8 +970,13 @@ const nextPage = () => { if (currentPage.value < totalPages - 1) currentPage.val
   margin-bottom: 5px;
 }
 
-.calendar-day.placement-first:hover { animation-play-state: paused; }
-.calendar-day.placement-first:hover .placement-tooltip { display: block; }
+.calendar-day.placement-first:hover {
+  animation-play-state: paused;
+}
+
+.calendar-day.placement-first:hover .placement-tooltip {
+  display: block;
+}
 
 /* ─── Числа ──────────────────────────────────────── */
 .day-number {
@@ -884,32 +987,86 @@ const nextPage = () => { if (currentPage.value < totalPages - 1) currentPage.val
 
 /* ─── Адаптивность ───────────────────────────────── */
 @media (max-width: 900px) {
-  .grid-wrapper { padding: 16px; }
-  .weekdays-vertical { width: 88px; }
-  .weekday-vertical { font-size: 10px; }
-  .day-number { font-size: 13px; }
+  .grid-wrapper {
+    padding: 16px;
+  }
+
+  .weekdays-vertical {
+    width: 88px;
+  }
+
+  .weekday-vertical {
+    font-size: 10px;
+  }
+
+  .day-number {
+    font-size: 13px;
+  }
 }
 
 @media (max-width: 768px) {
-  .weekdays-vertical { width: 76px; }
-  .weekday-vertical { font-size: 9px; }
-  .day-number { font-size: 12px; }
+  .weekdays-vertical {
+    width: 76px;
+  }
+
+  .weekday-vertical {
+    font-size: 9px;
+  }
+
+  .day-number {
+    font-size: 12px;
+  }
 }
 
 @media (max-width: 640px) {
-  .weekdays-vertical { width: 64px; }
-  .weekday-vertical { font-size: 8px; border-radius: 8px; }
-  .calendar-grid { gap: 4px; }
-  .calendar-days-vertical { gap: 4px; }
-  .day-number { font-size: 11px; }
+  .weekdays-vertical {
+    width: 64px;
+  }
+
+  .weekday-vertical {
+    font-size: 8px;
+    border-radius: 8px;
+  }
+
+  .calendar-grid {
+    gap: 4px;
+  }
+
+  .calendar-days-vertical {
+    gap: 4px;
+  }
+
+  .day-number {
+    font-size: 11px;
+  }
 }
 
 @media (max-width: 480px) {
-  .grid-wrapper { padding: 10px; }
-  .weekdays-vertical { width: 54px; }
-  .weekday-vertical { font-size: 7px; padding: 4px; }
-  .day-number { font-size: 10px; }
-  .month-nav { font-size: 14px; padding: 2px 8px; }
-  .current-month { font-size: 13px; min-width: 130px; }
+  .grid-wrapper {
+    padding: 10px;
+  }
+
+  .weekdays-vertical {
+    width: 54px;
+  }
+
+  .weekday-vertical {
+    font-size: 7px;
+    padding: 4px;
+  }
+
+  .day-number {
+    font-size: 10px;
+  }
+
+  .month-nav {
+    font-size: 14px;
+    padding: 2px 8px;
+  }
+
+  .current-month {
+    font-size: 13px;
+    min-width: 130px;
+  }
 }
 </style>
