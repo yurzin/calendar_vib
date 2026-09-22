@@ -10,7 +10,7 @@
         <h2 class="gl-section-title">Интеграция в проект</h2>
         <p class="gl-section-sub">Выберите формат участия</p>
       </div>
-      <router-link to="/general-partner" class="gl-pkg gl-pkg--general">
+      <router-link to="/general-partner/#general-partner" class="gl-pkg gl-pkg--general">
         <div class="gl-pkg-left">
           <span class="gl-pkg-badge">Топ выбор</span>
           <span class="gl-pkg-name">Генеральный партнёр</span>
