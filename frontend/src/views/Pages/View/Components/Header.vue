@@ -2,7 +2,7 @@
 import {computed, ref} from "vue";
 import { useAuth } from '@/composable/useAuth';
 import {useRouter} from "vue-router";
-const { user, logout, checkAuth } = useAuth();
+const { user, logout } = useAuth();
 
 const mobileOpen = ref(false)
 const isAdmin = computed(() => user.value?.roles?.includes('admin'));
@@ -35,7 +35,7 @@ const handleLogout = async () => {
 
     <nav class="gl-nav">
       <div class="gl-nav-menu">
-        <a href="#integration" class="gl-nav-item">Интеграция в проект</a>
+        <a href="/#integration" class="gl-nav-item">Интеграция в проект</a>
         <a href="#members" class="gl-nav-item">Участники проекта</a>
         <a href="#about" class="gl-nav-item">О проекте</a>
         <a href="#archive" class="gl-nav-item">Архив</a>

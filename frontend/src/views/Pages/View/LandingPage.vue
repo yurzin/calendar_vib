@@ -2,6 +2,7 @@
 import {computed, onMounted, onUnmounted, ref} from 'vue'
 import { useAuth } from '@/composable/useAuth';
 import axios from "axios";
+import { getErrorMessage } from '@/lib/errors';
 import Footer from "@/views/Pages/View/Components/Footer.vue";
 import Header from "@/views/Pages/View/Components/Header.vue";
 import Statistics from "@/views/Pages/View/Components/Statistics.vue";
@@ -51,6 +52,7 @@ interface Member {
   site: string | null;
   initials: string;
   role?: string;
+  is_paid?: boolean;
   persons?: PersonPreview[];
 }
 
@@ -151,7 +153,7 @@ const calendarPages = [
 // Карусель галереи
 const currentSlide = ref(0)
 const isTransitioning = ref(false)
-let autoplayInterval = null
+let autoplayInterval: ReturnType<typeof setInterval> | null = null
 
 const totalSlides = computed(() => calendarPages.length)
 
@@ -173,7 +175,7 @@ const prevSlide = () => {
   }, 500)
 }
 
-const goToSlide = (index) => {
+const goToSlide = (index: number) => {
   if (isTransitioning.value || index === currentSlide.value) return
   isTransitioning.value = true
   currentSlide.value = index
@@ -207,16 +209,13 @@ const loadData = async () => {
 
   try {
     if (!user.value) await checkAuth();
-    console.log('User after checkAuth:', user.value);
-    console.log('Cookies:', document.cookie);
-
-    const res = await axios.post('/api/main');
-  } catch (e: any) {
-    console.error('Error status:', e.response?.status);
-    console.error('Error data:', e.response?.data);
-    error.value = e.response?.data?.message || 'Ошибка загрузки';
-
-  } finally {
+    await axios.post('/api/main');
+  } catch (e) {
+    if (axios.isAxiosError(e)) {
+      console.error('Error status:', e.response?.status);
+      console.error('Error data:', e.response?.data);
+    }
+    error.value = getErrorMessage(e, 'Ошибка загрузки');
   }
 };
 
@@ -327,11 +326,11 @@ onMounted(() => {
             <div class="gl-carousel-track" :style="{ transform: `translateX(-${currentSlide * 100}%)` }">
               <div v-for="(image, i) in calendarPages" :key="i" class="gl-carousel-slide">
                 <div class="gl-carousel-image-wrapper">
-                  <img :src="image.src" :alt="image.alt" class="gl-carousel-image" />
+                  <img :src="image.src" :alt="image.label" class="gl-carousel-image" />
                   <div class="gl-carousel-overlay">
                     <div class="gl-carousel-caption">
                       <span class="gl-carousel-caption-number">{{ i + 1 }}/{{ totalSlides }}</span>
-                      <h3 class="gl-carousel-caption-title">{{ image.caption }}</h3>
+                      <h3 class="gl-carousel-caption-title">{{ image.label }}</h3>
                     </div>
                   </div>
                 </div>
@@ -439,7 +438,7 @@ onMounted(() => {
               <div class="gl-pm-avatar">
                 <img
                   v-if="person.photo_thumb_path || person.photo_path"
-                  :src="person.photo_thumb_path || person.photo_path"
+                  :src="person.photo_thumb_path || person.photo_path || undefined"
                   :alt="person.short_name"
                   class="gl-pm-avatar-img"
                   @error="($event.target as HTMLImageElement).style.display='none'"

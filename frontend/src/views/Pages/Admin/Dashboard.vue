@@ -3,6 +3,7 @@ import { ref, onMounted, computed } from 'vue';
 import { useAuth } from '@/composable/useAuth';
 import AuthenticatedLayout from '../../Layouts/AuthenticatedLayout.vue';
 import axios from 'axios';
+import { getErrorMessage } from '@/lib/errors';
 
 const { user, checkAuth } = useAuth();
 const message   = ref('');
@@ -29,8 +30,8 @@ const loadData = async () => {
     if (!user.value) await checkAuth();
     const res = await axios.get('/api/dashboard');
     message.value = res.data.message;
-  } catch (e: any) {
-    error.value = e.response?.data?.message || 'Ошибка загрузки';
+  } catch (e) {
+    error.value = getErrorMessage(e, 'Ошибка загрузки');
   } finally {
     loading.value = false;
   }

@@ -4,7 +4,7 @@ import { useRouter } from 'vue-router';
 import { useAuth } from '@/composable/useAuth';
 import axios from "axios";
 
-const { user, logout, checkAuth } = useAuth();
+const { user, logout } = useAuth();
 const router = useRouter();
 
 const mobileOpen = ref(false)
@@ -389,7 +389,7 @@ onMounted(() => {
               <div class="gl-pm-avatar">
                 <img
                   v-if="person.photo_thumb_path || person.photo_path"
-                  :src="person.photo_thumb_path || person.photo_path"
+                  :src="person.photo_thumb_path || person.photo_path || undefined"
                   :alt="person.short_name"
                   class="gl-pm-avatar-img"
                   @error="($event.target as HTMLImageElement).style.display='none'"

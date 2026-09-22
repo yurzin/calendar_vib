@@ -1,9 +1,28 @@
 import { ref } from 'vue';
 import axios from '../utils/axios';
+import { getErrorMessage, getValidationErrors } from '@/lib/errors';
 
-const user = ref(null);
+export interface User {
+  id: number;
+  name: string;
+  email: string;
+  roles: string[];
+}
+
+export interface AuthErrors {
+  message?: string;
+  [field: string]: string | string[] | undefined;
+}
+
+interface Credentials {
+  email: string;
+  password: string;
+  remember?: boolean;
+}
+
+const user = ref<User | null>(null);
 const loading = ref(false);
-const errors = ref({});
+const errors = ref<AuthErrors>({});
 
 export function useAuth() {
   const checkAuth = async () => {
@@ -16,7 +35,7 @@ export function useAuth() {
         ? response.data.data
         : null;
       return user.value;
-    } catch (error) {
+    } catch {
       // 401 — нормально, пользователь не авторизован
       user.value = null;
       return null;
@@ -25,7 +44,7 @@ export function useAuth() {
     }
   };
 
-  const login = async (credentials) => {
+  const login = async (credentials: Credentials) => {
     loading.value = true;
     errors.value = {};
 
@@ -45,17 +64,14 @@ export function useAuth() {
       }
 
       return response.data; // ← только для admin/editor
-    } catch (error) {
-      console.error('Login error:', error);
+    } catch (e) {
+      console.error('Login error:', e);
 
-      if (error.response?.status === 422) {
-        errors.value = error.response.data.errors;
-      } else {
-        errors.value = {
-          message: error.response?.data?.message || 'Login failed. Please try again.'
-        };
-      }
-      throw error;
+      const validationErrors = getValidationErrors(e);
+      errors.value = validationErrors ?? {
+        message: getErrorMessage(e, 'Login failed. Please try again.')
+      };
+      throw e;
     } finally {
       loading.value = false;
     }
@@ -63,20 +79,19 @@ export function useAuth() {
 
   const logout = async () => {
     loading.value = true;
-    console.log(loading)
     try {
       await axios.post('/api/logout');
       user.value = null;
       return true;
-    } catch (error) {
-      console.error('Logout failed:', error);
-      throw error;
+    } catch (e) {
+      console.error('Logout failed:', e);
+      throw e;
     } finally {
       loading.value = false;
     }
   };
 
-  const register = async (data) => {
+  const register = async (data: Record<string, unknown>) => {
     loading.value = true;
     errors.value = {};
 
@@ -87,17 +102,14 @@ export function useAuth() {
       user.value = response.data.data || null;
 
       return response.data;
-    } catch (error) {
-      console.error('Registration error:', error);
+    } catch (e) {
+      console.error('Registration error:', e);
 
-      if (error.response?.status === 422) {
-        errors.value = error.response.data.errors;
-      } else {
-        errors.value = {
-          message: error.response?.data?.message || 'Registration failed. Please try again.'
-        };
-      }
-      throw error;
+      const validationErrors = getValidationErrors(e);
+      errors.value = validationErrors ?? {
+        message: getErrorMessage(e, 'Registration failed. Please try again.')
+      };
+      throw e;
     } finally {
       loading.value = false;
     }

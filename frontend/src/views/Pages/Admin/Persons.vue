@@ -3,6 +3,7 @@ import {ref, computed, onMounted} from 'vue';
 import {useAuth} from '@/composable/useAuth';
 import AuthenticatedLayout from '../../Layouts/AuthenticatedLayout.vue';
 import axios from 'axios';
+import { getErrorMessage, getValidationErrors } from '@/lib/errors';
 
 const {user, checkAuth} = useAuth();
 
@@ -98,8 +99,8 @@ const loadData = async () => {
     if (!user.value) await checkAuth();
     const {data} = await axios.get('/api/persons');
     persons.value = Array.isArray(data?.persons) ? data.persons : [];
-  } catch (e: any) {
-    error.value = e.response?.data?.message || 'Ошибка загрузки';
+  } catch (e) {
+    error.value = getErrorMessage(e, 'Ошибка загрузки');
   } finally {
     loading.value = false;
   }
@@ -111,17 +112,16 @@ onMounted(loadData);
 const initials = (p?: Pick<Person, 'last_name' | 'first_name'> | null) =>
   p ? ((p.first_name?.[0] || '') + (p.last_name?.[0] || '')).toUpperCase() || '?' : '?';
 
-const formatDate = (day, month) => {
-  if (isNaN(day) || isNaN(month) || day < 1 || day > 31 || month < 1 || month > 12) {
+const formatDate = (day: string | null, month: string | null) => {
+  const d = Number(day);
+  const m = Number(month);
+  if (isNaN(d) || isNaN(m) || d < 1 || d > 31 || m < 1 || m > 12) {
     return '';
   }
-  const formattedDay = day < 10 ? '0' + day : day;
-  const formattedMonth = month < 10 ? '0' + month : month;
+  const formattedDay = d < 10 ? '0' + d : d;
+  const formattedMonth = m < 10 ? '0' + m : m;
   return `${formattedDay}.${formattedMonth}`;
 };
-
-const normalizeUrl = (url?: string | null) =>
-  url && !url.startsWith('http') ? 'https://' + url : (url || '');
 
 const stripProtocol = (url?: string | null) =>
   (url || '').replace(/^https?:\/\//, '');
@@ -304,6 +304,10 @@ const onPartnerFocus = () => {
   fetchPartners(partnerSearch.value);
 };
 
+const onPartnerBlur = () => {
+  setTimeout(() => { partnerDropOpen.value = false }, 150);
+};
+
 const selectPartner = (p: Partner) => {
   selectedPartner.value = p;
   form.value.partner_id = p.id;
@@ -429,14 +433,14 @@ const save = async () => {
       if (idx !== -1) persons.value[idx] = data;
     }
     closeModal();
-  } catch (e: any) {
-    const errs = e.response?.data?.errors;
+  } catch (e) {
+    const errs = getValidationErrors(e);
     if (errs) {
       formErrors.value = Object.fromEntries(
-        Object.entries(errs).map(([k, v]) => [k, (v as string[])[0]])
+        Object.entries(errs).map(([k, v]) => [k, v[0]])
       );
     } else {
-      formErrors.value.global = e.response?.data?.message || 'Ошибка сохранения';
+      formErrors.value.global = getErrorMessage(e, 'Ошибка сохранения');
     }
   } finally {
     saving.value = false;
@@ -461,8 +465,8 @@ const doDelete = async (id: number) => {
     const p = persons.value.find(p => p.id === id);
     if (p) p.checked = false;
     deleteConfirmId.value = null;
-  } catch (e: any) {
-    error.value = e.response?.data?.message || 'Ошибка удаления';
+  } catch (e) {
+    error.value = getErrorMessage(e, 'Ошибка удаления');
   } finally {
     deleting.value = false;
   }
@@ -477,8 +481,8 @@ const doRestore = async (id: number) => {
     await axios.post(`/api/persons/${id}/restore`);
     const p = persons.value.find(p => p.id === id);
     if (p) p.checked = true;
-  } catch (e: any) {
-    error.value = e.response?.data?.message || 'Ошибка восстановления';
+  } catch (e) {
+    error.value = getErrorMessage(e, 'Ошибка восстановления');
   } finally {
     restoring.value = null;
   }
@@ -869,7 +873,7 @@ const downloadPersonsTxt = () => {
           <div class="pl-groups-days">
             <!-- Месяцы с днями рождения -->
             <template
-              v-for="{ month, name, svgPath, days, persons: monthPersons } in visibleMonthGroups"
+              v-for="{ month, days } in visibleMonthGroups"
               :key="month">
               <!-- Группировка по дням -->
               <template v-for="{ day, persons } in days" :key="day">
@@ -1117,7 +1121,7 @@ const downloadPersonsTxt = () => {
                   class="pl-preview-img"
                   @error="($event.target as HTMLImageElement).style.display='none'"
                 />
-                <span v-else>{{ initials(form.value) }}</span>
+                <span v-else>{{ initials(form) }}</span>
               </div>
             </div>
 
@@ -1277,7 +1281,7 @@ const downloadPersonsTxt = () => {
                       placeholder="Найти или создать партнёра…"
                       @input="onPartnerInput"
                       @focus="onPartnerFocus"
-                      @blur="setTimeout(() => { partnerDropOpen = false }, 150)"
+                      @blur="onPartnerBlur"
                     />
                     <button v-if="selectedPartner" class="pl-partner-clear" type="button"
                             @click="clearPartner">×

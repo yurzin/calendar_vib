@@ -3,6 +3,7 @@ import { ref, computed, onMounted } from 'vue';
 import { useAuth } from '@/composable/useAuth';
 import AuthenticatedLayout from '../../Layouts/AuthenticatedLayout.vue';
 import axios from 'axios';
+import { getErrorMessage, getValidationErrors } from '@/lib/errors';
 
 const { user, checkAuth } = useAuth();
 
@@ -47,8 +48,8 @@ const loadData = async () => {
     if (!user.value) await checkAuth();
     const { data } = await axios.get('/api/partners');
     partners.value = Array.isArray(data?.partners) ? data.partners : [];
-  } catch (e: any) {
-    error.value = e.response?.data?.message || 'Ошибка загрузки';
+  } catch (e) {
+    error.value = getErrorMessage(e, 'Ошибка загрузки');
   } finally {
     loading.value = false;
   }
@@ -76,7 +77,7 @@ type FormState = {
   profile_id: number | null;
 };
 
-const emptyForm = (): FormState => ({ id: null, name: '', site: '', is_paid: null, logo: null, profile_id: null });
+const emptyForm = (): FormState => ({ id: null, name: '', site: '', is_paid: false, logo: null, profile_id: null });
 
 const modalOpen = ref(false);
 const modalMode = ref<'create' | 'edit'>('create');
@@ -125,6 +126,10 @@ const onProfileInput = () => {
 const onProfileFocus = () => {
   profileDropOpen.value = true;
   fetchProfiles(profileSearch.value);
+};
+
+const onProfileBlur = () => {
+  setTimeout(() => { profileDropOpen.value = false }, 150);
 };
 
 const selectProfile = (p: Profile) => {
@@ -201,7 +206,7 @@ const openEdit = (p: Partner) => {
   modalMode.value = 'edit';
   formErrors.value = {};
   logoFile.value   = null;
-  p.profile_id || fetchProfiles();
+  if (!p.profile_id) fetchProfiles();
   modalOpen.value = true;
 };
 
@@ -243,14 +248,14 @@ const save = async () => {
       if (idx !== -1) partners.value[idx] = data;
     }
     closeModal();
-  } catch (e: any) {
-    const errs = e.response?.data?.errors;
+  } catch (e) {
+    const errs = getValidationErrors(e);
     if (errs) {
       formErrors.value = Object.fromEntries(
-        Object.entries(errs).map(([k, v]) => [k === 'url' ? 'site' : k, (v as string[])[0]])
+        Object.entries(errs).map(([k, v]) => [k === 'url' ? 'site' : k, v[0]])
       );
     } else {
-      formErrors.value.global = e.response?.data?.message || 'Ошибка сохранения';
+      formErrors.value.global = getErrorMessage(e, 'Ошибка сохранения');
     }
   } finally {
     saving.value = false;
@@ -271,8 +276,8 @@ const doDelete = async (id: number) => {
     const p = partners.value.find(p => p.id === id);
     if (p) p.checked = false;
     deleteConfirmId.value = null;
-  } catch (e: any) {
-    error.value = e.response?.data?.message || 'Ошибка удаления';
+  } catch (e) {
+    error.value = getErrorMessage(e, 'Ошибка удаления');
   } finally {
     deleting.value = false;
   }
@@ -287,8 +292,8 @@ const doRestore = async (id: number) => {
     await axios.post(`/api/partners/${id}/restore`);
     const p = partners.value.find(p => p.id === id);
     if (p) p.checked = true;
-  } catch (e: any) {
-    error.value = e.response?.data?.message || 'Ошибка восстановления';
+  } catch (e) {
+    error.value = getErrorMessage(e, 'Ошибка восстановления');
   } finally {
     restoring.value = null;
   }
@@ -531,7 +536,7 @@ const doRestore = async (id: number) => {
                       placeholder="Найти или создать профиль…"
                       @input="onProfileInput"
                       @focus="onProfileFocus"
-                      @blur="setTimeout(() => { profileDropOpen = false }, 150)"
+                      @blur="onProfileBlur"
                     />
                     <button v-if="selectedProfile" class="pl-profile-clear" type="button" @click="clearProfile">×</button>
                   </div>

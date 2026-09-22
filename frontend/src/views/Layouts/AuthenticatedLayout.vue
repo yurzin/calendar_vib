@@ -4,7 +4,7 @@ import { useAuth } from '@/composable/useAuth';
 import { useRouter } from 'vue-router';
 import Header from "@/views/Pages/Admin/Components/Header.vue";
 
-const { user, logout, loading } = useAuth();
+const { logout, loading } = useAuth();
 const router = useRouter();
 const menuOpen = ref(false);
 const mobileOpen = ref(false)
@@ -18,8 +18,6 @@ const handleLogout = async () => {
   }
 };
 
-const initials = (name: string = '') =>
-  name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2) || '?';
 </script>
 
 <template>
@@ -34,7 +32,7 @@ const initials = (name: string = '') =>
     </div>
 
     <!-- ─── Header ───────────────────────────────────────── -->
-    <Header @click="mobileOpen" />
+    <Header @click="mobileOpen = !mobileOpen" />
 
     <!-- Мобильная навигация -->
     <div class="gl-mobile-nav" :class="{ 'is-open': mobileOpen }">
