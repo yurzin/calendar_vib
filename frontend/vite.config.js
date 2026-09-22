@@ -37,7 +37,11 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     port: 5173,
-    allowedHosts: ['властьибизнес.local', 'admin.властьибизнес.local'],
+    allowedHosts: [
+      'властьибизнес.local', 'admin.властьибизнес.local',
+      // Браузер отправляет заголовок Host в punycode для кириллических доменов
+      'xn--80acbojebux9agf4k.local', 'admin.xn--80acbojebux9agf4k.local',
+    ],
     proxy: {
       '/api': {
         target: 'http://nginx:80',
