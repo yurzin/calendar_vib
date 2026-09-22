@@ -37,6 +37,12 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     port: 5173,
+    watch: {
+      // Docker на Windows не всегда доставляет inotify-события в контейнер
+      // через bind mount, из-за чего HMR не подхватывает изменения файлов.
+      usePolling: true,
+      interval: 300,
+    },
     allowedHosts: [
       'властьибизнес.local', 'admin.властьибизнес.local',
       // Браузер отправляет заголовок Host в punycode для кириллических доменов

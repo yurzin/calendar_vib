@@ -17,8 +17,8 @@
         Настольный справочник для деловых людей Кузбасса: дни рождения чиновников, руководителей, топ-менеджеров и праздничные даты в одном издании.
       </p>
       <div class="gl-hero-cta">
-        <a href="#integration" class="gl-btn-primary">Интеграция в проект</a>
-        <a href="#about"       class="gl-btn-ghost">Узнать больше</a>
+        <a href="/#integration" class="gl-btn-primary">Интеграция в проект</a>
+        <a href="/#about"       class="gl-btn-ghost">Узнать больше</a>
       </div>
     </div>
 

@@ -58,6 +58,16 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(),
   routes,
+  scrollBehavior(to) {
+    if (to.hash) {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve({ el: to.hash, behavior: 'smooth' });
+        }, 300);
+      });
+    }
+    return { top: 0 };
+  },
 });
 
 router.beforeEach(() => {

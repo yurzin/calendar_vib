@@ -150,11 +150,11 @@ onMounted(() => {
 
       <nav class="gl-nav">
         <div class="gl-nav-menu">
-          <a href="#integration" class="gl-nav-item">Интеграция в проект</a>
-          <a href="#members"     class="gl-nav-item">Участники проекта</a>
-          <a href="#about"       class="gl-nav-item">О проекте</a>
-          <a href="#archive"     class="gl-nav-item">Архив</a>
-          <a href="#contacts"    class="gl-nav-item">Контакты</a>
+          <a href="/#integration" class="gl-nav-item">Интеграция в проект</a>
+          <a href="#members"      class="gl-nav-item">Участники проекта</a>
+          <a href="/#about"       class="gl-nav-item">О проекте</a>
+          <a href="/#archive"     class="gl-nav-item">Архив</a>
+          <a href="/#contacts"    class="gl-nav-item">Контакты</a>
         </div>
         <div class="gl-nav-divider" />
         <router-link v-if="!user" to="/login" class="gl-nav-accent">Войти</router-link>
@@ -175,11 +175,11 @@ onMounted(() => {
 
     <!-- Мобильная навигация -->
     <div class="gl-mobile-nav" :class="{ 'is-open': mobileOpen }">
-      <router-link to="#about"       class="gl-mobile-item" @click="mobileOpen = false">О проекте</router-link>
-      <router-link to="#integration" class="gl-mobile-item" @click="mobileOpen = false">Интеграция в проект</router-link>
-      <router-link to="#members"     class="gl-mobile-item" @click="mobileOpen = false">Участники проекта</router-link>
-      <router-link to="#archive"     class="gl-mobile-item" @click="mobileOpen = false">Архив</router-link>
-      <router-link to="#contacts"    class="gl-mobile-item" @click="mobileOpen = false">Контакты</router-link>
+      <router-link to="/#about"       class="gl-mobile-item" @click="mobileOpen = false">О проекте</router-link>
+      <router-link to="/#integration" class="gl-mobile-item" @click="mobileOpen = false">Интеграция в проект</router-link>
+      <router-link to="#members"      class="gl-mobile-item" @click="mobileOpen = false">Участники проекта</router-link>
+      <router-link to="/#archive"     class="gl-mobile-item" @click="mobileOpen = false">Архив</router-link>
+      <router-link to="/#contacts"    class="gl-mobile-item" @click="mobileOpen = false">Контакты</router-link>
       <div class="gl-mobile-divider" />
       <router-link to="/login"    class="gl-mobile-item gl-mobile-item--plain"  @click="mobileOpen = false">Войти</router-link>
       <router-link to="/register" class="gl-mobile-item gl-mobile-item--accent" @click="mobileOpen = false">Регистрация</router-link>
@@ -199,8 +199,8 @@ onMounted(() => {
           Настольный справочник для деловых людей Кузбасса: дни рождения чиновников, руководителей, топ-менеджеров и праздничные даты в одном издании.
         </p>
         <div class="gl-hero-cta">
-          <a href="#integration" class="gl-btn-primary">Интеграция в проект</a>
-          <a href="#about"       class="gl-btn-ghost">Узнать больше</a>
+          <a href="/#integration" class="gl-btn-primary">Интеграция в проект</a>
+          <a href="/#about"       class="gl-btn-ghost">Узнать больше</a>
         </div>
       </div>
 
