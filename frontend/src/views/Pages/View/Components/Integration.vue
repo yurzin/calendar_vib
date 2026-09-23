@@ -76,4 +76,18 @@
 .gl-pkg--member { border-color: rgba(96,165,250,0.08); background: rgba(10,14,32,0.35); }
 .gl-pkg--member .gl-pkg-price { color: #6b9fd4; }
 
+/* ═══════════════════════════════════════
+   АДАПТИВ
+═══════════════════════════════════════ */
+@media (max-width: 900px) {
+  .gl-pkg--general { grid-template-columns: 1fr; gap: 20px; padding: 32px 28px; }
+  .gl-pkg-right { align-items: flex-start; }
+  .gl-pkg-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 480px) {
+  .gl-pkg-name { font-size: 28px; }
+  .gl-pkg-price { font-size: 40px; }
+}
+
 </style>

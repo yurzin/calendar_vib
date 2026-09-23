@@ -103,4 +103,16 @@ const emit = defineEmits<{
 }
 .gl-card-abs:hover .gl-card-abs-arrow { transform: translateX(4px); }
 
+/* ═══════════════════════════════════════
+   АДАПТИВ
+═══════════════════════════════════════ */
+@media (max-width: 900px) {
+  .gl-card-abs { width: 220px; right: 16px; bottom: 16px; padding: 20px 22px; }
+  .gl-card-abs-title { font-size: 22px; }
+}
+
+@media (max-width: 480px) {
+  .gl-card-abs { display: none; }
+}
+
 </style>

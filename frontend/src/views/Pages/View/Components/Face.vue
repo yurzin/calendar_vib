@@ -46,4 +46,17 @@ const { galleryItems, openLightbox } = useLightbox()
 .gl-gallery-zoom { font-size: 22px; color: #93c5fd; position: absolute; top: 12px; right: 14px; }
 .gl-gallery-label { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: #a8c4e8; font-weight: 300; }
 
+/* ═══════════════════════════════════════
+   АДАПТИВ
+═══════════════════════════════════════ */
+@media (max-width: 900px) {
+  .gl-gallery { grid-template-columns: repeat(2, 1fr); }
+  .gl-gallery-item--lg { grid-column: span 2; }
+}
+
+@media (max-width: 480px) {
+  .gl-gallery { grid-template-columns: 1fr; }
+  .gl-gallery-item--lg { grid-column: span 1; }
+}
+
 </style>

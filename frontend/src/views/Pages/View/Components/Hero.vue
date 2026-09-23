@@ -47,6 +47,25 @@
 .gl-hero-cta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 
 /* ═══════════════════════════════════════
+   АДАПТИВ
+═══════════════════════════════════════ */
+@media (max-width: 1100px) {
+  /* Декоративная подложка (aria-hidden) шире экрана на планшетах/телефонах — прячем,
+     а не пытаемся вписать: она не несёт контента и не должна ломать раскладку. */
+  .gl-hero-visual { display: none; }
+}
+
+@media (max-width: 900px) {
+  .gl-container { padding: 0 32px; }
+  .gl-section { padding: 64px 0; }
+}
+
+@media (max-width: 480px) {
+  .gl-container { padding: 0 20px; }
+  .gl-hero-lead { max-width: none; }
+}
+
+/* ═══════════════════════════════════════
    КНОПКИ
 ═══════════════════════════════════════ */
 .gl-btn-primary { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #06091a; font-weight: 500; padding: 13px 28px; border-radius: 8px; background: #93c5fd; text-decoration: none; transition: background 0.2s, transform 0.15s; }

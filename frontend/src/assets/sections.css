@@ -22,3 +22,19 @@
 .gl-two-col-block { display: flex; flex-direction: column; gap: 24px; }
 .gl-block-title { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 600; color: #dce8f5; line-height: 1.2; margin: 0; }
 .gl-text-stack { display: flex; flex-direction: column; gap: 14px; padding-left: 20px; border-left: 1px solid rgba(96,165,250,0.15); }
+
+/* ═══════════════════════════════════════
+   АДАПТИВ (общие классы секций)
+═══════════════════════════════════════ */
+@media (max-width: 900px) {
+  .gl-container { padding: 0 32px; }
+  .gl-section { padding: 64px 0; }
+  .gl-features { grid-template-columns: 1fr; }
+  .gl-feature:first-child { border-radius: 12px 12px 0 0; }
+  .gl-feature:last-child  { border-radius: 0 0 12px 12px; }
+  .gl-two-col { grid-template-columns: 1fr; gap: 48px; }
+}
+
+@media (max-width: 480px) {
+  .gl-container { padding: 0 20px; }
+}
