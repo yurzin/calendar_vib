@@ -153,6 +153,7 @@ onMounted(() => {
           <a href="/#integration" class="gl-nav-item">Интеграция в проект</a>
           <a href="#members"      class="gl-nav-item">Участники проекта</a>
           <a href="/#about"       class="gl-nav-item">О проекте</a>
+          <a href="/#calendar"    class="gl-nav-item">Галерея</a>
           <a href="/#archive"     class="gl-nav-item">Архив</a>
           <a href="/#contacts"    class="gl-nav-item">Контакты</a>
         </div>
@@ -178,6 +179,7 @@ onMounted(() => {
       <router-link to="/#about"       class="gl-mobile-item" @click="mobileOpen = false">О проекте</router-link>
       <router-link to="/#integration" class="gl-mobile-item" @click="mobileOpen = false">Интеграция в проект</router-link>
       <router-link to="#members"      class="gl-mobile-item" @click="mobileOpen = false">Участники проекта</router-link>
+      <router-link to="/#calendar"    class="gl-mobile-item" @click="mobileOpen = false">Галерея</router-link>
       <router-link to="/#archive"     class="gl-mobile-item" @click="mobileOpen = false">Архив</router-link>
       <router-link to="/#contacts"    class="gl-mobile-item" @click="mobileOpen = false">Контакты</router-link>
       <div class="gl-mobile-divider" />
