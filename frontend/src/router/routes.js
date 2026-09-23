@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import { getAdminSiteUrl } from '@/utils/site';
 
 const routes = [
   {
@@ -32,6 +33,21 @@ const routes = [
     name: 'general-partner'
   },
   {
+    path: '/official-partner',
+    component: () => import('../views/Pages/View/OfficialPartner.vue'),
+    name: 'official-partner'
+  },
+  {
+    path: '/business-partner',
+    component: () => import('../views/Pages/View/BusinessPartner.vue'),
+    name: 'business-partner'
+  },
+  {
+    path: '/project-participant',
+    component: () => import('../views/Pages/View/ProjectParticipant.vue'),
+    name: 'project-participant'
+  },
+  {
     path: '/login',
     component: () => import('../views/Pages/Auth/Login.vue'),
     name: 'login'
@@ -49,7 +65,7 @@ const routes = [
   {
     path: '/admin',
     beforeEnter: () => {
-      window.location.href = 'http://admin.calendar.local';
+      window.location.href = getAdminSiteUrl();
     },
     component: { template: '<div></div>' },
   },

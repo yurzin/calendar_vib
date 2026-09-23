@@ -22,24 +22,24 @@
         </div>
       </router-link>
       <div class="gl-pkg-grid">
-        <a href="https://xn--80acbojebux9agf4k.xn--p1ai/oficial-partner" class="gl-pkg gl-pkg--card">
+        <router-link to="/official-partner#official-partner" class="gl-pkg gl-pkg--card">
           <span class="gl-pkg-name">Официальный партнёр</span>
           <span class="gl-pkg-desc">Представительский формат с приоритетным размещением и расширенным блоком информации.</span>
           <span class="gl-pkg-price">45 900 ₽</span>
           <span class="gl-pkg-cta">Подробнее →</span>
-        </a>
-        <a href="https://xn--80acbojebux9agf4k.xn--p1ai/delovoy-partner" class="gl-pkg gl-pkg--card">
+        </router-link>
+        <router-link to="/business-partner#business-partner" class="gl-pkg gl-pkg--card">
           <span class="gl-pkg-name">Деловой партнёр</span>
           <span class="gl-pkg-desc">Оптимальный пакет для уверенного присутствия в календаре среди ключевых персон региона.</span>
           <span class="gl-pkg-price">25 900 ₽</span>
           <span class="gl-pkg-cta">Подробнее →</span>
-        </a>
-        <a href="https://xn--80acbojebux9agf4k.xn--p1ai/uchastnik-proekta" class="gl-pkg gl-pkg--card gl-pkg--member">
+        </router-link>
+        <router-link to="/project-participant#project-participant" class="gl-pkg gl-pkg--card gl-pkg--member">
           <span class="gl-pkg-name">Участник проекта</span>
           <span class="gl-pkg-desc">Базовое включение в календарь. Имя, должность и контактные данные в алфавитном указателе.</span>
           <span class="gl-pkg-price">5 990 ₽</span>
           <span class="gl-pkg-cta">Подробнее →</span>
-        </a>
+        </router-link>
       </div>
     </div>
   </section>

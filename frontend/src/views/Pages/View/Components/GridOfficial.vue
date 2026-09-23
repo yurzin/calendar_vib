@@ -1,16 +1,16 @@
 <template>
-  <div class="gl-section gl-section--dark" id="general-partner">
+  <div class="gl-section gl-section--dark" id="official-partner">
     <div class="gl-container">
       <div class="gl-section-head">
         <div class="gl-section-head-top">
           <div class="gl-section-head-main">
-            <h2 class="gl-section-title">Генеральный партнер</h2>
+            <h2 class="gl-section-title">Официальный партнёр</h2>
           </div>
           <div class="gl-section-headline">
-            Ваш бренд на каждой <span class="gl-section-headline-accent">странице</span>
+            Ваш бренд в <span class="gl-section-headline-accent">ключевые даты</span>
           </div>
         </div>
-        <p class="gl-section-body">12 месяцев присутствия в рабочей зоне вашей аудитории.</p>
+        <p class="gl-section-body">6 знаменательных дат, 2 размещения макета в календарной сетке и 1 макет на странице месяца.</p>
       </div>
 
       <div class="grid-wrapper">
@@ -25,15 +25,11 @@
           <span class="page-indicator">Стр. {{ currentPage + 1 }} / {{ totalPages }}</span>
         </div>
 
-        <div v-if="currentPageInfo.type === 'ad'" class="ad-page" :class="{ 'ad-page--placement': currentPage !== 0 }">
+        <div v-if="currentPageInfo.type === 'ad'" class="ad-page ad-page--placement">
           <div class="ad-right">
-            <div v-if="currentPage === 0" class="ad-cover-title">
-              Власть и Бизнес<br><span class="ad-headline-accent">{{ START_YEAR }}</span>
-            </div>
-
-            <div v-if="currentPage !== 0" class="ad-placement-marker">
+            <div class="ad-placement-marker">
               <div class="placement-tooltip">
-                <span class="placement-tooltip-count">3 размещения</span>
+                <span class="placement-tooltip-count">1 размещение</span>
                 Макет компании на странице месяца
               </div>
             </div>
@@ -139,15 +135,15 @@
                 <span v-if="day" class="day-number">{{ day.day }}</span>
 
                 <div v-if="day && isSpecialDay(day.date)" class="special-tooltip">
-                  <span class="special-tooltip-count">10 размещений</span>
+                  <span class="special-tooltip-count">6 размещений</span>
                   Знаменательная дата — день рождения компании, руководителя, сотрудников,
                   профессионального праздника
                 </div>
 
                 <!-- Тултип только на первой ячейке группы -->
                 <div v-if="!day && isPlacementFirst(rowIdx, ci)" class="placement-tooltip">
-                  <span class="placement-tooltip-count">3 размещения</span>
-                  Макет компании на страницах календаря
+                  <span class="placement-tooltip-count">2 размещения</span>
+                  Макет компании на странице календаря
                 </div>
               </div>
             </div>
@@ -155,7 +151,7 @@
         </div>
       </div>
 
-      <PartnerTiersNav current="general-partner"/>
+      <PartnerTiersNav current="official-partner"/>
     </div>
   </div>
 </template>
@@ -194,23 +190,15 @@ const monthNames = [
 
 const weekdayNames = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье']
 
-// Обложка, затем для каждого месяца: страница календаря + страница-заглушка рекламы
-const totalPages = 1 + monthNames.length * 2
+// У официального партнёра нет обложки: сразу январь, затем для каждого месяца —
+// страница календаря + страница-заглушка рекламы (как у генерального партнёра)
+const totalPages = monthNames.length * 2
 const currentPage = ref(0)
 
 const currentPageInfo = computed<PageInfo>(() => {
   const page = currentPage.value
-  if (page === 0) {
-    return {
-      type: 'ad',
-      label: 'Обложка',
-      adName: 'Обложка - место для рекламного макета генерального партнёра'
-    }
-  }
-
-  const offset = page - 1
-  const idx = Math.floor(offset / 2)
-  const isAdPage = offset % 2 === 1
+  const idx = Math.floor(page / 2)
+  const isAdPage = page % 2 === 1
 
   if (isAdPage) {
     return {
@@ -316,7 +304,7 @@ const specialDay = computed(() => {
 
 const isSpecialDay = (date: Date): boolean => {
   const info = currentPageInfo.value
-  if (info.type !== 'calendar') return false
+  if (info.type !== 'calendar' || specialDay.value === null) return false
   return date.getDate() === specialDay.value && date.getMonth() === info.month && date.getFullYear() === info.year
 }
 
@@ -395,7 +383,6 @@ const placementGroup = computed<PlacementGroup | null>(() => {
     targetSize = chosen.rows.length;
   }
 
-  /*const targetSize = chosen.rows.length >= 4 ? (Math.random() < 0.5 ? 3 : 4) : chosen.rows.length*/
   const result: PlacementGroup = {colIdx: chosen.colIdx, rows: chosen.rows.slice(0, targetSize)}
 
   placementCache.set(key, result)
@@ -623,23 +610,6 @@ const nextPage = () => {
   flex: 1;
   position: relative;
   overflow: hidden;
-}
-
-.ad-cover-title {
-  position: absolute;
-  bottom: 90px;
-  right: 28px;
-  z-index: 4;
-  text-align: right;
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(28px, 4vw, 48px);
-  font-weight: 600;
-  line-height: 1.15;
-  color: #f0f4ff;
-}
-
-.ad-headline-accent {
-  color: #818cf8;
 }
 
 .ad-geo {
@@ -914,8 +884,6 @@ const nextPage = () => {
   overflow: visible;
   z-index: 1;
   cursor: default;
-  /*animation: placement-pulse 2.4s ease-out infinite;
-  animation-delay: 0.4s;*/
 }
 
 /* Верхняя ячейка группы */

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Grid from "@/views/Pages/View/Components/Grid.vue";
+import GridOfficial from "@/views/Pages/View/Components/GridOfficial.vue";
 import Header from "@/views/Pages/View/Components/Header.vue";
 import Footer from "@/views/Pages/View/Components/Footer.vue";
 import Statistics from "@/views/Pages/View/Components/Statistics.vue";
@@ -33,7 +33,7 @@ function openModal() { modalOpen.value = true; formSent.value = false }
 
     <Statistics @open-modal="openModal" />
 
-    <Grid/>
+    <GridOfficial/>
 
     <Footer/>
 
