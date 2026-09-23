@@ -192,7 +192,7 @@ const monthNames = [
   'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
 ]
 
-const weekdayNames = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье']
+const weekdayNames = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс']
 
 // Обложка, затем для каждого месяца: страница календаря + страница-заглушка рекламы
 const totalPages = 1 + monthNames.length * 2
@@ -1108,9 +1108,35 @@ const nextPage = () => {
     min-width: 0;
   }
 
+  .ad-logo-area {
+    top: 14px;
+    left: 14px;
+    transform: none;
+  }
+
   .ad-cover-title {
-    bottom: 56px;
-    right: 16px;
+    bottom: 40px;
+    right: 14px;
+  }
+
+  .ad-stats {
+    bottom: 8px;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    gap: 14px;
+  }
+
+  .ad-stat {
+    text-align: center;
+  }
+
+  .ad-stat-val {
+    font-size: 13px;
+  }
+
+  .ad-stat-lbl {
+    font-size: 6px;
   }
 }
 </style>

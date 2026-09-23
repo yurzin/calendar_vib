@@ -188,7 +188,7 @@ const monthNames = [
   'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
 ]
 
-const weekdayNames = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье']
+const weekdayNames = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс']
 
 // У официального партнёра нет обложки: сразу январь, затем для каждого месяца —
 // страница календаря + страница-заглушка рекламы (как у генерального партнёра)
@@ -1074,6 +1074,26 @@ const nextPage = () => {
   .current-month {
     font-size: 13px;
     min-width: 0;
+  }
+
+  .ad-stats {
+    bottom: 8px;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    gap: 14px;
+  }
+
+  .ad-stat {
+    text-align: center;
+  }
+
+  .ad-stat-val {
+    font-size: 13px;
+  }
+
+  .ad-stat-lbl {
+    font-size: 6px;
   }
 }
 </style>
