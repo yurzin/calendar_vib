@@ -70,4 +70,15 @@
 .gl-footer-link { color: #2a3f65; text-decoration: none; transition: color 0.2s; }
 .gl-footer-link:hover { color: #4a7fd4; }
 
+/* ═══════════════════════════════════════
+   АДАПТИВ
+═══════════════════════════════════════ */
+@media (max-width: 900px) {
+  .gl-footer-inner { grid-template-columns: 1fr; justify-items: center; padding: 28px 32px; gap: 20px; text-align: center; }
+  .gl-footer-links { justify-content: center; }
+}
+@media (max-width: 480px) {
+  .gl-footer-inner { padding: 24px 20px; }
+}
+
 </style>
