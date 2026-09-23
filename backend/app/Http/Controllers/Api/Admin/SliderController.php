@@ -6,8 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\SliderImage;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 
 class SliderController extends Controller
 {
@@ -30,21 +28,25 @@ class SliderController extends Controller
 
     public function store(Request $request): JsonResponse
     {
-        $validated = $request->validate([
-            'image' => 'required|image|mimes:jpg,jpeg,png,webp|max:8192',
-            'label' => 'nullable|string|max:255',
-            'sort_order' => 'nullable|integer|min:0',
+        $request->validate([
+            'images' => 'required|array|min:1',
+            'images.*' => 'image|mimes:jpg,jpeg,png,webp|max:8192',
         ]);
 
-        $nextOrder = $validated['sort_order'] ?? ((int) SliderImage::max('sort_order') + 1);
+        $nextOrder = (int) SliderImage::max('sort_order');
+        $created = [];
 
-        $image = SliderImage::create([
-            'image_path' => SliderImage::uploadImage($request),
-            'label' => $validated['label'] ?? null,
-            'sort_order' => $nextOrder,
-        ]);
+        foreach ($request->file('images') as $file) {
+            $nextOrder++;
+            $created[] = SliderImage::create([
+                'image_path' => SliderImage::storeFile($file),
+                'sort_order' => $nextOrder,
+            ]);
+        }
 
-        return response()->json($this->present($image), 201);
+        return response()->json([
+            'images' => collect($created)->map(fn($i) => $this->present($i)),
+        ], 201);
     }
 
     public function update(Request $request, SliderImage $slider): JsonResponse
@@ -55,7 +57,11 @@ class SliderController extends Controller
             'sort_order' => 'nullable|integer|min:0',
         ]);
 
-        $imagePath = SliderImage::uploadImage($request, $slider->image_path);
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            SliderImage::deleteFile($slider->image_path);
+            $imagePath = SliderImage::storeFile($request->file('image'));
+        }
 
         $slider->update([
             'image_path' => $imagePath ?? $slider->image_path,
@@ -68,10 +74,7 @@ class SliderController extends Controller
 
     public function destroy(SliderImage $slider): JsonResponse
     {
-        if ($slider->image_path) {
-            Storage::disk('public')->delete(Str::after($slider->image_path, '/storage/'));
-        }
-
+        SliderImage::deleteFile($slider->image_path);
         $slider->delete();
 
         return response()->json(['message' => 'Изображение удалено']);

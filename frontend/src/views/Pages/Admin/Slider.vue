@@ -56,9 +56,10 @@ const form        = ref<FormState>(emptyForm());
 const formErrors  = ref<Record<string, string>>({});
 const saving      = ref(false);
 
-// Изображение
-const imageFile    = ref<File | null>(null);
-const imagePreview = ref('');
+// Изображение (режим редактирования — один файл на замену)
+const imageFile       = ref<File | null>(null);
+const imagePreview    = ref('');
+const originalPreview = ref(''); // текущее изображение записи, для отмены выбора нового файла
 
 const onImageChange = (e: Event) => {
   const input = e.target as HTMLInputElement;
@@ -80,14 +81,50 @@ const onImageChange = (e: Event) => {
 
 const removeImage = () => {
   imageFile.value    = null;
-  imagePreview.value = '';
+  imagePreview.value = originalPreview.value;
+};
+
+// Новые изображения (режим добавления — сразу несколько файлов)
+interface PendingFile { file: File; preview: string }
+const newFiles = ref<PendingFile[]>([]);
+
+const clearNewFiles = () => {
+  newFiles.value.forEach(f => URL.revokeObjectURL(f.preview));
+  newFiles.value = [];
+};
+
+const onImagesChange = (e: Event) => {
+  const input = e.target as HTMLInputElement;
+  const files = Array.from(input.files ?? []);
+  input.value = '';
+  if (!files.length) return;
+
+  const rejected: string[] = [];
+  for (const file of files) {
+    if (file.size > MAX_IMAGE_MB * 1024 * 1024) {
+      rejected.push(file.name);
+      continue;
+    }
+    newFiles.value.push({ file, preview: URL.createObjectURL(file) });
+  }
+
+  formErrors.value.image = rejected.length
+    ? `Пропущены файлы больше ${MAX_IMAGE_MB} МБ: ${rejected.join(', ')}`
+    : '';
+};
+
+const removeNewFile = (idx: number) => {
+  URL.revokeObjectURL(newFiles.value[idx].preview);
+  newFiles.value.splice(idx, 1);
 };
 
 // ─── Модалка ───────────────────────────────────────────────────────────────
 const resetModal = () => {
-  formErrors.value   = {};
-  imageFile.value    = null;
-  imagePreview.value = '';
+  formErrors.value      = {};
+  imageFile.value       = null;
+  imagePreview.value    = '';
+  originalPreview.value = '';
+  clearNewFiles();
 };
 
 const openCreate = () => {
@@ -104,7 +141,8 @@ const openEdit = (image: SlideImage) => {
     sort_order: image.sort_order,
   };
   resetModal();
-  imagePreview.value = image.image;
+  imagePreview.value    = image.image;
+  originalPreview.value = image.image;
   modalMode.value = 'edit';
   modalOpen.value = true;
 };
@@ -117,8 +155,8 @@ const closeModal = () => {
 // ─── Валидация ─────────────────────────────────────────────────────────────
 const validate = (): boolean => {
   const e: Record<string, string> = {};
-  if (modalMode.value === 'create' && !imageFile.value) {
-    e.image = 'Выберите изображение';
+  if (modalMode.value === 'create' && newFiles.value.length === 0) {
+    e.image = 'Выберите хотя бы одно изображение';
   }
   formErrors.value = e;
   return !Object.keys(e).length;
@@ -129,17 +167,19 @@ const save = async () => {
   if (!validate()) return;
   saving.value = true;
   try {
-    const fd = new FormData();
-    if (form.value.label.trim()) fd.append('label', form.value.label.trim());
-    if (form.value.sort_order !== null) fd.append('sort_order', String(form.value.sort_order));
-    if (imageFile.value) fd.append('image', imageFile.value);
-
     const headers = { 'Content-Type': 'multipart/form-data' };
 
     if (modalMode.value === 'create') {
+      const fd = new FormData();
+      newFiles.value.forEach(f => fd.append('images[]', f.file));
       const { data } = await axios.post('/api/slider', fd, { headers });
-      images.value.push(data);
+      const created = Array.isArray(data?.images) ? data.images : [];
+      images.value.push(...created);
     } else {
+      const fd = new FormData();
+      if (form.value.label.trim()) fd.append('label', form.value.label.trim());
+      if (form.value.sort_order !== null) fd.append('sort_order', String(form.value.sort_order));
+      if (imageFile.value) fd.append('image', imageFile.value);
       fd.append('_method', 'PUT');
       const { data } = await axios.post(`/api/slider/${form.value.id}`, fd, { headers });
       const idx = images.value.findIndex(i => i.id === form.value.id);
@@ -151,7 +191,7 @@ const save = async () => {
     if (errs) {
       formErrors.value = Object.fromEntries(Object.entries(errs).map(([k, v]) => [k, v[0]]));
     } else if (axios.isAxiosError(e) && e.response?.status === 413) {
-      formErrors.value.global = `Файл слишком большой. Максимальный размер — ${MAX_IMAGE_MB} МБ.`;
+      formErrors.value.global = `Суммарный размер файлов слишком большой для одной загрузки.`;
     } else {
       formErrors.value.global = getErrorMessage(e, 'Ошибка сохранения');
     }
@@ -311,7 +351,7 @@ const doDelete = async (id: number) => {
 
             <div class="pl-modal-head">
               <h2 class="pl-modal-title">
-                {{ modalMode === 'create' ? 'Новое изображение' : 'Редактирование изображения' }}
+                {{ modalMode === 'create' ? 'Новые изображения' : 'Редактирование изображения' }}
               </h2>
               <button class="pl-icon-btn" @click="closeModal">
                 <svg viewBox="0 0 20 20" fill="none"><path d="M6 6l8 8M14 6l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
@@ -320,33 +360,61 @@ const doDelete = async (id: number) => {
 
             <div class="pl-modal-form">
 
-              <!-- Изображение -->
-              <div class="pl-field">
-                <label class="pl-label">Изображение {{ modalMode === 'create' ? '*' : '' }}</label>
-                <label class="pl-upload" :class="{ 'pl-upload--has': imagePreview }">
-                  <img v-if="imagePreview" :src="imagePreview" class="pl-upload-preview" alt="preview" />
-                  <div v-else class="pl-upload-placeholder">
-                    <svg viewBox="0 0 24 24" fill="none">
-                      <path d="M12 16V8M12 8l-3 3M12 8l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                      <rect x="3" y="3" width="18" height="18" rx="4" stroke="currentColor" stroke-width="1.3"/>
-                    </svg>
-                    <span>Нажмите или перетащите файл</span>
-                    <span class="pl-upload-hint">JPG, PNG, WEBP · до {{ MAX_IMAGE_MB }} МБ</span>
-                  </div>
-                  <input type="file" accept="image/jpeg,image/png,image/webp" class="pl-upload-input" @change="onImageChange" />
-                </label>
-                <button v-if="imagePreview" class="pl-upload-clear" type="button" @click="removeImage">
-                  × Убрать изображение
-                </button>
-                <span v-if="formErrors.image" class="pl-field-err">{{ formErrors.image }}</span>
-              </div>
+              <!-- Добавление: мультизагрузка -->
+              <template v-if="modalMode === 'create'">
+                <div class="pl-field">
+                  <label class="pl-label">Изображения *</label>
+                  <label class="pl-upload">
+                    <div class="pl-upload-placeholder">
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M12 16V8M12 8l-3 3M12 8l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <rect x="3" y="3" width="18" height="18" rx="4" stroke="currentColor" stroke-width="1.3"/>
+                      </svg>
+                      <span>Нажмите или перетащите файлы (можно сразу несколько)</span>
+                      <span class="pl-upload-hint">JPG, PNG, WEBP · до {{ MAX_IMAGE_MB }} МБ каждый</span>
+                    </div>
+                    <input type="file" multiple accept="image/jpeg,image/png,image/webp" class="pl-upload-input" @change="onImagesChange" />
+                  </label>
+                  <span v-if="formErrors.image" class="pl-field-err">{{ formErrors.image }}</span>
+                </div>
 
-              <!-- Подпись -->
-              <div class="pl-field" :class="{ 'pl-field--err': formErrors.label }">
-                <label class="pl-label">Подпись (необязательно)</label>
-                <input v-model="form.label" class="pl-input" placeholder="Разворот календаря" />
-                <span v-if="formErrors.label" class="pl-field-err">{{ formErrors.label }}</span>
-              </div>
+                <div v-if="newFiles.length" class="sl-pending-grid">
+                  <div v-for="(f, idx) in newFiles" :key="idx" class="sl-pending-item">
+                    <img :src="f.preview" class="sl-pending-img" alt="" />
+                    <button type="button" class="sl-pending-remove" title="Убрать" @click="removeNewFile(idx)">×</button>
+                  </div>
+                </div>
+                <p v-if="newFiles.length" class="pl-field-hint">Выбрано файлов: {{ newFiles.length }}. Подписи можно добавить позже через редактирование.</p>
+              </template>
+
+              <!-- Редактирование: один файл + подпись + порядок -->
+              <template v-else>
+                <div class="pl-field">
+                  <label class="pl-label">Изображение</label>
+                  <label class="pl-upload" :class="{ 'pl-upload--has': imagePreview }">
+                    <img v-if="imagePreview" :src="imagePreview" class="pl-upload-preview" alt="preview" />
+                    <div v-else class="pl-upload-placeholder">
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M12 16V8M12 8l-3 3M12 8l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <rect x="3" y="3" width="18" height="18" rx="4" stroke="currentColor" stroke-width="1.3"/>
+                      </svg>
+                      <span>Нажмите или перетащите файл</span>
+                      <span class="pl-upload-hint">JPG, PNG, WEBP · до {{ MAX_IMAGE_MB }} МБ</span>
+                    </div>
+                    <input type="file" accept="image/jpeg,image/png,image/webp" class="pl-upload-input" @change="onImageChange" />
+                  </label>
+                  <button v-if="imageFile" class="pl-upload-clear" type="button" @click="removeImage">
+                    × Отменить выбор нового файла
+                  </button>
+                  <span v-if="formErrors.image" class="pl-field-err">{{ formErrors.image }}</span>
+                </div>
+
+                <div class="pl-field" :class="{ 'pl-field--err': formErrors.label }">
+                  <label class="pl-label">Подпись (необязательно)</label>
+                  <input v-model="form.label" class="pl-input" placeholder="Разворот календаря" />
+                  <span v-if="formErrors.label" class="pl-field-err">{{ formErrors.label }}</span>
+                </div>
+              </template>
 
               <div v-if="formErrors.global" class="pl-alert pl-alert--sm">{{ formErrors.global }}</div>
 
@@ -356,7 +424,7 @@ const doDelete = async (id: number) => {
               <button class="pl-btn pl-btn--ghost" @click="closeModal">Отмена</button>
               <button class="pl-btn pl-btn--primary" :disabled="saving" @click="save">
                 <span v-if="saving" class="pl-spinner" />
-                {{ modalMode === 'create' ? 'Добавить' : 'Сохранить' }}
+                {{ modalMode === 'create' ? `Добавить${newFiles.length > 1 ? ` (${newFiles.length})` : ''}` : 'Сохранить' }}
               </button>
             </div>
 
@@ -464,6 +532,18 @@ const doDelete = async (id: number) => {
 .pl-upload-preview { width: 100%; height: 140px; object-fit: cover; }
 .pl-upload-clear { background: none; border: none; font-size: 12px; color: var(--danger); cursor: pointer; padding: 0; text-align: left; }
 .pl-upload-clear:hover { text-decoration: underline; }
+
+/* ── Превью выбранных файлов (мультизагрузка) ─────────────────── */
+.sl-pending-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.sl-pending-item { position: relative; aspect-ratio: 1; border-radius: 8px; overflow: hidden; background: #0d1836; }
+.sl-pending-img { width: 100%; height: 100%; object-fit: cover; }
+.sl-pending-remove {
+  position: absolute; top: 4px; right: 4px; width: 20px; height: 20px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(5,10,24,0.75); color: #fff; border: none; border-radius: 50%;
+  font-size: 14px; line-height: 1; cursor: pointer;
+}
+.sl-pending-remove:hover { background: var(--danger); }
 
 .pl-spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.6s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
