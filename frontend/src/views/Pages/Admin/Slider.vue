@@ -23,6 +23,7 @@ const images  = ref<SlideImage[]>([]);
 const sorted = computed(() => [...images.value].sort((a, b) => a.sort_order - b.sort_order || a.id - b.id));
 
 const MAX_IMAGE_MB = 8;
+const MAX_FILES = 32;
 
 // ─── Загрузка ──────────────────────────────────────────────────────────────
 const loadData = async () => {
@@ -100,7 +101,13 @@ const onImagesChange = (e: Event) => {
   if (!files.length) return;
 
   const rejected: string[] = [];
+  let overflow = 0;
+
   for (const file of files) {
+    if (newFiles.value.length >= MAX_FILES) {
+      overflow++;
+      continue;
+    }
     if (file.size > MAX_IMAGE_MB * 1024 * 1024) {
       rejected.push(file.name);
       continue;
@@ -108,9 +115,10 @@ const onImagesChange = (e: Event) => {
     newFiles.value.push({ file, preview: URL.createObjectURL(file) });
   }
 
-  formErrors.value.image = rejected.length
-    ? `Пропущены файлы больше ${MAX_IMAGE_MB} МБ: ${rejected.join(', ')}`
-    : '';
+  const messages: string[] = [];
+  if (rejected.length) messages.push(`Пропущены файлы больше ${MAX_IMAGE_MB} МБ: ${rejected.join(', ')}`);
+  if (overflow) messages.push(`За раз можно загрузить не больше ${MAX_FILES} файлов, лишние (${overflow}) не добавлены`);
+  formErrors.value.image = messages.join('. ');
 };
 
 const removeNewFile = (idx: number) => {
@@ -371,7 +379,7 @@ const doDelete = async (id: number) => {
                         <rect x="3" y="3" width="18" height="18" rx="4" stroke="currentColor" stroke-width="1.3"/>
                       </svg>
                       <span>Нажмите или перетащите файлы (можно сразу несколько)</span>
-                      <span class="pl-upload-hint">JPG, PNG, WEBP · до {{ MAX_IMAGE_MB }} МБ каждый</span>
+                      <span class="pl-upload-hint">JPG, PNG, WEBP · до {{ MAX_IMAGE_MB }} МБ каждый · не больше {{ MAX_FILES }} файлов за раз</span>
                     </div>
                     <input type="file" multiple accept="image/jpeg,image/png,image/webp" class="pl-upload-input" @change="onImagesChange" />
                   </label>
@@ -384,7 +392,7 @@ const doDelete = async (id: number) => {
                     <button type="button" class="sl-pending-remove" title="Убрать" @click="removeNewFile(idx)">×</button>
                   </div>
                 </div>
-                <p v-if="newFiles.length" class="pl-field-hint">Выбрано файлов: {{ newFiles.length }}. Подписи можно добавить позже через редактирование.</p>
+                <p v-if="newFiles.length" class="pl-field-hint">Выбрано файлов: {{ newFiles.length }} из {{ MAX_FILES }}. Подписи можно добавить позже через редактирование.</p>
               </template>
 
               <!-- Редактирование: один файл + подпись + порядок -->

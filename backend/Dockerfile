@@ -8,10 +8,7 @@ RUN apt-get update && apt-get install -y \
 RUN docker-php-ext-configure gd --with-jpeg --with-webp \
     && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 
-RUN echo "upload_max_filesize = 20M" > /usr/local/etc/php/conf.d/uploads.ini \
-    && echo "post_max_size = 20M" >> /usr/local/etc/php/conf.d/uploads.ini \
-    && echo "memory_limit = 256M" >> /usr/local/etc/php/conf.d/uploads.ini \
-    && echo "max_execution_time = 300" >> /usr/local/etc/php/conf.d/uploads.ini
+COPY php.ini /usr/local/etc/php/conf.d/uploads.ini
 
 RUN mkdir -p /tmp/uploads && chmod 777 /tmp/uploads
 
