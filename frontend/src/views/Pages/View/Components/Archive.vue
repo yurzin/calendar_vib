@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import axios from 'axios';
 
 interface ArchiveIssue {
@@ -10,6 +10,7 @@ interface ArchiveIssue {
 }
 
 const archiveIssues = ref<ArchiveIssue[]>([]);
+const visibleIssues = computed(() => archiveIssues.value.slice(0, 6));
 
 onMounted(async () => {
   try {
@@ -30,7 +31,7 @@ onMounted(async () => {
         <p class="gl-section-sub">Все выпуски делового календаря</p>
       </div>
       <div class="gl-archive-grid">
-        <div v-for="issue in archiveIssues" :key="issue.year" class="gl-archive-card">
+        <div v-for="issue in visibleIssues" :key="issue.year" class="gl-archive-card">
           <div class="gl-archive-cover">
             <img v-if="issue.cover" :src="issue.cover" :alt="`Обложка ${issue.year}`" class="gl-archive-cover-img" />
             <div v-else class="gl-archive-cover-placeholder">
