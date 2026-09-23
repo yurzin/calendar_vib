@@ -24,9 +24,10 @@ services:
     environment:
       APP_ENV: local
       APP_DEBUG: true
-      APP_URL: http://властьибизнес.local
-      SANCTUM_STATEFUL_DOMAINS: властьибизнес.local,властьибизнес.local:5173,admin.властьибизнес.local
-      SESSION_DOMAIN: .властьибизнес.local
+      APP_URL: http://xn--80acbojebux9agf4k.local
+      ADMIN_DOMAIN: admin.xn--80acbojebux9agf4k.local
+      SANCTUM_STATEFUL_DOMAINS: xn--80acbojebux9agf4k.local,xn--80acbojebux9agf4k.local:5173,admin.xn--80acbojebux9agf4k.local,властьибизнес.local,властьибизнес.local:5173,admin.властьибизнес.local
+      SESSION_DOMAIN: .xn--80acbojebux9agf4k.local
       DB_HOST: mysql
       DB_PORT: 3306
       DB_DATABASE: calendar_db
