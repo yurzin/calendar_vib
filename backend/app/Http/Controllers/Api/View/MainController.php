@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\View;
 
 use App\Models\ArchiveIssue;
 use App\Models\Partner;
+use App\Models\SliderImage;
 
 class MainController
 {
@@ -53,6 +54,16 @@ class MainController
         ]);
 
         return response()->json(['issues' => $issues]);
+    }
+
+    public function slider()
+    {
+        $images = SliderImage::orderBy('sort_order')->orderBy('id')->get()->map(fn($i) => [
+            'src' => $i->image_path,
+            'label' => $i->label,
+        ]);
+
+        return response()->json(['images' => $images]);
     }
 
 }

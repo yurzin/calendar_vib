@@ -115,50 +115,31 @@ const loadAllMembers = async () => {
   }
 }
 
-const calendarPages = [
-  { src: '/calendar/vib_01.jpg', label: 'Обложка календаря 2026', size: 'lg' },
-  { src: '/calendar/vib_02.jpg', label: 'Разворот календаря', size: 'sm' },
-  { src: '/calendar/vib_03.jpg', label: 'Внутренний разворот', size: 'sm' },
-  { src: '/calendar/vib_04.jpg', label: 'Календарная сетка', size: 'md' },
-  { src: '/calendar/vib_05.jpg', label: 'Страница с датами', size: 'md' },
-  { src: '/calendar/vib_06.jpg', label: 'Информационный блок', size: 'sm' },
-  { src: '/calendar/vib_07.jpg', label: 'Дополнительная страница', size: 'sm' },
-  { src: '/calendar/vib_08.jpg', label: 'Завершающий разворот', size: 'sm' },
-  { src: '/calendar/vib_09.jpg', label: 'Обложка с разных ракурсов', size: 'md' },
-  { src: '/calendar/vib_10.jpg', label: 'Календарь в интерьере', size: 'lg' },
-  { src: '/calendar/vib_11.jpg', label: 'Детали оформления', size: 'sm' },
-  { src: '/calendar/vib_12.jpg', label: 'Финальный вид', size: 'md' },
-  { src: '/calendar/vib_13.jpg', label: 'Обложка календаря 2026', size: 'lg' },
-  { src: '/calendar/vib_14.jpg', label: 'Разворот календаря', size: 'sm' },
-  { src: '/calendar/vib_15.jpg', label: 'Внутренний разворот', size: 'sm' },
-  { src: '/calendar/vib_16.jpg', label: 'Календарная сетка', size: 'md' },
-  { src: '/calendar/vib_17.jpg', label: 'Страница с датами', size: 'md' },
-  { src: '/calendar/vib_18.jpg', label: 'Информационный блок', size: 'sm' },
-  { src: '/calendar/vib_19.jpg', label: 'Дополнительная страница', size: 'sm' },
-  { src: '/calendar/vib_20.jpg', label: 'Завершающий разворот', size: 'sm' },
-  { src: '/calendar/vib_21.jpg', label: 'Обложка с разных ракурсов', size: 'md' },
-  { src: '/calendar/vib_22.jpg', label: 'Календарь в интерьере', size: 'lg' },
-  { src: '/calendar/vib_23.jpg', label: 'Детали оформления', size: 'sm' },
-  { src: '/calendar/vib_24.jpg', label: 'Финальный вид', size: 'md' },
-  { src: '/calendar/vib_25.jpg', label: 'Финальный вид', size: 'md' },
-  { src: '/calendar/vib_26.jpg', label: 'Финальный вид', size: 'md' },
-  { src: '/calendar/vib_27.jpg', label: 'Финальный вид', size: 'md' },
-  { src: '/calendar/vib_28.jpg', label: 'Финальный вид', size: 'md' },
-  { src: '/calendar/vib_29.jpg', label: 'Финальный вид', size: 'md' },
-  { src: '/calendar/vib_30.jpg', label: 'Финальный вид', size: 'md' },
-  { src: '/calendar/vib_31.jpg', label: 'Финальный вид', size: 'md' },
-  { src: '/calendar/vib_32.jpg', label: 'Финальный вид', size: 'md' },
-]
+interface CalendarPage {
+  src: string;
+  label: string | null;
+}
+
+const calendarPages = ref<CalendarPage[]>([])
+
+const loadSlider = async () => {
+  try {
+    const { data } = await axios.get('/api/slider-images');
+    calendarPages.value = Array.isArray(data?.images) ? data.images : [];
+  } catch {
+    calendarPages.value = [];
+  }
+};
 
 // Карусель галереи
 const currentSlide = ref(0)
 const isTransitioning = ref(false)
 let autoplayInterval: ReturnType<typeof setInterval> | null = null
 
-const totalSlides = computed(() => calendarPages.length)
+const totalSlides = computed(() => calendarPages.value.length)
 
 const nextSlide = () => {
-  if (isTransitioning.value) return
+  if (isTransitioning.value || totalSlides.value === 0) return
   isTransitioning.value = true
   currentSlide.value = (currentSlide.value + 1) % totalSlides.value
   setTimeout(() => {
@@ -167,7 +148,7 @@ const nextSlide = () => {
 }
 
 const prevSlide = () => {
-  if (isTransitioning.value) return
+  if (isTransitioning.value || totalSlides.value === 0) return
   isTransitioning.value = true
   currentSlide.value = (currentSlide.value - 1 + totalSlides.value) % totalSlides.value
   setTimeout(() => {
@@ -223,6 +204,7 @@ onMounted(() => {
   startAutoplay();
   loadData();
   loadMembers();
+  loadSlider();
 })
 
 </script>
@@ -326,11 +308,11 @@ onMounted(() => {
             <div class="gl-carousel-track" :style="{ transform: `translateX(-${currentSlide * 100}%)` }">
               <div v-for="(image, i) in calendarPages" :key="i" class="gl-carousel-slide">
                 <div class="gl-carousel-image-wrapper">
-                  <img :src="image.src" :alt="image.label" class="gl-carousel-image" />
+                  <img :src="image.src" :alt="image.label || ''" class="gl-carousel-image" />
                   <div class="gl-carousel-overlay">
                     <div class="gl-carousel-caption">
                       <span class="gl-carousel-caption-number">{{ i + 1 }}/{{ totalSlides }}</span>
-                      <h3 class="gl-carousel-caption-title">{{ image.label }}</h3>
+                      <h3 v-if="image.label" class="gl-carousel-caption-title">{{ image.label }}</h3>
                     </div>
                   </div>
                 </div>

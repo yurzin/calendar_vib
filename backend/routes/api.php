@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\Admin\CalendarExportController;
 use App\Http\Controllers\Api\Admin\PartnerController;
 use App\Http\Controllers\Api\Admin\PersonController;
 use App\Http\Controllers\Api\Admin\ProfileController;
+use App\Http\Controllers\Api\Admin\SliderController;
 use App\Http\Controllers\Api\View\MainController;
 use App\Http\Controllers\Auth\AuthController;
 use Illuminate\Support\Facades\Route;
@@ -28,6 +29,7 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/main', [MainController::class, 'index']);
 Route::post('/members', [MainController::class, 'members']);
 Route::get('/archive-issues', [MainController::class, 'archive']);
+Route::get('/slider-images', [MainController::class, 'slider']);
 
 Route::domain(env('ADMIN_DOMAIN', 'admin.calendar.local'))->group(function () {
 
@@ -43,6 +45,7 @@ Route::domain(env('ADMIN_DOMAIN', 'admin.calendar.local'))->group(function () {
         Route::apiResource('partners', PartnerController::class);
         Route::apiResource('persons', PersonController::class);
         Route::apiResource('archive', ArchiveController::class)->except(['show']);
+        Route::apiResource('slider', SliderController::class)->except(['show']);
         Route::prefix('export/calendar')->group(function () {
             // Статистика по месяцам (для кнопок в UI)
             Route::get('stats',    [CalendarExportController::class, 'stats']);

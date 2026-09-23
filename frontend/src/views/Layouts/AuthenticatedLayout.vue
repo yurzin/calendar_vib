@@ -77,6 +77,14 @@ const handleLogout = async () => {
             <span>Архив</span>
           </router-link>
 
+          <router-link to="/slider" class="al-nav-item" active-class="al-nav-item--active">
+            <svg viewBox="0 0 20 20" fill="none" width="16" height="16">
+              <rect x="2" y="4" width="16" height="12" rx="2" stroke="currentColor" stroke-width="1.3"/>
+              <path d="M2 13l4-4 3 3 4-5 5 6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span>Слайдер</span>
+          </router-link>
+
           <router-link to="/profile" class="al-nav-item" active-class="al-nav-item--active">
             <svg viewBox="0 0 20 20" fill="none" width="16" height="16">
               <circle cx="10" cy="7" r="3" stroke="currentColor" stroke-width="1.3"/>

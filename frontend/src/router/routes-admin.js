@@ -34,6 +34,12 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/slider',
+    component: () => import('../views/Pages/Admin/Slider.vue'),
+    name: 'slider',
+    meta: { requiresAuth: true }
+  },
+  {
     path: '/calendar',
     beforeEnter: () => {
       window.location.href = getMainSiteUrl();
