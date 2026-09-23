@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\View;
 
+use App\Models\ArchiveIssue;
 use App\Models\Partner;
 
 class MainController
@@ -40,6 +41,18 @@ class MainController
             'partners' => $partners,
             'user' => auth()->user(),
         ]);
+    }
+
+    public function archive()
+    {
+        $issues = ArchiveIssue::orderByDesc('year')->get()->map(fn($i) => [
+            'year' => $i->year,
+            'cover' => $i->cover_path,
+            'pdfUrl' => $i->pdf_path,
+            'pageUrl' => $i->page_url,
+        ]);
+
+        return response()->json(['issues' => $issues]);
     }
 
 }

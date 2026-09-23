@@ -69,6 +69,14 @@ const handleLogout = async () => {
             <span>Участники</span>
           </router-link>
 
+          <router-link to="/archive" class="al-nav-item" active-class="al-nav-item--active">
+            <svg viewBox="0 0 20 20" fill="none" width="16" height="16">
+              <path d="M3 6l1-3h12l1 3M3 6v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V6M3 6h14" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M8 10h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+            </svg>
+            <span>Архив</span>
+          </router-link>
+
           <router-link to="/profile" class="al-nav-item" active-class="al-nav-item--active">
             <svg viewBox="0 0 20 20" fill="none" width="16" height="16">
               <circle cx="10" cy="7" r="3" stroke="currentColor" stroke-width="1.3"/>

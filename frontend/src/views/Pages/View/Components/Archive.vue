@@ -1,13 +1,24 @@
 <script setup lang="ts">
-// Архив
-const archiveIssues = [
-  { year: 2025, cover: '/calendar/cover/2025.jpg', members: 312, pdfUrl: 'https://drive.google.com/file/d/1yq9CQw8OS1naDWqpQsgCAEH9-AAiYyOF/view', pageUrl: '/archive/2025' },
-  { year: 2024, cover: '/calendar/cover/2024.jpg', members: 298, pdfUrl: 'https://drive.google.com/file/d/1D4rDBCU0MDG9qA8T6Vk4xF4rBpWI6ItR/view', pageUrl: '/archive/2024' },
-  { year: 2023, cover: '/calendar/cover/2023.jpg', members: 276, pdfUrl: 'https://drive.google.com/file/d/1RkW-WLvkOZ_Gpq2wmyQLxQaKntUVyH4T/view', pageUrl: '/archive/2023' },
-  { year: 2022, cover: '/calendar/cover/2022.jpg', members: 251, pdfUrl: 'https://drive.google.com/file/d/1n4G2Ffs__fJh09cqIUYg0kkbBKv-BIs9/view', pageUrl: '/archive/2022' },
-  { year: 2021, cover: '/calendar/cover/2021.jpg', members: 234, pdfUrl: 'https://drive.google.com/file/d/185vPOVFO3byG2ZjI77q7VVAv-6UM5dIw/view', pageUrl: '/archive/2021' },
-  { year: 2020, cover: '/calendar/cover/2020.jpg', members: 218, pdfUrl: 'https://drive.google.com/file/d/1D3t1uVi-Cyn3-1rPrPhXjWVXrDlOhdef/view', pageUrl: '/archive/2020' },
-]
+import { ref, onMounted } from 'vue';
+import axios from 'axios';
+
+interface ArchiveIssue {
+  year: number;
+  cover: string | null;
+  pdfUrl: string | null;
+  pageUrl: string | null;
+}
+
+const archiveIssues = ref<ArchiveIssue[]>([]);
+
+onMounted(async () => {
+  try {
+    const { data } = await axios.get('/api/archive');
+    archiveIssues.value = Array.isArray(data?.issues) ? data.issues : [];
+  } catch {
+    archiveIssues.value = [];
+  }
+});
 </script>
 
 <template>
@@ -29,23 +40,27 @@ const archiveIssues = [
             <div class="gl-archive-cover-shine" aria-hidden="true" />
           </div>
           <div class="gl-archive-info">
-            <div class="gl-archive-meta">
-              <span v-if="issue.members" class="gl-archive-members">{{ issue.members }} участников</span>
-            </div>
             <span class="gl-archive-title">Власть и Бизнес · {{ issue.year }}</span>
           </div>
           <div class="gl-archive-actions">
-            <a :href="issue.pdfUrl || '#'" class="gl-archive-btn gl-archive-btn--primary" target="_blank">
+            <a
+              v-if="issue.pdfUrl"
+              :href="issue.pdfUrl"
+              class="gl-archive-btn gl-archive-btn--primary"
+              target="_blank"
+              rel="noopener"
+            >
               <svg viewBox="0 0 16 16" fill="none" width="13" height="13">
                 <path d="M8 3v10M3 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
               Скачать PDF
             </a>
-            <a :href="issue.pageUrl || `/archive/${issue.year}`" class="gl-archive-btn gl-archive-btn--ghost">Смотреть →</a>
+            <span v-else class="gl-archive-btn gl-archive-btn--ghost gl-archive-btn--disabled">PDF скоро</span>
+            <a v-if="issue.pageUrl" :href="issue.pageUrl" class="gl-archive-btn gl-archive-btn--ghost">Смотреть →</a>
           </div>
         </div>
       </div>
-      <div class="gl-members-cta" style="margin-top: 48px;">
+      <div v-if="archiveIssues.length > 6" class="gl-members-cta" style="margin-top: 48px;">
         <router-link to="#archive" class="gl-btn-ghost">Весь архив →</router-link>
       </div>
     </div>
@@ -54,6 +69,18 @@ const archiveIssues = [
 
 <style scoped>
 @import '@/assets/sections.css';
+
+.gl-archive-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.gl-archive-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
 
 .gl-archive-cover {
   position: relative;
@@ -96,8 +123,6 @@ const archiveIssues = [
 
 .gl-archive-card:hover .gl-archive-cover-shine { left: 130%; }
 .gl-archive-info { display: flex; flex-direction: column; gap: 4px; }
-.gl-archive-meta { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
-.gl-archive-members { font-size: 10px; font-weight: 300; color: #2e4a73; letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; }
 .gl-archive-title { font-size: 11px; font-weight: 300; color: #3d5a8a; letter-spacing: 0.06em; text-transform: uppercase; }
 .gl-archive-actions { display: flex; flex-direction: column; gap: 6px; margin-top: auto; }
 .gl-archive-btn { z-index: 19; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 11px; letter-spacing: 0.07em; text-transform: uppercase; padding: 9px 14px; border-radius: 8px; text-decoration: none; transition: all 0.2s; font-weight: 400; }
@@ -105,6 +130,8 @@ const archiveIssues = [
 .gl-archive-btn--primary:hover { background: #93c5fd; border-color: #93c5fd; color: #06091a; }
 .gl-archive-btn--ghost { background: transparent; border: 1px solid rgba(96,165,250,0.12); color: #3d5a8a; }
 .gl-archive-btn--ghost:hover { border-color: rgba(96,165,250,0.28); color: #93c5fd; background: rgba(96,165,250,0.05); }
+.gl-archive-btn--disabled { opacity: 0.5; cursor: default; }
+.gl-archive-btn--disabled:hover { border-color: rgba(96,165,250,0.12); color: #3d5a8a; background: transparent; }
 
 .gl-btn-ghost {
   display: inline-flex;
@@ -123,5 +150,13 @@ const archiveIssues = [
 }
 
 .gl-btn-ghost:hover { cursor: pointer; color: #93c5fd; border-color: rgba(147,197,253,0.4); background: rgba(147,197,253,0.05); }
+
+@media (max-width: 900px) {
+  .gl-archive-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 560px) {
+  .gl-archive-grid { grid-template-columns: 1fr; }
+}
 
 </style>
