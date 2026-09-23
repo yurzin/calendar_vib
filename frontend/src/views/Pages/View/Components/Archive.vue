@@ -10,7 +10,8 @@ interface ArchiveIssue {
 }
 
 const archiveIssues = ref<ArchiveIssue[]>([]);
-const visibleIssues = computed(() => archiveIssues.value.slice(0, 6));
+const showAll = ref(false);
+const visibleIssues = computed(() => showAll.value ? archiveIssues.value : archiveIssues.value.slice(0, 6));
 
 onMounted(async () => {
   try {
@@ -61,8 +62,8 @@ onMounted(async () => {
           </div>
         </div>
       </div>
-      <div v-if="archiveIssues.length > 6" class="gl-members-cta" style="margin-top: 48px;">
-        <router-link to="#archive" class="gl-btn-ghost">Весь архив →</router-link>
+      <div v-if="!showAll && archiveIssues.length > 6" class="gl-members-cta" style="margin-top: 48px;">
+        <button type="button" class="gl-btn-ghost" @click="showAll = true">Весь архив →</button>
       </div>
     </div>
   </section>
@@ -138,16 +139,19 @@ onMounted(async () => {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  font-family: inherit;
   font-size: 12px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: #4a6fa5;
   padding: 13px 24px;
+  margin: 0;
   border-radius: 8px;
   border: 1px solid rgba(96, 165, 250, 0.2);
   text-decoration: none;
   transition: all 0.2s;
   background: transparent;
+  cursor: pointer;
 }
 
 .gl-btn-ghost:hover { cursor: pointer; color: #93c5fd; border-color: rgba(147,197,253,0.4); background: rgba(147,197,253,0.05); }
