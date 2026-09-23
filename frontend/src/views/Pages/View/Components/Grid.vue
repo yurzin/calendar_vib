@@ -656,13 +656,13 @@ const nextPage = () => {
   transform: translate(-50%, -50%);
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: clamp(8px, 3vw, 16px);
   z-index: 4;
 }
 
 .ad-logo-mark {
-  width: 150px;
-  height: 150px;
+  width: clamp(60px, 15vw, 150px);
+  height: clamp(60px, 15vw, 150px);
   border-radius: 20px;
   background: rgba(129, 140, 248, 0.12);
   border: 1px solid rgba(129, 140, 248, 0.22);
@@ -672,9 +672,14 @@ const nextPage = () => {
   flex-shrink: 0;
 }
 
+.ad-logo-mark svg {
+  width: 50%;
+  height: 50%;
+}
+
 .ad-logo-name {
   font-family: 'Roboto', sans-serif;
-  font-size: 56px;
+  font-size: clamp(20px, 6vw, 56px);
   font-weight: 100;
   color: #e2edf8;
   letter-spacing: 0.01em;
