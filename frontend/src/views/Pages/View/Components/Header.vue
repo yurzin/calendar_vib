@@ -194,6 +194,9 @@ const handleLogout = async () => {
 @media (max-width: 1100px) {
   .gl-nav-menu { display: none; }
   .gl-nav-divider { display: none; }
+  .gl-nav-accent { display: none; }
+  .gl-nav-plain { display: none; }
+  .gl-nav { flex: 0; padding: 0; }
   .gl-burger { display: flex; }
   .gl-mobile-nav { display: flex; }
 }
@@ -226,10 +229,15 @@ const handleLogout = async () => {
   .gl-gallery-item--lg { grid-column: span 1; }
   .gl-members-grid { grid-template-columns: 1fr; }
   .gl-archive-grid { grid-template-columns: repeat(2, 1fr); }
-  .gl-nav-accent span { display: none; }
   .gl-card-abs { display: none; }
   .gl-modal { padding: 32px 24px; }
   .gl-footer-inner { padding: 24px 20px; }
+  .gl-header { padding: 12px 16px; }
+  .gl-brand { padding: 0; gap: 10px; }
+  .gl-brand-icon { width: 52px; height: 60px; }
+  .gl-logo { width: 46px; height: 46px; }
+  .gl-brand-name { font-size: 19px; }
+  .gl-burger { padding: 0 10px; border-left: none; }
 }
 
 </style>
