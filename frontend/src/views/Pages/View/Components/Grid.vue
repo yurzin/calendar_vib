@@ -515,12 +515,14 @@ const nextPage = () => {
   flex-shrink: 0;
   flex-wrap: nowrap;
   gap: 12px;
-  overflow-x: auto;
+  min-width: 0;
 }
 
 .page-indicator {
   font-size: 12px;
   color: #64748b;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .month-selector {
@@ -531,6 +533,8 @@ const nextPage = () => {
   border: 1px solid rgba(96, 165, 250, 0.15);
   border-radius: 40px;
   padding: 6px 16px;
+  min-width: 0;
+  flex: 1;
 }
 
 .month-nav {
@@ -542,6 +546,7 @@ const nextPage = () => {
   padding: 4px 12px;
   border-radius: 20px;
   transition: all 0.2s;
+  flex-shrink: 0;
 }
 
 .month-nav:hover:not(:disabled) {
@@ -558,9 +563,12 @@ const nextPage = () => {
   font-size: 15px;
   font-weight: 500;
   color: #dce8f5;
-  min-width: 170px;
+  min-width: 0;
+  flex: 1;
   text-align: center;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* ─── Рекламная заглушка ─────────────────────────── */
@@ -632,7 +640,7 @@ const nextPage = () => {
   z-index: 4;
   text-align: right;
   font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(28px, 4vw, 48px);
+  font-size: clamp(18px, 5vw, 48px);
   font-weight: 600;
   line-height: 1.15;
   color: #f0f4ff;
@@ -656,13 +664,13 @@ const nextPage = () => {
   transform: translate(-50%, -50%);
   display: flex;
   align-items: center;
-  gap: clamp(8px, 3vw, 16px);
+  gap: clamp(6px, 2.5vw, 16px);
   z-index: 4;
 }
 
 .ad-logo-mark {
-  width: clamp(60px, 15vw, 150px);
-  height: clamp(60px, 15vw, 150px);
+  width: clamp(40px, 12vw, 150px);
+  height: clamp(40px, 12vw, 150px);
   border-radius: 20px;
   background: rgba(129, 140, 248, 0.12);
   border: 1px solid rgba(129, 140, 248, 0.22);
@@ -679,7 +687,7 @@ const nextPage = () => {
 
 .ad-logo-name {
   font-family: 'Roboto', sans-serif;
-  font-size: clamp(20px, 6vw, 56px);
+  font-size: clamp(14px, 5vw, 56px);
   font-weight: 100;
   color: #e2edf8;
   letter-spacing: 0.01em;
@@ -1097,7 +1105,12 @@ const nextPage = () => {
 
   .current-month {
     font-size: 13px;
-    min-width: 130px;
+    min-width: 0;
+  }
+
+  .ad-cover-title {
+    bottom: 56px;
+    right: 16px;
   }
 }
 </style>

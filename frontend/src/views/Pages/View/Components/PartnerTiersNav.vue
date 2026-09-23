@@ -65,4 +65,21 @@ const otherTiers = tiers.filter(t => t.key !== props.current)
   background: rgba(13, 21, 48, 0.8);
   color: #bfdbfe;
 }
+
+@media (max-width: 480px) {
+  .tier-nav {
+    gap: 8px;
+  }
+
+  .tier-nav-label {
+    width: 100%;
+    margin-right: 0;
+    margin-bottom: 2px;
+  }
+
+  .tier-nav-link {
+    font-size: 12px;
+    padding: 8px 14px;
+  }
+}
 </style>
