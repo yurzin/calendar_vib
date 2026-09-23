@@ -75,13 +75,24 @@ const removeCover = () => {
 };
 
 // PDF
+const MAX_PDF_MB = 50;
+
 const pdfFile      = ref<File | null>(null);
 const pdfFileName  = ref('');
 const existingPdfName = ref('');
 
 const onPdfChange = (e: Event) => {
-  const file = (e.target as HTMLInputElement).files?.[0];
+  const input = e.target as HTMLInputElement;
+  const file  = input.files?.[0];
   if (!file) return;
+
+  if (file.size > MAX_PDF_MB * 1024 * 1024) {
+    formErrors.value.pdf = `Файл слишком большой (${(file.size / 1024 / 1024).toFixed(1)} МБ). Максимум — ${MAX_PDF_MB} МБ.`;
+    input.value = '';
+    return;
+  }
+
+  formErrors.value.pdf = '';
   pdfFile.value     = file;
   pdfFileName.value = file.name;
 };
@@ -163,6 +174,10 @@ const save = async () => {
     const errs = getValidationErrors(e);
     if (errs) {
       formErrors.value = Object.fromEntries(Object.entries(errs).map(([k, v]) => [k, v[0]]));
+    } else if (axios.isAxiosError(e) && e.response?.status === 413) {
+      // Сервер (nginx) отклонил запрос ещё до Laravel — тело не JSON,
+      // поэтому проверяем именно статус, а не пытаемся распарсить ответ
+      formErrors.value.global = `Файл слишком большой. Максимальный размер — ${MAX_PDF_MB} МБ.`;
     } else {
       formErrors.value.global = getErrorMessage(e, 'Ошибка сохранения');
     }
