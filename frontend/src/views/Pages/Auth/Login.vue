@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useAuth } from '@/composable/useAuth';
+import { getMainSiteUrl } from '@/utils/site';
 import GuestLayout from '../../Layouts/GuestLayout.vue';
 
 const router  = useRouter();
@@ -10,6 +11,7 @@ const { login, loading, errors } = useAuth();
 
 const form = ref({ email: '', password: '', remember: false });
 const showPass = ref(false);
+const registerUrl = `${getMainSiteUrl()}/register`;
 
 const handleLogin = async () => {
   try {
@@ -125,7 +127,7 @@ const handleLogin = async () => {
     <!-- Ссылка на регистрацию -->
     <div class="lf-footer">
       <span>Нет аккаунта?</span>
-      <a href="http://calendar.local/register" class="lf-link">Зарегистрироваться →</a>
+      <a :href="registerUrl" class="lf-link">Зарегистрироваться →</a>
     </div>
 
   </GuestLayout>

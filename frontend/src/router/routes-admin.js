@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import { useAuth } from '@/composable/useAuth';
+import { getMainSiteUrl } from '@/utils/site';
 
 const routes = [
   {
@@ -27,9 +28,15 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/archive',
+    component: () => import('../views/Pages/Admin/Archive.vue'),
+    name: 'archive',
+    meta: { requiresAuth: true }
+  },
+  {
     path: '/calendar',
     beforeEnter: () => {
-      window.location.href = 'http://calendar.local';
+      window.location.href = getMainSiteUrl();
     },
     component: { template: '<div></div>' },
   },
@@ -69,7 +76,7 @@ router.beforeEach(async (to) => {
         // Есть доступ — в дашборд, нет — на основной сайт
         return hasAccess
           ? { name: 'admin' }
-          : { path: window.location.href = import.meta.env.VITE_MAIN_URL ?? 'http://calendar.local' };
+          : { path: window.location.href = getMainSiteUrl() };
       }
     }
     return true;
@@ -88,7 +95,7 @@ router.beforeEach(async (to) => {
 
     if (!hasAccess) {
       // Залогинен, но не админ — на основной сайт, не на логин
-      window.location.href = import.meta.env.VITE_MAIN_URL ?? 'http://calendar.local';
+      window.location.href = getMainSiteUrl();
       return false;
     }
   }

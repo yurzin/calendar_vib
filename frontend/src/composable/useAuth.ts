@@ -1,6 +1,7 @@
 import { ref } from 'vue';
 import axios from '../utils/axios';
 import { getErrorMessage, getValidationErrors } from '@/lib/errors';
+import { getMainSiteUrl } from '@/utils/site';
 
 export interface User {
   id: number;
@@ -59,7 +60,7 @@ export function useAuth() {
 
       if (!hasAccess) {
         user.value = null;
-        window.location.href = import.meta.env.VITE_MAIN_URL ?? 'http://calendar.local';
+        window.location.href = getMainSiteUrl();
         return; // ← undefined, компонент увидит !result и остановится
       }
 
