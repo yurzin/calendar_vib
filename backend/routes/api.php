@@ -27,7 +27,7 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/main', [MainController::class, 'index']);
 Route::post('/members', [MainController::class, 'members']);
-Route::get('/archive', [MainController::class, 'archive']);
+Route::get('/archive-issues', [MainController::class, 'archive']);
 
 Route::domain(env('ADMIN_DOMAIN', 'admin.calendar.local'))->group(function () {
 

@@ -13,7 +13,7 @@ const archiveIssues = ref<ArchiveIssue[]>([]);
 
 onMounted(async () => {
   try {
-    const { data } = await axios.get('/api/archive');
+    const { data } = await axios.get('/api/archive-issues');
     archiveIssues.value = Array.isArray(data?.issues) ? data.issues : [];
   } catch {
     archiveIssues.value = [];
