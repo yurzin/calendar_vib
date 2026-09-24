@@ -636,9 +636,9 @@ const nextPage = () => {
 .ad-cover-title {
   position: absolute;
   bottom: 90px;
-  right: 28px;
+  left: 28px;
   z-index: 4;
-  text-align: right;
+  text-align: left;
   font-family: 'Cormorant Garamond', serif;
   font-size: clamp(18px, 5vw, 48px);
   font-weight: 600;
@@ -1116,7 +1116,7 @@ const nextPage = () => {
 
   .ad-cover-title {
     bottom: 40px;
-    right: 14px;
+    left: 14px;
   }
 
   .ad-stats {
