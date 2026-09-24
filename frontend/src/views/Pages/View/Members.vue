@@ -3,6 +3,7 @@ import {computed, onMounted, ref} from 'vue'
 import { useRouter } from 'vue-router';
 import { useAuth } from '@/composable/useAuth';
 import axios from "axios";
+import Modal from "@/views/Pages/View/Components/Modal.vue";
 
 const { user, logout } = useAuth();
 const router = useRouter();
@@ -12,8 +13,6 @@ const isAdmin = computed(() => user.value?.roles?.includes('admin'));
 
 // Модальное окно формы регистрации
 const modalOpen = ref(false)
-const formSent = ref(false)
-const form = ref({ name: '', company: '', phone: '' })
 const members    = ref<Member[]>([]);
 const membersLoading  = ref(false);
 
@@ -28,12 +27,7 @@ const handleLogout = async () => {
   }
 };
 
-function openModal() { modalOpen.value = true; formSent.value = false }
-function closeModal() { modalOpen.value = false }
-function submitForm() {
-  // Здесь можно добавить отправку на сервер
-  formSent.value = true
-}
+function openModal() { modalOpen.value = true }
 
 // ─── Типы ──────────────────────────────────────────────────────────────────
 interface PersonPreview {
@@ -435,88 +429,7 @@ onMounted(() => {
       </div>
     </Transition>
 
-    <!-- ═══════════════════════════════════════════════════════
-         МОДАЛЬНОЕ ОКНО — Форма регистрации
-    ═══════════════════════════════════════════════════════════ -->
-    <Transition name="modal">
-      <div v-if="modalOpen" class="gl-modal-overlay" @click.self="closeModal">
-        <div class="gl-modal">
-          <button class="gl-modal-close" @click="closeModal" aria-label="Закрыть">✕</button>
-
-          <!-- Успех -->
-          <Transition name="fade" mode="out-in">
-            <div v-if="formSent" class="gl-modal-success">
-              <div class="gl-modal-success-icon">
-                <svg viewBox="0 0 24 24" fill="none" width="32" height="32">
-                  <path d="M20 6L9 17l-5-5" stroke="#93c5fd" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </div>
-              <h3 class="gl-modal-success-title">Заявка отправлена!</h3>
-              <p class="gl-modal-success-text">Мы свяжемся с вами в ближайшее время и расскажем о форматах участия в календаре.</p>
-              <button class="gl-modal-success-btn" @click="closeModal">Закрыть</button>
-            </div>
-
-            <!-- Форма -->
-            <div v-else class="gl-modal-body">
-              <div class="gl-modal-head">
-                <div class="gl-section-line" />
-                <h2 class="gl-modal-title">Хочу в календарь</h2>
-                <p class="gl-modal-sub">Оставьте контакты — мы подберём подходящий формат участия и свяжемся с вами</p>
-              </div>
-
-              <div class="gl-modal-form">
-                <div class="gl-field">
-                  <label class="gl-field-label">Имя и фамилия *</label>
-                  <input
-                    v-model="form.name"
-                    type="text"
-                    class="gl-field-input"
-                    placeholder="Иванов Иван"
-                    autocomplete="name"
-                  />
-                </div>
-                <div class="gl-field">
-                  <label class="gl-field-label">Компания / организация *</label>
-                  <input
-                    v-model="form.company"
-                    type="text"
-                    class="gl-field-input"
-                    placeholder="ООО «Название»"
-                    autocomplete="organization"
-                  />
-                </div>
-                <div class="gl-field">
-                  <label class="gl-field-label">Телефон *</label>
-                  <input
-                    v-model="form.phone"
-                    type="tel"
-                    class="gl-field-input"
-                    placeholder="+7 (___) ___-__-__"
-                    autocomplete="tel"
-                  />
-                </div>
-
-                <button
-                  class="gl-modal-submit"
-                  :disabled="!form.name || !form.company || !form.phone"
-                  @click="submitForm"
-                >
-                  Отправить заявку
-                  <svg viewBox="0 0 16 16" fill="none" width="13" height="13">
-                    <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                  </svg>
-                </button>
-
-                <p class="gl-modal-hint">
-                  Нажимая «Отправить», вы соглашаетесь с
-                  <a href="#" class="gl-modal-link">политикой конфиденциальности</a>
-                </p>
-              </div>
-            </div>
-          </Transition>
-        </div>
-      </div>
-    </Transition>
+    <Modal v-model="modalOpen" />
 
   </div>
 </template>

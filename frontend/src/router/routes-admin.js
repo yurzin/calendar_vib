@@ -40,6 +40,12 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/leads',
+    component: () => import('../views/Pages/Admin/Leads.vue'),
+    name: 'leads',
+    meta: { requiresAuth: true }
+  },
+  {
     path: '/calendar',
     beforeEnter: () => {
       window.location.href = getMainSiteUrl();

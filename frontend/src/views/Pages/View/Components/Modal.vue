@@ -1,7 +1,10 @@
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive, watch } from 'vue'
+import { useRoute } from 'vue-router'
+import axios from 'axios'
+import { getErrorMessage, getValidationErrors } from '@/lib/errors'
 
-defineProps<{
+const props = defineProps<{
   modelValue: boolean
 }>()
 
@@ -14,12 +17,43 @@ function closeModal() {
   emit('update:modelValue', false)
 }
 
+const route = useRoute()
+
 const formSent = ref(false)
+const sending = ref(false)
+const error = ref('')
+const fieldErrors = ref<Record<string, string>>({})
 const form = reactive({ name: '', company: '', phone: '' })
 
-function submitForm() {
-  formSent.value = true
-  emit('submit')
+// При повторном открытии — снова показываем форму, а не экран успеха
+watch(() => props.modelValue, (open) => {
+  if (open && formSent.value) {
+    formSent.value = false
+    Object.assign(form, { name: '', company: '', phone: '' })
+  }
+})
+
+async function submitForm() {
+  if (sending.value) return
+  sending.value = true
+  error.value = ''
+  fieldErrors.value = {}
+  try {
+    await axios.post('/api/leads', { ...form, source: route.fullPath })
+    formSent.value = true
+    emit('submit')
+  } catch (e) {
+    const errors = getValidationErrors(e)
+    if (errors) {
+      fieldErrors.value = Object.fromEntries(Object.entries(errors).map(([k, v]) => [k, v[0]]))
+    } else if (axios.isAxiosError(e) && e.response?.status === 429) {
+      error.value = 'Слишком много заявок подряд. Попробуйте через минуту.'
+    } else {
+      error.value = getErrorMessage(e, 'Не удалось отправить заявку. Попробуйте ещё раз.')
+    }
+  } finally {
+    sending.value = false
+  }
 }
 </script>
 
@@ -63,6 +97,7 @@ function submitForm() {
                   placeholder="Иванов Иван"
                   autocomplete="name"
                 />
+                <span v-if="fieldErrors.name" class="gl-field-err">{{ fieldErrors.name }}</span>
               </div>
               <div class="gl-field">
                 <label class="gl-field-label">Компания / организация *</label>
@@ -73,6 +108,7 @@ function submitForm() {
                   placeholder="ООО «Название»"
                   autocomplete="organization"
                 />
+                <span v-if="fieldErrors.company" class="gl-field-err">{{ fieldErrors.company }}</span>
               </div>
               <div class="gl-field">
                 <label class="gl-field-label">Телефон *</label>
@@ -83,14 +119,17 @@ function submitForm() {
                   placeholder="+7 (___) ___-__-__"
                   autocomplete="tel"
                 />
+                <span v-if="fieldErrors.phone" class="gl-field-err">{{ fieldErrors.phone }}</span>
               </div>
+
+              <p v-if="error" class="gl-modal-error">{{ error }}</p>
 
               <button
                 class="gl-modal-submit"
-                :disabled="!form.name || !form.company || !form.phone"
+                :disabled="sending || !form.name || !form.company || !form.phone"
                 @click="submitForm"
               >
-                Отправить заявку
+                {{ sending ? 'Отправляем…' : 'Отправить заявку' }}
                 <svg viewBox="0 0 16 16" fill="none" width="13" height="13">
                   <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
                 </svg>
@@ -177,6 +216,14 @@ function submitForm() {
   transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
 }
 .gl-field-input::placeholder { color: #2a3f65; }
+.gl-field-err { font-size: 12px; color: #fca5a5; }
+.gl-modal-error {
+  margin: 0; padding: 10px 14px;
+  font-size: 13px; line-height: 1.5; color: #fca5a5;
+  background: rgba(239,68,68,0.1);
+  border: 1px solid rgba(239,68,68,0.2);
+  border-radius: 10px;
+}
 .gl-field-input:focus {
   border-color: rgba(147,197,253,0.4);
   background: rgba(10,16,40,0.85);
