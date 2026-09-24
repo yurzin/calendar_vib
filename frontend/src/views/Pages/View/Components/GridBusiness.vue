@@ -2,9 +2,14 @@
   <div class="gl-section gl-section--dark" id="business-partner">
     <div class="gl-container">
       <div class="gl-section-head">
+        <router-link to="/#integration" class="gl-back-link">← Все форматы участия</router-link>
         <div class="gl-section-head-top">
           <div class="gl-section-head-main">
             <h2 class="gl-section-title">Деловой партнёр</h2>
+          </div>
+          <div class="gl-section-price">
+            <span class="gl-section-price-lbl">Стоимость участия</span>
+            <span class="gl-section-price-val">25 900 ₽</span>
           </div>
           <div class="gl-section-headline">
             Ваш бренд <span class="gl-section-headline-accent">в деловой среде</span>
@@ -462,6 +467,49 @@ const nextPage = () => {
   color: #818cf8;
 }
 
+.gl-back-link {
+  display: inline-block;
+  margin: 24px 0 16px;
+  font-size: 13px;
+  color: #93c5fd;
+  text-decoration: none;
+  padding: 8px 16px;
+  border-radius: 30px;
+  border: 1px solid rgba(96, 165, 250, 0.2);
+  background: rgba(13, 21, 48, 0.5);
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
+}
+
+.gl-back-link:hover {
+  border-color: rgba(147, 197, 253, 0.5);
+  background: rgba(13, 21, 48, 0.8);
+  color: #bfdbfe;
+}
+
+.gl-section-price {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.gl-section-price-lbl {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #64748b;
+}
+
+.gl-section-price-val {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(28px, 3vw, 40px);
+  font-weight: 700;
+  color: #93c5fd;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  white-space: nowrap;
+}
+
 .gl-section-body {
   font-size: 15px;
   line-height: 1.6;
@@ -478,6 +526,10 @@ const nextPage = () => {
 
   .gl-section-headline {
     white-space: normal;
+  }
+
+  .gl-section-price {
+    align-items: flex-start;
   }
 }
 
