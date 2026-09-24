@@ -30,12 +30,15 @@
           <span class="page-indicator">Стр. {{ currentPage + 1 }} / {{ totalPages }}</span>
         </div>
 
-        <div v-if="currentPageInfo.type === 'ad'" class="ad-page ad-page--placement">
+        <div v-if="currentPageInfo.type === 'ad'" class="ad-page ad-page--half">
+          <!-- Вторая половина полосы — не входит в размещение участника -->
+          <div class="ad-half-free" aria-hidden="true"/>
+
           <div class="ad-right">
             <div class="ad-placement-marker">
               <div class="placement-tooltip">
-                <span class="placement-tooltip-count">1 размещение</span>
-                Макет компании на странице месяца
+                <span class="placement-tooltip-count">1 размещение · 1/2 полосы</span>
+                Макет компании на половине страницы месяца
               </div>
             </div>
 
@@ -209,7 +212,7 @@ const currentPageInfo = computed<PageInfo>(() => {
     return {
       type: 'ad',
       label: `Реклама после «${monthNames[idx]}»`,
-      adName: 'Размещение макета компании на странице месяца'
+      adName: 'Размещение макета компании на 1/2 полосы страницы месяца'
     }
   }
 
@@ -620,8 +623,41 @@ const nextPage = () => {
   position: relative;
 }
 
-.ad-page--placement {
+/* Макет участника занимает 1/2 полосы: правая половина страницы */
+.ad-page--half {
+  flex-direction: row;
+  gap: 8px;
+  background: transparent;
+  border-radius: 0;
+}
+
+.ad-page--half .ad-right {
+  flex: 1 1 0;
+  min-width: 0;
   border: 1px solid #ec4899;
+  border-radius: 12px;
+}
+
+.ad-half-free {
+  flex: 1 1 0;
+  min-width: 0;
+  border: 1px dashed rgba(96, 165, 250, 0.15);
+  border-radius: 12px;
+  background: rgba(13, 21, 48, 0.3);
+}
+
+.ad-page--half .ad-logo-area {
+  top: 50%;
+  left: 50%;
+}
+
+.ad-page--half .ad-logo-mark {
+  width: clamp(28px, 7vw, 90px);
+  height: clamp(28px, 7vw, 90px);
+}
+
+.ad-page--half .ad-logo-name {
+  font-size: clamp(11px, 3vw, 34px);
 }
 
 .ad-placement-marker {
