@@ -10,10 +10,17 @@ const { user, checkAuth } = useAuth();
 // ─── Типы ──────────────────────────────────────────────────────────────────
 interface Lead {
   id: number;
-  name: string;
-  company: string;
+  last_name: string;
+  first_name: string | null;
+  middle_name: string | null;
+  birthday: string | null;
+  city: string | null;
+  workplace: string;
+  position: string | null;
+  email: string | null;
   phone: string;
   source: string | null;
+  consent_at: string | null;
   created_at: string | null;
 }
 
@@ -45,6 +52,14 @@ const formatDate = (iso: string | null) => {
     day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit',
   });
 };
+
+const formatBirthday = (date: string | null) => {
+  if (!date) return '—';
+  const [y, m, d] = date.split('-');
+  return `${d}.${m}.${y}`;
+};
+
+const fullName = (l: Lead) => [l.last_name, l.first_name, l.middle_name].filter(Boolean).join(' ');
 
 // ─── Удаление ──────────────────────────────────────────────────────────────
 const deleteConfirmId = ref<number | null>(null);
@@ -113,9 +128,11 @@ const doDelete = async (id: number) => {
             <thead>
               <tr>
                 <th>Дата</th>
-                <th>Имя</th>
-                <th>Компания</th>
-                <th>Телефон</th>
+                <th>ФИО</th>
+                <th>Дата рождения</th>
+                <th>Город</th>
+                <th>Работа</th>
+                <th>Контакты</th>
                 <th>Страница</th>
                 <th />
               </tr>
@@ -123,9 +140,20 @@ const doDelete = async (id: number) => {
             <tbody>
               <tr v-for="lead in leads" :key="lead.id">
                 <td class="ld-date" data-label="Дата">{{ formatDate(lead.created_at) }}</td>
-                <td data-label="Имя">{{ lead.name }}</td>
-                <td data-label="Компания">{{ lead.company }}</td>
-                <td data-label="Телефон"><a :href="`tel:${lead.phone}`" class="ld-phone">{{ lead.phone }}</a></td>
+                <td data-label="ФИО">
+                  {{ fullName(lead) }}
+                  <span v-if="!lead.consent_at" class="ld-badge" title="Заявка отправлена до появления галочки согласия">без согласия на ПД</span>
+                </td>
+                <td class="ld-nowrap" data-label="Дата рождения">{{ formatBirthday(lead.birthday) }}</td>
+                <td data-label="Город">{{ lead.city || '—' }}</td>
+                <td data-label="Работа">
+                  {{ lead.workplace }}
+                  <span v-if="lead.position" class="ld-sub">{{ lead.position }}</span>
+                </td>
+                <td data-label="Контакты">
+                  <a :href="`tel:${lead.phone}`" class="ld-phone">{{ lead.phone }}</a>
+                  <a v-if="lead.email" :href="`mailto:${lead.email}`" class="ld-phone ld-sub">{{ lead.email }}</a>
+                </td>
                 <td class="ld-source" data-label="Страница">{{ lead.source || '—' }}</td>
                 <td><div class="ld-actions">
                   <template v-if="deleteConfirmId === lead.id">
@@ -213,6 +241,10 @@ const doDelete = async (id: number) => {
 .ld-date { white-space: nowrap; color: var(--text-b) !important; }
 .ld-phone { color: var(--accent-hi); text-decoration: none; white-space: nowrap; }
 .ld-phone:hover { text-decoration: underline; }
+.ld-nowrap { white-space: nowrap; }
+.ld-sub { display: block; font-size: 12px; color: var(--text-b); margin-top: 2px; }
+a.ld-sub { color: var(--accent-hi); }
+.ld-badge { display: inline-block; margin-top: 4px; padding: 2px 8px; border-radius: 999px; font-size: 11px; color: #fbbf24; background: rgba(251,191,36,0.1); border: 1px solid rgba(251,191,36,0.25); }
 .ld-source { color: var(--text-mute) !important; font-size: 12px; }
 .ld-actions { display: flex; align-items: center; justify-content: flex-end; gap: 6px; }
 
@@ -226,6 +258,7 @@ const doDelete = async (id: number) => {
   .ld-table tbody tr:last-child { border-bottom: none; }
   .ld-table td { padding: 3px 0; border-bottom: none; }
   .ld-table td[data-label]::before { content: attr(data-label) ': '; color: var(--text-mute); font-size: 12px; }
+  .ld-sub { display: inline; margin: 0 0 0 8px; }
   .ld-actions { justify-content: flex-start; margin-top: 8px; }
 }
 </style>

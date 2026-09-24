@@ -38,7 +38,7 @@
         <span class="gl-footer-copy-text">© 2017 – {{ new Date().getFullYear() }}</span>
       </div>
       <div class="gl-footer-links">
-        <a href="#" class="gl-footer-link">Политика конфиденциальности</a>
+        <a href="/consent-personal-data" class="gl-footer-link">Политика конфиденциальности</a>
         <span class="gl-sep">·</span>
         <a href="#" class="gl-footer-link">Поддержка</a>
       </div>

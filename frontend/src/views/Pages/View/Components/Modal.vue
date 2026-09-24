@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, watch } from 'vue'
+import { ref, reactive, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import axios from 'axios'
 import { getErrorMessage, getValidationErrors } from '@/lib/errors'
@@ -19,27 +19,65 @@ function closeModal() {
 
 const route = useRoute()
 
+type FieldKey = 'last_name' | 'first_name' | 'middle_name' | 'birthday' | 'city'
+  | 'workplace' | 'position' | 'email' | 'phone'
+
+interface FieldDef {
+  key: FieldKey
+  label: string
+  type: string
+  placeholder?: string
+  autocomplete: string
+  required: boolean
+  wide?: boolean // на всю ширину формы
+}
+
+const fields: FieldDef[] = [
+  { key: 'last_name',   label: 'Фамилия',       type: 'text',  placeholder: 'Иванов',            autocomplete: 'family-name',     required: true },
+  { key: 'first_name',  label: 'Имя',           type: 'text',  placeholder: 'Иван',              autocomplete: 'given-name',      required: true },
+  { key: 'middle_name', label: 'Отчество',      type: 'text',  placeholder: 'Иванович',          autocomplete: 'additional-name', required: false },
+  { key: 'birthday',    label: 'День рождения', type: 'date',                                    autocomplete: 'bday',            required: true },
+  { key: 'city',        label: 'Город',         type: 'text',  placeholder: 'Кемерово',          autocomplete: 'address-level2',  required: true, wide: true },
+  { key: 'workplace',   label: 'Место работы',  type: 'text',  placeholder: 'ООО «Название»',    autocomplete: 'organization',    required: true, wide: true },
+  { key: 'position',    label: 'Должность',     type: 'text',  placeholder: 'Генеральный директор', autocomplete: 'organization-title', required: true, wide: true },
+  { key: 'email',       label: 'E-mail',        type: 'email', placeholder: 'mail@example.ru',   autocomplete: 'email',           required: true },
+  { key: 'phone',       label: 'Телефон',       type: 'tel',   placeholder: '+7 (___) ___-__-__', autocomplete: 'tel',            required: true },
+]
+
+const emptyForm = (): Record<FieldKey, string> => ({
+  last_name: '', first_name: '', middle_name: '', birthday: '', city: '',
+  workplace: '', position: '', email: '', phone: '',
+})
+
 const formSent = ref(false)
 const sending = ref(false)
 const error = ref('')
 const fieldErrors = ref<Record<string, string>>({})
-const form = reactive({ name: '', company: '', phone: '' })
+const form = reactive(emptyForm())
+const consent = ref(false)
+
+const today = new Date().toISOString().slice(0, 10)
+
+const canSubmit = computed(() =>
+  !sending.value && consent.value && fields.every(f => !f.required || form[f.key].trim() !== ''),
+)
 
 // При повторном открытии — снова показываем форму, а не экран успеха
 watch(() => props.modelValue, (open) => {
   if (open && formSent.value) {
     formSent.value = false
-    Object.assign(form, { name: '', company: '', phone: '' })
+    Object.assign(form, emptyForm())
+    consent.value = false
   }
 })
 
 async function submitForm() {
-  if (sending.value) return
+  if (!canSubmit.value) return
   sending.value = true
   error.value = ''
   fieldErrors.value = {}
   try {
-    await axios.post('/api/leads', { ...form, source: route.fullPath })
+    await axios.post('/api/leads', { ...form, consent: consent.value, source: route.fullPath })
     formSent.value = true
     emit('submit')
   } catch (e) {
@@ -80,7 +118,7 @@ async function submitForm() {
           </div>
 
           <!-- Форма -->
-          <div v-else class="gl-modal-body">
+          <form v-else class="gl-modal-body" novalidate @submit.prevent="submitForm">
             <div class="gl-modal-head">
               <div class="gl-section-line" />
               <h2 class="gl-modal-title">Хочу в календарь</h2>
@@ -88,64 +126,59 @@ async function submitForm() {
             </div>
 
             <div class="gl-modal-form">
-              <div class="gl-field">
-                <label class="gl-field-label">Имя и фамилия *</label>
-                <input
-                  v-model="form.name"
-                  type="text"
-                  class="gl-field-input"
-                  placeholder="Иванов Иван"
-                  autocomplete="name"
-                />
-                <span v-if="fieldErrors.name" class="gl-field-err">{{ fieldErrors.name }}</span>
+              <div class="gl-fields-grid">
+                <div
+                  v-for="f in fields"
+                  :key="f.key"
+                  class="gl-field"
+                  :class="{ 'gl-field--wide': f.wide }"
+                >
+                  <label class="gl-field-label" :for="`lead-${f.key}`">{{ f.label }}{{ f.required ? ' *' : '' }}</label>
+                  <input
+                    :id="`lead-${f.key}`"
+                    v-model="form[f.key]"
+                    :type="f.type"
+                    class="gl-field-input"
+                    :class="{ 'gl-field-input--err': fieldErrors[f.key] }"
+                    :placeholder="f.placeholder"
+                    :autocomplete="f.autocomplete"
+                    :max="f.type === 'date' ? today : undefined"
+                    :min="f.type === 'date' ? '1900-01-01' : undefined"
+                  />
+                  <span v-if="fieldErrors[f.key]" class="gl-field-err">{{ fieldErrors[f.key] }}</span>
+                </div>
               </div>
-              <div class="gl-field">
-                <label class="gl-field-label">Компания / организация *</label>
-                <input
-                  v-model="form.company"
-                  type="text"
-                  class="gl-field-input"
-                  placeholder="ООО «Название»"
-                  autocomplete="organization"
-                />
-                <span v-if="fieldErrors.company" class="gl-field-err">{{ fieldErrors.company }}</span>
-              </div>
-              <div class="gl-field">
-                <label class="gl-field-label">Телефон *</label>
-                <input
-                  v-model="form.phone"
-                  type="tel"
-                  class="gl-field-input"
-                  placeholder="+7 (___) ___-__-__"
-                  autocomplete="tel"
-                />
-                <span v-if="fieldErrors.phone" class="gl-field-err">{{ fieldErrors.phone }}</span>
-              </div>
+
+              <label class="gl-consent">
+                <input v-model="consent" type="checkbox" class="gl-consent-input" />
+                <span class="gl-consent-box" aria-hidden="true">
+                  <svg viewBox="0 0 16 16" fill="none" width="12" height="12">
+                    <path d="M3 8.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </span>
+                <span class="gl-consent-text">
+                  Я даю согласие на обработку персональных данных в соответствии с
+                  <a href="/consent-personal-data" target="_blank" rel="noopener" class="gl-modal-link" @click.stop>положением об обработке персональных данных</a>
+                </span>
+              </label>
+              <span v-if="fieldErrors.consent" class="gl-field-err">{{ fieldErrors.consent }}</span>
 
               <p v-if="error" class="gl-modal-error">{{ error }}</p>
 
-              <button
-                class="gl-modal-submit"
-                :disabled="sending || !form.name || !form.company || !form.phone"
-                @click="submitForm"
-              >
+              <button type="submit" class="gl-modal-submit" :disabled="!canSubmit">
                 {{ sending ? 'Отправляем…' : 'Отправить заявку' }}
                 <svg viewBox="0 0 16 16" fill="none" width="13" height="13">
                   <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
                 </svg>
               </button>
-
-              <p class="gl-modal-hint">
-                Нажимая «Отправить», вы соглашаетесь с
-                <a href="#" class="gl-modal-link">политикой конфиденциальности</a>
-              </p>
             </div>
-          </div>
+          </form>
         </Transition>
       </div>
     </div>
   </Transition>
 </template>
+
 
 <style scoped>
 /* ═══════════════════════════════════════
@@ -157,10 +190,12 @@ async function submitForm() {
   backdrop-filter: blur(14px);
   display: flex; align-items: center; justify-content: center;
   padding: 24px;
+  overflow-y: auto;
 }
 .gl-modal {
   position: relative;
-  width: 100%; max-width: 480px;
+  width: 100%; max-width: 600px;
+  margin: auto; /* длинная форма прокручивается внутри оверлея, не обрезаясь сверху */
   background: linear-gradient(150deg, #0d1530 0%, #091220 100%);
   border: 1px solid rgba(96,165,250,0.18);
   border-radius: 20px;
@@ -247,12 +282,42 @@ async function submitForm() {
 .gl-modal-submit:hover:not(:disabled) { background: #bfdbfe; transform: translateY(-1px); }
 .gl-modal-submit:disabled { opacity: 0.35; cursor: not-allowed; }
 
-.gl-modal-hint {
-  font-size: 11px; color: #2a3f65; text-align: center;
-  margin: 0; line-height: 1.5;
+.gl-modal-link { color: #60a5fa; text-decoration: none; transition: color 0.2s; }
+.gl-modal-link:hover { color: #93c5fd; text-decoration: underline; }
+
+/* Сетка полей: две колонки, широкие поля — на всю строку */
+.gl-fields-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.gl-field--wide { grid-column: 1 / -1; }
+.gl-field-input--err { border-color: rgba(239,68,68,0.45); }
+.gl-field-input[type="date"] { color-scheme: dark; }
+
+/* Согласие на обработку ПД */
+.gl-consent {
+  display: flex; align-items: flex-start; gap: 12px;
+  cursor: pointer; margin-top: 4px;
 }
-.gl-modal-link { color: #3d5a8a; text-decoration: none; transition: color 0.2s; }
-.gl-modal-link:hover { color: #93c5fd; }
+.gl-consent-input { position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none; }
+.gl-consent-box {
+  flex-shrink: 0;
+  width: 20px; height: 20px; margin-top: 1px;
+  display: flex; align-items: center; justify-content: center;
+  border: 1px solid rgba(96,165,250,0.3);
+  border-radius: 6px;
+  background: rgba(10,16,40,0.6);
+  color: transparent;
+  transition: all 0.2s;
+}
+.gl-consent-input:checked + .gl-consent-box { background: #93c5fd; border-color: #93c5fd; color: #06091a; }
+.gl-consent-input:focus-visible + .gl-consent-box { box-shadow: 0 0 0 3px rgba(59,130,246,0.3); }
+.gl-consent-text { font-size: 12px; line-height: 1.55; color: #7a93b8; }
+
+@media (max-width: 560px) {
+  .gl-modal-overlay { padding: 12px; }
+  .gl-modal { padding: 36px 20px 24px; }
+  .gl-modal-head { margin-bottom: 24px; }
+  .gl-modal-title { font-size: 30px; padding-right: 36px; }
+  .gl-fields-grid { grid-template-columns: 1fr; gap: 12px; }
+}
 
 /* Успех */
 .gl-modal-success {

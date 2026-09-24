@@ -20,7 +20,7 @@ class NewLead extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Новая заявка «Хочу в календарь»: ' . $this->lead->company,
+            subject: 'Новая заявка «Хочу в календарь»: ' . $this->lead->full_name,
         );
     }
 

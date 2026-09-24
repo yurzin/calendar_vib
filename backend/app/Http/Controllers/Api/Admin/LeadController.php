@@ -12,10 +12,17 @@ class LeadController extends Controller
     {
         $leads = Lead::orderByDesc('id')->get()->map(fn(Lead $lead) => [
             'id' => $lead->id,
-            'name' => $lead->name,
-            'company' => $lead->company,
+            'last_name' => $lead->last_name,
+            'first_name' => $lead->first_name,
+            'middle_name' => $lead->middle_name,
+            'birthday' => $lead->birthday?->toDateString(),
+            'city' => $lead->city,
+            'workplace' => $lead->workplace,
+            'position' => $lead->position,
+            'email' => $lead->email,
             'phone' => $lead->phone,
             'source' => $lead->source,
+            'consent_at' => $lead->consent_at?->toIso8601String(),
             'created_at' => $lead->created_at?->toIso8601String(),
         ]);
 
