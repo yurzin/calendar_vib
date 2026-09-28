@@ -40,7 +40,7 @@ const handleLogout = async () => {
         <a href="/#about" class="gl-nav-item">О проекте</a>
         <a href="/#calendar" class="gl-nav-item">Галерея</a>
         <a href="/#archive" class="gl-nav-item">Архив</a>
-        <a href="/#contacts" class="gl-nav-item">Контакты</a>
+        <a href="/contacts" class="gl-nav-item">Контакты</a>
       </div>
       <div class="gl-nav-divider"/>
       <router-link v-if="!user" to="/login" class="gl-nav-accent">Войти</router-link>
@@ -68,7 +68,7 @@ const handleLogout = async () => {
     <router-link to="/#members"     class="gl-mobile-item" @click="mobileOpen = false">Участники проекта</router-link>
     <router-link to="/#calendar"    class="gl-mobile-item" @click="mobileOpen = false">Галерея</router-link>
     <router-link to="/#archive"     class="gl-mobile-item" @click="mobileOpen = false">Архив</router-link>
-    <router-link to="/#contacts"    class="gl-mobile-item" @click="mobileOpen = false">Контакты</router-link>
+    <router-link to="/contacts"    class="gl-mobile-item" @click="mobileOpen = false">Контакты</router-link>
     <div class="gl-mobile-divider" />
     <router-link to="/login"    class="gl-mobile-item gl-mobile-item--plain"  @click="mobileOpen = false">Войти</router-link>
     <router-link to="/register" class="gl-mobile-item gl-mobile-item--accent" @click="mobileOpen = false">Регистрация</router-link>

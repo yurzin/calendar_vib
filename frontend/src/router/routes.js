@@ -53,6 +53,11 @@ const routes = [
     name: 'consent-personal-data'
   },
   {
+    path: '/contacts',
+    component: () => import('../views/Pages/View/Contacts.vue'),
+    name: 'contacts'
+  },
+  {
     path: '/login',
     component: () => import('../views/Pages/Auth/Login.vue'),
     name: 'login'
