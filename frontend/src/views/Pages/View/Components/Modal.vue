@@ -3,6 +3,7 @@ import { ref, reactive, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import axios from 'axios'
 import { getErrorMessage, getValidationErrors } from '@/lib/errors'
+import SmartCaptcha from '@/views/Pages/View/Components/SmartCaptcha.vue'
 
 const props = defineProps<{
   modelValue: boolean
@@ -56,20 +57,33 @@ const fieldErrors = ref<Record<string, string>>({})
 const form = reactive(emptyForm())
 const consent = ref(false)
 
+// Защита от ботов: скрытое поле-ловушка и время заполнения формы проверяет сервер
+const companySite = ref('')
+let openedAt = Date.now()
+
+// Капча показывается, только если задан клиентский ключ
+const captchaKey = import.meta.env.VITE_SMARTCAPTCHA_CLIENT_KEY || ''
+const captchaToken = ref('')
+const captchaRef = ref<InstanceType<typeof SmartCaptcha> | null>(null)
+
 const today = new Date().toISOString().slice(0, 10)
 
 const canSubmit = computed(() =>
-  !sending.value && consent.value && fields.every(f => !f.required || form[f.key].trim() !== ''),
+  !sending.value && consent.value && (!captchaKey || captchaToken.value !== '')
+  && fields.every(f => !f.required || form[f.key].trim() !== ''),
 )
 
-// При повторном открытии — снова показываем форму, а не экран успеха
 watch(() => props.modelValue, (open) => {
-  if (open && formSent.value) {
+  if (!open) return
+  openedAt = Date.now()
+  // При повторном открытии — снова показываем форму, а не экран успеха
+  if (formSent.value) {
     formSent.value = false
     Object.assign(form, emptyForm())
     consent.value = false
+    captchaToken.value = ''
   }
-})
+}, { immediate: true })
 
 async function submitForm() {
   if (!canSubmit.value) return
@@ -77,15 +91,24 @@ async function submitForm() {
   error.value = ''
   fieldErrors.value = {}
   try {
-    await axios.post('/api/leads', { ...form, consent: consent.value, source: route.fullPath })
+    await axios.post('/api/leads', {
+      ...form,
+      consent: consent.value,
+      source: route.fullPath,
+      company_site: companySite.value,
+      form_time: Date.now() - openedAt,
+      captcha: captchaToken.value,
+    })
     formSent.value = true
     emit('submit')
   } catch (e) {
+    // Токен капчи одноразовый — после ошибки её нужно пройти заново
+    captchaRef.value?.reset()
     const errors = getValidationErrors(e)
     if (errors) {
       fieldErrors.value = Object.fromEntries(Object.entries(errors).map(([k, v]) => [k, v[0]]))
     } else if (axios.isAxiosError(e) && e.response?.status === 429) {
-      error.value = 'Слишком много заявок подряд. Попробуйте через минуту.'
+      error.value = 'Слишком много заявок подряд. Попробуйте позже.'
     } else {
       error.value = getErrorMessage(e, 'Не удалось отправить заявку. Попробуйте ещё раз.')
     }
@@ -162,6 +185,17 @@ async function submitForm() {
                 </span>
               </label>
               <span v-if="fieldErrors.consent" class="gl-field-err">{{ fieldErrors.consent }}</span>
+
+              <!-- Ловушка для ботов: человек это поле не видит и не заполняет -->
+              <div class="gl-hp" aria-hidden="true">
+                <label for="lead-company-site">Сайт компании</label>
+                <input id="lead-company-site" v-model="companySite" type="text" name="company_site" tabindex="-1" autocomplete="off" />
+              </div>
+
+              <div v-if="captchaKey" class="gl-captcha">
+                <SmartCaptcha ref="captchaRef" v-model="captchaToken" :sitekey="captchaKey" />
+                <span v-if="fieldErrors.captcha" class="gl-field-err">{{ fieldErrors.captcha }}</span>
+              </div>
 
               <p v-if="error" class="gl-modal-error">{{ error }}</p>
 
@@ -292,6 +326,8 @@ async function submitForm() {
 .gl-field-input[type="date"] { color-scheme: dark; }
 
 /* Согласие на обработку ПД */
+.gl-hp { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); opacity: 0; pointer-events: none; }
+.gl-captcha { display: flex; flex-direction: column; gap: 6px; }
 .gl-consent {
   display: flex; align-items: flex-start; gap: 12px;
   cursor: pointer; margin-top: 4px;

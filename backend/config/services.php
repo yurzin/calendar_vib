@@ -33,6 +33,11 @@ return [
         'email' => env('LEADS_EMAIL'),
     ],
 
+    'smartcaptcha' => [
+        // Серверный ключ Yandex SmartCaptcha. Пустой — проверка капчи отключена
+        'server_key' => env('SMARTCAPTCHA_SERVER_KEY'),
+    ],
+
     'slack' => [
         'notifications' => [
             'bot_user_oauth_token' => env('SLACK_BOT_USER_OAUTH_TOKEN'),

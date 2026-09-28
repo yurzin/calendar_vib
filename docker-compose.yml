@@ -21,7 +21,7 @@ services:
       dockerfile: Dockerfile
     container_name: calendar_php
     restart: unless-stopped
-    environment:
+    environment: &php-env
       APP_ENV: local
       APP_DEBUG: true
       APP_URL: http://xn--80acbojebux9agf4k.local
@@ -44,6 +44,24 @@ services:
       - calendar_network
     depends_on:
       - mysql
+
+  # Воркер очереди: отправляет письма о новых заявках.
+  # После изменений в PHP-коде перезапустите: docker compose restart queue
+  queue:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: calendar_queue
+    restart: unless-stopped
+    environment: *php-env
+    command: php artisan queue:work --sleep=3
+    volumes:
+      - ./backend:/var/www/html
+    networks:
+      - calendar_network
+    depends_on:
+      - mysql
+      - php
 
   # Nginx веб-сервер
   nginx:

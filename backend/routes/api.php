@@ -32,7 +32,7 @@ Route::post('/main', [MainController::class, 'index']);
 Route::post('/members', [MainController::class, 'members']);
 Route::get('/archive-issues', [MainController::class, 'archive']);
 Route::get('/slider-images', [MainController::class, 'slider']);
-Route::post('/leads', [LeadController::class, 'store'])->middleware('throttle:5,1');
+Route::post('/leads', [LeadController::class, 'store'])->middleware('throttle:leads');
 
 Route::domain(env('ADMIN_DOMAIN', 'admin.calendar.local'))->group(function () {
 
