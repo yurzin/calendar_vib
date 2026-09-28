@@ -22,6 +22,9 @@ const mapSrc = `https://yandex.ru/map-widget/v1/?ll=${lon},${lat}&z=16&pt=${lon}
     <Header />
 
     <main class="ct-main">
+      <div class="ct-back">
+        <router-link to="/" class="gl-back-link">← На главную</router-link>
+      </div>
       <section class="ct-card">
         <h1 class="ct-title">Контакты</h1>
 
@@ -105,6 +108,24 @@ const mapSrc = `https://yandex.ru/map-widget/v1/?ll=${lon},${lat}&z=16&pt=${lon}
 .gl-grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(96,165,250,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(96,165,250,0.04) 1px, transparent 1px); background-size: 56px 56px; }
 
 .ct-main { position: relative; z-index: 1; flex: 1; padding: 48px 24px 80px; }
+.ct-back { max-width: 1080px; margin: 0 auto 16px; }
+.gl-back-link {
+  display: inline-block;
+  font-size: 13px;
+  color: #93c5fd;
+  text-decoration: none;
+  padding: 8px 16px;
+  border-radius: 30px;
+  border: 1px solid rgba(96, 165, 250, 0.2);
+  background: rgba(13, 21, 48, 0.5);
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
+}
+.gl-back-link:hover {
+  border-color: rgba(147, 197, 253, 0.5);
+  background: rgba(13, 21, 48, 0.8);
+  color: #bfdbfe;
+}
+
 .ct-card {
   max-width: 1080px; margin: 0 auto;
   padding: 48px;
