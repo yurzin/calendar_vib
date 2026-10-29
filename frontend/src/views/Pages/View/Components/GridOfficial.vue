@@ -1,169 +1,19 @@
-<template>
-  <div class="gl-section gl-section--dark" id="official-partner">
-    <div class="gl-container">
-      <div class="gl-section-head">
-        <router-link to="/#integration" class="gl-back-link">← Все форматы участия</router-link>
-        <div class="gl-section-head-top">
-          <div class="gl-section-head-main">
-            <h2 class="gl-section-title">Официальный партнёр</h2>
-          </div>
-          <div class="gl-section-price">
-            <span class="gl-section-price-lbl">Стоимость участия</span>
-            <span class="gl-section-price-val">45 900 ₽</span>
-          </div>
-          <div class="gl-section-headline">
-            Ваш бренд в <span class="gl-section-headline-accent">ключевые даты</span>
-          </div>
-        </div>
-        <p class="gl-section-body">6 знаменательных дат, 2 размещения макета в календарной сетке и 1 макет на странице месяца.</p>
-      </div>
-
-      <div class="grid-wrapper">
-        <div class="grid-header">
-          <div class="month-selector">
-            <button @click="prevPage" class="month-nav" :disabled="currentPage === 0">←</button>
-            <span class="current-month">{{ currentPageInfo.type === 'ad' ? currentPageInfo.adName : pageLabel }}</span>
-            <button @click="nextPage" class="month-nav" :disabled="currentPage === totalPages - 1">
-              →
-            </button>
-          </div>
-          <span class="page-indicator">Стр. {{ currentPage + 1 }} / {{ totalPages }}</span>
-        </div>
-
-        <div v-if="currentPageInfo.type === 'ad'" class="ad-page ad-page--placement">
-          <div class="ad-right">
-            <div class="ad-placement-marker">
-              <div class="placement-tooltip">
-                <span class="placement-tooltip-count">1 размещение</span>
-                Макет компании на странице месяца
-              </div>
-            </div>
-
-            <svg class="ad-geo" viewBox="0 0 400 240" xmlns="http://www.w3.org/2000/svg"
-                 preserveAspectRatio="xMidYMid slice">
-              <rect width="400" height="240" fill="#0b1225"/>
-              <circle cx="320" cy="60" r="130" fill="none" stroke="rgba(129,140,248,0.08)"
-                      stroke-width="1"/>
-              <circle cx="320" cy="60" r="95" fill="none" stroke="rgba(129,140,248,0.07)"
-                      stroke-width="1"/>
-              <circle cx="320" cy="60" r="60" fill="none" stroke="rgba(129,140,248,0.10)"
-                      stroke-width="1"/>
-              <circle cx="320" cy="60" r="30" fill="rgba(129,140,248,0.06)"
-                      stroke="rgba(129,140,248,0.20)" stroke-width="1"/>
-              <rect x="60" y="40" width="120" height="70" rx="8" fill="rgba(129,140,248,0.07)"
-                    stroke="rgba(129,140,248,0.15)" stroke-width="1"/>
-              <rect x="68" y="52" width="60" height="6" rx="3" fill="rgba(129,140,248,0.25)"/>
-              <rect x="68" y="64" width="90" height="4" rx="2" fill="rgba(255,255,255,0.06)"/>
-              <rect x="68" y="74" width="75" height="4" rx="2" fill="rgba(255,255,255,0.06)"/>
-              <rect x="68" y="92" width="40" height="10" rx="4" fill="rgba(236,72,153,0.30)"
-                    stroke="rgba(236,72,153,0.40)" stroke-width="0.5"/>
-              <rect x="200" y="100" width="110" height="65" rx="8" fill="rgba(129,140,248,0.07)"
-                    stroke="rgba(129,140,248,0.15)" stroke-width="1"/>
-              <rect x="209" y="113" width="50" height="5" rx="2.5" fill="rgba(129,140,248,0.30)"/>
-              <rect x="209" y="123" width="85" height="3" rx="1.5" fill="rgba(255,255,255,0.05)"/>
-              <rect x="209" y="131" width="70" height="3" rx="1.5" fill="rgba(255,255,255,0.05)"/>
-              <rect x="209" y="148" width="36" height="8" rx="3" fill="rgba(129,140,248,0.25)"
-                    stroke="rgba(129,140,248,0.30)" stroke-width="0.5"/>
-              <rect x="50" y="150" width="130" height="55" rx="8" fill="rgba(129,140,248,0.05)"
-                    stroke="rgba(129,140,248,0.10)" stroke-width="1"/>
-              <rect x="60" y="162" width="45" height="5" rx="2.5" fill="rgba(129,140,248,0.20)"/>
-              <rect x="60" y="172" width="100" height="3" rx="1.5" fill="rgba(255,255,255,0.05)"/>
-              <rect x="60" y="180" width="80" height="3" rx="1.5" fill="rgba(255,255,255,0.05)"/>
-              <line x1="180" y1="75" x2="204" y2="104" stroke="rgba(129,140,248,0.20)"
-                    stroke-width="0.8" stroke-dasharray="3 3"/>
-              <line x1="120" y1="145" x2="110" y2="153" stroke="rgba(129,140,248,0.15)"
-                    stroke-width="0.8" stroke-dasharray="3 3"/>
-              <circle cx="180" cy="75" r="3" fill="#818cf8" opacity="0.6"/>
-              <circle cx="204" cy="104" r="2" fill="#818cf8" opacity="0.4"/>
-              <circle cx="120" cy="145" r="2.5" fill="#ec4899" opacity="0.5"/>
-              <circle cx="350" cy="190" r="18" fill="rgba(236,72,153,0.08)"
-                      stroke="rgba(236,72,153,0.20)" stroke-width="1"/>
-              <circle cx="350" cy="190" r="9" fill="rgba(236,72,153,0.15)"
-                      stroke="rgba(236,72,153,0.30)" stroke-width="0.8"/>
-              <circle cx="350" cy="190" r="3" fill="#ec4899" opacity="0.7"/>
-            </svg>
-
-            <div class="ad-logo-area">
-              <div class="ad-logo-mark">
-                <svg width="70" height="70" viewBox="0 0 14 14" fill="none">
-                  <rect x="1" y="1" width="5" height="5" rx="1.5" fill="#818cf8" opacity="0.9"/>
-                  <rect x="8" y="1" width="5" height="5" rx="1.5" fill="#818cf8" opacity="0.5"/>
-                  <rect x="1" y="8" width="5" height="5" rx="1.5" fill="#818cf8" opacity="0.5"/>
-                  <rect x="8" y="8" width="5" height="5" rx="1.5" fill="#ec4899" opacity="0.7"/>
-                </svg>
-              </div>
-              <span class="ad-logo-name">Ваша<br>организация</span>
-            </div>
-
-            <div class="ad-stats">
-              <div class="ad-stat">
-                <div class="ad-stat-val">12×</div>
-                <div class="ad-stat-lbl">месяцев</div>
-              </div>
-              <div class="ad-stat">
-                <div class="ad-stat-val">3000+</div>
-                <div class="ad-stat-lbl">экземпляров</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Страница с календарём -->
-        <div v-else class="calendar-grid">
-          <div class="weekdays-vertical">
-            <div
-              class="weekday-vertical"
-              v-for="(wd, idx) in activeWeekdays"
-              :key="idx"
-            >{{ wd }}
-            </div>
-          </div>
-
-          <div class="calendar-days-vertical">
-            <div class="calendar-col" v-for="(col, ci) in columns" :key="ci">
-              <div
-                v-for="(day, rowIdx) in col"
-                :key="rowIdx"
-                class="calendar-day"
-                :class="{
-                  'is-today':     day && isToday(day.date),
-                  'is-weekend':   day && isWeekend(day.date),
-                  'is-special':   day && isSpecialDay(day.date),
-                  'is-placement': !day && placementKey(rowIdx, ci) !== null,
-                  'placement-first':  !day && placementKey(rowIdx, ci) !== null && isPlacementFirst(rowIdx, ci),
-                  'placement-last':   !day && placementKey(rowIdx, ci) !== null && isPlacementLast(rowIdx, ci),
-                  'placement-middle': !day && placementKey(rowIdx, ci) !== null && !isPlacementFirst(rowIdx, ci) && !isPlacementLast(rowIdx, ci),
-                  'empty': !day && placementKey(rowIdx, ci) === null && activeWeekdays[rowIdx] !== '',
-                  'spacer': activeWeekdays[rowIdx] === ''
-                }"
-              >
-                <span v-if="day" class="day-number">{{ day.day }}</span>
-
-                <div v-if="day && isSpecialDay(day.date)" class="special-tooltip">
-                  <span class="special-tooltip-count">6 размещений</span>
-                  Знаменательная дата — день рождения компании, руководителя, сотрудников,
-                  профессионального праздника
-                </div>
-
-                <!-- Тултип только на первой ячейке группы -->
-                <div v-if="!day && isPlacementFirst(rowIdx, ci)" class="placement-tooltip">
-                  <span class="placement-tooltip-count">2 размещения</span>
-                  Макет компании на странице календаря
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <PartnerTiersNav current="official-partner"/>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
 import {ref, computed} from 'vue'
+import {formatNumber} from "@/utils/format.ts";
 import PartnerTiersNav from '@/views/Pages/View/Components/PartnerTiersNav.vue'
+defineProps<{
+  participation: Participation | null; // Разрешаем null, если данные еще грузятся
+}>();
+
+interface Participation {
+  id: number
+  name: string
+  slug: string
+  description: string
+  price: string | null
+  sold_out?: boolean
+}
 
 interface CalendarDay {
   day: number
@@ -324,9 +174,9 @@ const isSpecialDay = (date: Date): boolean => {
 //
 // "Группа" — это непрерывная цепочка null-ячеек в одной колонке.
 // Объединённая рамка реализована через CSS-классы:
-//   placement-first  → верхняя ячейка группы  (скруглены только верхние углы, нет нижней границы)
-//   placement-middle → средние ячейки          (нет скруглений, нет верхней и нижней границы)
-//   placement-last   → нижняя ячейка группы    (скруглены только нижние углы, нет верхней границы)
+//   placement-first → верхняя ячейка группы (скруглены только верхние углы, нет нижней границы)
+//   placement-middle → средние ячейки (нет скруглений, нет верхней и нижней границы)
+//   placement-last → нижняя ячейка группы (скруглены только нижние углы, нет верхней границы)
 
 const placementCache = new Map<string, PlacementGroup | null>()
 
@@ -416,6 +266,169 @@ const nextPage = () => {
   if (currentPage.value < totalPages - 1) currentPage.value++
 }
 </script>
+
+<template>
+  <div class="gl-section gl-section--dark" id="official-partner">
+    <div class="gl-container">
+      <div class="gl-section-head">
+        <router-link to="/#integration" class="gl-back-link">← Все форматы участия</router-link>
+        <div class="gl-section-head-top">
+          <div class="gl-section-head-main">
+            <h2 class="gl-section-title">{{ participation?.name }}</h2>
+          </div>
+          <div class="gl-section-price">
+            <span class="gl-section-price-lbl">Стоимость участия</span>
+            <span class="gl-section-price-val">{{ formatNumber(participation?.price) }} ₽</span>
+          </div>
+          <div class="gl-section-headline">
+            Ваш бренд в <span class="gl-section-headline-accent">ключевые даты</span>
+          </div>
+        </div>
+        <p class="gl-section-body">6 знаменательных дат, 2 размещения макета в календарной сетке и 1 макет на странице месяца.</p>
+      </div>
+
+      <div class="grid-wrapper">
+        <div class="grid-header">
+          <div class="month-selector">
+            <button @click="prevPage" class="month-nav" :disabled="currentPage === 0">←</button>
+            <span class="current-month">{{ currentPageInfo.type === 'ad' ? currentPageInfo.adName : pageLabel }}</span>
+            <button @click="nextPage" class="month-nav" :disabled="currentPage === totalPages - 1">
+              →
+            </button>
+          </div>
+          <span class="page-indicator">Стр. {{ currentPage + 1 }} / {{ totalPages }}</span>
+        </div>
+
+        <div v-if="currentPageInfo.type === 'ad'" class="ad-page ad-page--placement">
+          <div class="ad-right">
+            <div class="ad-placement-marker">
+              <div class="placement-tooltip">
+                <span class="placement-tooltip-count">1 размещение</span>
+                Макет компании на странице месяца
+              </div>
+            </div>
+
+            <svg class="ad-geo" viewBox="0 0 400 240" xmlns="http://www.w3.org/2000/svg"
+                 preserveAspectRatio="xMidYMid slice">
+              <rect width="400" height="240" fill="#0b1225"/>
+              <circle cx="320" cy="60" r="130" fill="none" stroke="rgba(129,140,248,0.08)"
+                      stroke-width="1"/>
+              <circle cx="320" cy="60" r="95" fill="none" stroke="rgba(129,140,248,0.07)"
+                      stroke-width="1"/>
+              <circle cx="320" cy="60" r="60" fill="none" stroke="rgba(129,140,248,0.10)"
+                      stroke-width="1"/>
+              <circle cx="320" cy="60" r="30" fill="rgba(129,140,248,0.06)"
+                      stroke="rgba(129,140,248,0.20)" stroke-width="1"/>
+              <rect x="60" y="40" width="120" height="70" rx="8" fill="rgba(129,140,248,0.07)"
+                    stroke="rgba(129,140,248,0.15)" stroke-width="1"/>
+              <rect x="68" y="52" width="60" height="6" rx="3" fill="rgba(129,140,248,0.25)"/>
+              <rect x="68" y="64" width="90" height="4" rx="2" fill="rgba(255,255,255,0.06)"/>
+              <rect x="68" y="74" width="75" height="4" rx="2" fill="rgba(255,255,255,0.06)"/>
+              <rect x="68" y="92" width="40" height="10" rx="4" fill="rgba(236,72,153,0.30)"
+                    stroke="rgba(236,72,153,0.40)" stroke-width="0.5"/>
+              <rect x="200" y="100" width="110" height="65" rx="8" fill="rgba(129,140,248,0.07)"
+                    stroke="rgba(129,140,248,0.15)" stroke-width="1"/>
+              <rect x="209" y="113" width="50" height="5" rx="2.5" fill="rgba(129,140,248,0.30)"/>
+              <rect x="209" y="123" width="85" height="3" rx="1.5" fill="rgba(255,255,255,0.05)"/>
+              <rect x="209" y="131" width="70" height="3" rx="1.5" fill="rgba(255,255,255,0.05)"/>
+              <rect x="209" y="148" width="36" height="8" rx="3" fill="rgba(129,140,248,0.25)"
+                    stroke="rgba(129,140,248,0.30)" stroke-width="0.5"/>
+              <rect x="50" y="150" width="130" height="55" rx="8" fill="rgba(129,140,248,0.05)"
+                    stroke="rgba(129,140,248,0.10)" stroke-width="1"/>
+              <rect x="60" y="162" width="45" height="5" rx="2.5" fill="rgba(129,140,248,0.20)"/>
+              <rect x="60" y="172" width="100" height="3" rx="1.5" fill="rgba(255,255,255,0.05)"/>
+              <rect x="60" y="180" width="80" height="3" rx="1.5" fill="rgba(255,255,255,0.05)"/>
+              <line x1="180" y1="75" x2="204" y2="104" stroke="rgba(129,140,248,0.20)"
+                    stroke-width="0.8" stroke-dasharray="3 3"/>
+              <line x1="120" y1="145" x2="110" y2="153" stroke="rgba(129,140,248,0.15)"
+                    stroke-width="0.8" stroke-dasharray="3 3"/>
+              <circle cx="180" cy="75" r="3" fill="#818cf8" opacity="0.6"/>
+              <circle cx="204" cy="104" r="2" fill="#818cf8" opacity="0.4"/>
+              <circle cx="120" cy="145" r="2.5" fill="#ec4899" opacity="0.5"/>
+              <circle cx="350" cy="190" r="18" fill="rgba(236,72,153,0.08)"
+                      stroke="rgba(236,72,153,0.20)" stroke-width="1"/>
+              <circle cx="350" cy="190" r="9" fill="rgba(236,72,153,0.15)"
+                      stroke="rgba(236,72,153,0.30)" stroke-width="0.8"/>
+              <circle cx="350" cy="190" r="3" fill="#ec4899" opacity="0.7"/>
+            </svg>
+
+            <div class="ad-logo-area">
+              <div class="ad-logo-mark">
+                <svg width="70" height="70" viewBox="0 0 14 14" fill="none">
+                  <rect x="1" y="1" width="5" height="5" rx="1.5" fill="#818cf8" opacity="0.9"/>
+                  <rect x="8" y="1" width="5" height="5" rx="1.5" fill="#818cf8" opacity="0.5"/>
+                  <rect x="1" y="8" width="5" height="5" rx="1.5" fill="#818cf8" opacity="0.5"/>
+                  <rect x="8" y="8" width="5" height="5" rx="1.5" fill="#ec4899" opacity="0.7"/>
+                </svg>
+              </div>
+              <span class="ad-logo-name">Ваша<br>организация</span>
+            </div>
+
+            <div class="ad-stats">
+              <div class="ad-stat">
+                <div class="ad-stat-val">12×</div>
+                <div class="ad-stat-lbl">месяцев</div>
+              </div>
+              <div class="ad-stat">
+                <div class="ad-stat-val">3000+</div>
+                <div class="ad-stat-lbl">экземпляров</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Страница с календарём -->
+        <div v-else class="calendar-grid">
+          <div class="weekdays-vertical">
+            <div
+              class="weekday-vertical"
+              v-for="(wd, idx) in activeWeekdays"
+              :key="idx"
+            >{{ wd }}
+            </div>
+          </div>
+
+          <div class="calendar-days-vertical">
+            <div class="calendar-col" v-for="(col, ci) in columns" :key="ci">
+              <div
+                v-for="(day, rowIdx) in col"
+                :key="rowIdx"
+                class="calendar-day"
+                :class="{
+                  'is-today':     day && isToday(day.date),
+                  'is-weekend':   day && isWeekend(day.date),
+                  'is-special':   day && isSpecialDay(day.date),
+                  'is-placement': !day && placementKey(rowIdx, ci) !== null,
+                  'placement-first':  !day && placementKey(rowIdx, ci) !== null && isPlacementFirst(rowIdx, ci),
+                  'placement-last':   !day && placementKey(rowIdx, ci) !== null && isPlacementLast(rowIdx, ci),
+                  'placement-middle': !day && placementKey(rowIdx, ci) !== null && !isPlacementFirst(rowIdx, ci) && !isPlacementLast(rowIdx, ci),
+                  'empty': !day && placementKey(rowIdx, ci) === null && activeWeekdays[rowIdx] !== '',
+                  'spacer': activeWeekdays[rowIdx] === ''
+                }"
+              >
+                <span v-if="day" class="day-number">{{ day.day }}</span>
+
+                <div v-if="day && isSpecialDay(day.date)" class="special-tooltip">
+                  <span class="special-tooltip-count">6 размещений</span>
+                  Знаменательная дата — день рождения компании, руководителя, сотрудников,
+                  профессионального праздника
+                </div>
+
+                <!-- Тултип только на первой ячейке группы -->
+                <div v-if="!day && isPlacementFirst(rowIdx, ci)" class="placement-tooltip">
+                  <span class="placement-tooltip-count">2 размещения</span>
+                  Макет компании на странице календаря
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <PartnerTiersNav current="official-partner"/>
+    </div>
+  </div>
+</template>
 
 <style scoped>
 .gl-container {

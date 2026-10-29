@@ -10,10 +10,10 @@ const props = defineProps<{
 }>()
 
 const tiers: Tier[] = [
-  {key: 'general-partner', path: '/general-partner#general-partner', label: 'Генеральный партнёр'},
-  {key: 'official-partner', path: '/official-partner#official-partner', label: 'Официальный партнёр'},
-  {key: 'business-partner', path: '/business-partner#business-partner', label: 'Деловой партнёр'},
-  {key: 'project-participant', path: '/project-participant#project-participant', label: 'Участник проекта'}
+  {key: 'general-partner', path: '/participation/general-partner', label: 'Генеральный партнёр'},
+  {key: 'official-partner', path: '/participation/official-partner', label: 'Официальный партнёр'},
+  {key: 'business-partner', path: '/participation/business-partner', label: 'Деловой партнёр'},
+  {key: 'project-participant', path: '/participation/project-participant', label: 'Участник проекта'}
 ]
 
 const otherTiers = tiers.filter(t => t.key !== props.current)

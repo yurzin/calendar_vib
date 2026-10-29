@@ -30,6 +30,8 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/main', [MainController::class, 'index']);
 Route::post('/members', [MainController::class, 'members']);
+Route::get('/participation/{slug}', [MainController::class, 'participation']);
+Route::post('/participations', [MainController::class, 'participations']);
 Route::get('/archive-issues', [MainController::class, 'archive']);
 Route::get('/slider-images', [MainController::class, 'slider']);
 Route::post('/leads', [LeadController::class, 'store'])->middleware('throttle:leads');

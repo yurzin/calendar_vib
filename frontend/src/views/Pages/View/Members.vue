@@ -30,21 +30,6 @@ const handleLogout = async () => {
 function openModal() { modalOpen.value = true }
 
 // ─── Типы ──────────────────────────────────────────────────────────────────
-interface PersonPreview {
-  id: number;
-  short_name: string;
-  first_name: string;
-  last_name: string;
-  middle_name: string | null;
-  photo_path: string | null;
-  photo_thumb_path: string | null;
-  position_short: string | null;
-  phone: string | null;
-  email: string | null;
-  birth_day: number | null;
-  birth_month: string | null;
-}
-
 interface Member {
   id: number;
   name: string;
@@ -52,31 +37,21 @@ interface Member {
   site: string | null;
   initials: string;
   role?: string;
-  persons?: PersonPreview[];
 }
 
 // ─── Модалка партнёра ──────────────────────────────────────────────────────
 const partnerModalOpen = ref(false);
 const selectedMember   = ref<Member | null>(null);
-const memberPersons    = ref<PersonPreview[]>([]);
-const memberPersonsLoading = ref(false);
 
 const openPartnerModal = async (member: Member) => {
   selectedMember.value = member;
   partnerModalOpen.value = true;
-
-  // Данные уже есть в member.persons
-  memberPersons.value = Array.isArray(member.persons) ? member.persons : [];
 };
 
 const closePartnerModal = () => {
   partnerModalOpen.value = false;
   selectedMember.value = null;
-  memberPersons.value = [];
 };
-
-const personInitials = (p: PersonPreview) =>
-  ((p.first_name?.[0] || '') + (p.last_name?.[0] || '')).toUpperCase() || '?';
 
 const monthNames = ['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
 const formatBirthday = (day: number | null, month: string | null) => {
@@ -84,7 +59,6 @@ const formatBirthday = (day: number | null, month: string | null) => {
   const m = parseInt(String(month));
   return `${day} ${monthNames[m - 1] || ''}`;
 };
-
 
 const loadAllMembers = async () => {
   try {
@@ -249,7 +223,7 @@ onMounted(() => {
         <div class="gl-members-track-wrap">
           <div class="gl-members-track">
             <div v-for="(member, i) in [...members, ...members]" :key="`m-${i}`" class="gl-member"
-                 @click="i < members.length && openPartnerModal(member)"
+                 @click="i < members.length/* && openPartnerModal(member)*/"
                  style="cursor: pointer">
               <div class="gl-member-logo-wrap">
                 <img v-if="member.logo" :src="member.logo" :alt="member.name" class="gl-member-logo" />
@@ -261,7 +235,7 @@ onMounted(() => {
         </div>
         <div class="gl-members-grid">
           <div v-for="(member, i) in members" :key="`mg-${i}`" class="gl-member-card"
-               @click="openPartnerModal(member)"
+           <!--@click="openPartnerModal(member)"-->
                style="cursor: pointer">
             <div class="gl-member-logo-wrap gl-member-logo-wrap--lg">
               <img v-if="member.logo" :src="member.logo" :alt="member.name" class="gl-member-logo" />
@@ -357,73 +331,6 @@ onMounted(() => {
           <!-- Персоны -->
           <div class="gl-pm-persons-head">
             <span class="gl-pm-section-label">Персоны организации</span>
-          </div>
-
-          <!-- Загрузка -->
-          <div v-if="memberPersonsLoading" class="gl-pm-loading">
-            <span class="gl-pm-spinner" />
-            <span>Загрузка…</span>
-          </div>
-
-          <!-- Пусто -->
-          <div v-else-if="memberPersons.length === 0" class="gl-pm-empty">
-            <svg viewBox="0 0 48 48" fill="none" width="40" height="40">
-              <circle cx="24" cy="18" r="8" stroke="#3b82f6" stroke-width="1.3"/>
-              <path d="M8 40c0-8.837 7.163-14 16-14s16 5.163 16 14" stroke="#3b82f6" stroke-width="1.3" stroke-linecap="round"/>
-            </svg>
-            <span>Персоны не добавлены</span>
-          </div>
-
-          <!-- Список персон -->
-          <div v-else class="gl-pm-persons">
-            <div
-              v-for="person in memberPersons"
-              :key="person.id"
-              class="gl-pm-person"
-            >
-              <!-- Аватар -->
-              <div class="gl-pm-avatar">
-                <img
-                  v-if="person.photo_thumb_path || person.photo_path"
-                  :src="person.photo_thumb_path || person.photo_path || undefined"
-                  :alt="person.short_name"
-                  class="gl-pm-avatar-img"
-                  @error="($event.target as HTMLImageElement).style.display='none'"
-                />
-                <span v-else class="gl-pm-avatar-initials">{{ personInitials(person) }}</span>
-              </div>
-
-              <!-- Инфо -->
-              <div class="gl-pm-person-info">
-                <span class="gl-pm-person-name">{{ person.short_name }}</span>
-                <span v-if="person.position_short" class="gl-pm-person-pos">{{ person.position_short }}</span>
-                <div class="gl-pm-person-contacts">
-                  <!--                  <a v-if="person.phone" :href="`tel:${person.phone}`" class="gl-pm-contact">
-                                      <svg viewBox="0 0 14 14" fill="none" width="11" height="11">
-                                        <path d="M2.6 5.7c.6 1.2 1.6 2.2 2.8 2.8l.9-.9c.1-.1.3-.2.4-.1.5.2 1 .3 1.5.3.2 0 .4.2.4.4v1.5c0 .2-.2.4-.4.4C4.3 10 1 6.7 1 2.7c0-.2.2-.4.4-.4h1.5c.2 0 .4.2.4.4 0 .5.1 1 .3 1.5 0 .1 0 .3-.1.4l-.9.6z" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
-                                      </svg>
-                                      {{ person.phone }}
-                                    </a>
-                                    <a v-if="person.email" :href="`mailto:${person.email}`" class="gl-pm-contact">
-                                      <svg viewBox="0 0 14 14" fill="none" width="11" height="11">
-                                        <rect x="1" y="3" width="12" height="8" rx="1.2" stroke="currentColor" stroke-width="1"/>
-                                        <path d="M1 4l6 4 6-4" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>
-                                      </svg>
-                                      {{ person.email }}
-                                    </a>-->
-                </div>
-              </div>
-              <div>
-              <span v-if="formatBirthday(person.birth_day, person.birth_month)" class="gl-pm-birthday">
-                <svg viewBox="0 0 14 14" fill="none" width="11" height="11">
-                  <rect x="1" y="2.5" width="12" height="10" rx="1.5" stroke="currentColor" stroke-width="1"/>
-                  <path d="M4 1v3M10 1v3M1 6h12" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>
-                </svg>
-                {{ formatBirthday(person.birth_day, person.birth_month) }}
-              </span>
-              </div>
-            </div>
-
           </div>
         </div>
       </div>

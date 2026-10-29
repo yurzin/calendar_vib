@@ -15,7 +15,7 @@ class Partner extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['logo', 'name', 'url', 'profile_id', 'is_paid'];
+    protected $fillable = ['logo', 'name', 'url', 'profile_id', 'participation_id',  'is_paid'];
 
     public static function uploadImage(Request $request, ?string $oldPath = null): ?string
     {
@@ -50,5 +50,13 @@ class Partner extends Model
     public function persons()
     {
         return $this->hasMany(Person::class);
+    }
+
+    /**
+     * Получить участие, к которому принадлежит партнер.
+     */
+    public function participation()
+    {
+        return $this->belongsTo(Participation::class);
     }
 }

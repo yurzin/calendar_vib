@@ -7,6 +7,11 @@ import Hero from "@/views/Pages/View/Components/Hero.vue";
 import Modal from "@/views/Pages/View/Components/Modal.vue";
 import WantSee from "@/views/Pages/View/Components/WantSee.vue";
 import {ref} from "vue";
+import { useParticipation } from "@/composable/useParticipation";
+
+const props = defineProps<{ slug: string }>()
+
+const { participation, notFound } = useParticipation(() => props.slug)
 
 const modalOpen = ref(false)
 const formSent = ref(false)
@@ -33,7 +38,8 @@ function openModal() { modalOpen.value = true; formSent.value = false }
 
     <Statistics @open-modal="openModal" />
 
-    <GridParticipant/>
+    <div v-if="notFound" class="gl-notfound">Страница не найдена</div>
+    <GridParticipant v-else-if="participation" :participation="participation" />
 
     <Footer/>
 
