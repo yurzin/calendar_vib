@@ -1,23 +1,24 @@
+<!-- Participation.vue -->
 <script setup lang="ts">
-import GridOfficial from "@/views/Pages/View/Components/GridOfficial.vue";
-import Header from "@/views/Pages/View/Components/Header.vue";
+import {computed, ref} from 'vue'
+import {useParticipation} from '@/composable/useParticipation'
+import {tiers} from '@/composable/tiers'
+import Grid from "@/views/Pages/View/Components/Grid.vue";
 import Footer from "@/views/Pages/View/Components/Footer.vue";
 import Statistics from "@/views/Pages/View/Components/Statistics.vue";
 import Hero from "@/views/Pages/View/Components/Hero.vue";
-import Modal from "@/views/Pages/View/Components/Modal.vue";
 import WantSee from "@/views/Pages/View/Components/WantSee.vue";
-import {ref} from "vue";
-import { useParticipation } from "@/composable/useParticipation";
+import Modal from "@/views/Pages/View/Components/Modal.vue";
+import Header from "@/views/Pages/View/Components/Header.vue";
 
 const props = defineProps<{ slug: string }>()
-
-const { participation, notFound } = useParticipation(() => props.slug)
+const {participation, notFound} = useParticipation(() => props.slug)
+const tier = computed(() => tiers[props.slug])
 
 const modalOpen = ref(false)
-const formSent = ref(false)
-
-function openModal() { modalOpen.value = true; formSent.value = false }
-
+const openModal = () => {
+  modalOpen.value = true
+}
 </script>
 
 <template>
@@ -30,24 +31,21 @@ function openModal() { modalOpen.value = true; formSent.value = false }
       <div class="gl-orb gl-orb3" />
       <div class="gl-grid" />
     </div>
-
-    <WantSee @open-modal="openModal" />
+    <WantSee @open-modal="openModal"/>
 
     <Header/>
 
     <Hero/>
 
-    <Statistics @open-modal="openModal" />
-    <div v-if="notFound" class="gl-notfound">Страница не найдена</div>
-    <GridOfficial v-else-if="participation" :participation="participation" />
+    <Statistics @open-modal="openModal"/>
 
+    <div v-if="notFound || !tier" class="gl-notfound">Страница не найдена</div>
+    <Grid v-else-if="participation" :key="props.slug" :participation="participation" :tier="tier"/>
     <Footer/>
 
-    <Modal v-model="modalOpen" />
-
+    <Modal v-model="modalOpen"/>
   </div>
 </template>
-
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500&family=Roboto:wght@100&display=swap');
 

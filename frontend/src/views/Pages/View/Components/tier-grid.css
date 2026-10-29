@@ -1,0 +1,779 @@
+/* ═══════════════════════════════════════════════════════
+   Общие стили сетки тарифов участия
+   Используется: Grid.vue, AdPage.vue, CalendarGrid.vue
+   (без scoped: стили должны действовать во вложенных компонентах)
+═══════════════════════════════════════════════════════ */
+
+.gl-container {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 64px;
+  width: 100%;
+}
+
+@media (max-width: 900px) {
+  .gl-container {
+    padding: 0 32px;
+  }
+}
+
+@media (max-width: 480px) {
+  .gl-container {
+    padding: 0 20px;
+  }
+}
+
+/* ─── Шапка секции ───────────────────────────────── */
+.gl-section-head-top {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px 40px;
+  width: 100%;
+}
+
+.gl-section-head-main {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+}
+
+.gl-section-headline {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(18px, 2vw, 26px);
+  font-weight: 500;
+  line-height: 1.25;
+  color: #e2edf8;
+  white-space: nowrap;
+}
+
+.gl-section-headline-accent {
+  color: #818cf8;
+}
+
+.gl-back-link {
+  display: inline-block;
+  margin: 24px 0 16px;
+  font-size: 13px;
+  color: #93c5fd;
+  text-decoration: none;
+  padding: 8px 16px;
+  border-radius: 30px;
+  border: 1px solid rgba(96, 165, 250, 0.2);
+  background: rgba(13, 21, 48, 0.5);
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
+}
+
+.gl-back-link:hover {
+  border-color: rgba(147, 197, 253, 0.5);
+  background: rgba(13, 21, 48, 0.8);
+  color: #bfdbfe;
+}
+
+.gl-section-price {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.gl-section-price-lbl {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #64748b;
+}
+
+.gl-section-price-val {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(28px, 3vw, 40px);
+  font-weight: 700;
+  color: #93c5fd;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.gl-section-body {
+  font-size: 15px;
+  line-height: 1.6;
+  color: #94a3b8;
+  margin: 0;
+  text-align: left;
+}
+
+@media (max-width: 700px) {
+  .gl-section-head-top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .gl-section-headline {
+    white-space: normal;
+  }
+
+  .gl-section-price {
+    align-items: flex-start;
+  }
+}
+
+/* ─── Обёртка сетки и переключатель страниц ─────── */
+.grid-wrapper {
+  aspect-ratio: 5 / 3;
+  background: rgba(13, 21, 48, 0.4);
+  border: 1px solid rgba(96, 165, 250, 0.1);
+  border-radius: 16px;
+  padding: 24px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.grid-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-shrink: 0;
+  flex-wrap: nowrap;
+  gap: 12px;
+  min-width: 0;
+}
+
+.page-indicator {
+  font-size: 12px;
+  color: #64748b;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.month-selector {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: rgba(13, 21, 48, 0.6);
+  border: 1px solid rgba(96, 165, 250, 0.15);
+  border-radius: 40px;
+  padding: 6px 16px;
+  min-width: 0;
+  flex: 1;
+}
+
+.month-nav {
+  background: transparent;
+  border: none;
+  color: #93c5fd;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 4px 12px;
+  border-radius: 20px;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.month-nav:hover:not(:disabled) {
+  background: rgba(147, 197, 253, 0.1);
+  color: #bfdbfe;
+}
+
+.month-nav:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.current-month {
+  font-size: 15px;
+  font-weight: 500;
+  color: #dce8f5;
+  min-width: 0;
+  flex: 1;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ─── Рекламная заглушка ─────────────────────────── */
+.ad-page {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #0b1225;
+  position: relative;
+}
+
+/* Размещение на всю полосу */
+.ad-page--placement {
+  border: 1px solid #ec4899;
+}
+
+/* Размещение на 1/2 полосы: макет участника справа, левая половина свободна */
+.ad-page--half {
+  flex-direction: row;
+  gap: 8px;
+  background: transparent;
+  border-radius: 0;
+}
+
+.ad-page--half .ad-right {
+  flex: 1 1 0;
+  min-width: 0;
+  border: 1px solid #ec4899;
+  border-radius: 12px;
+}
+
+.ad-half-free {
+  flex: 1 1 0;
+  min-width: 0;
+  border: 1px dashed rgba(96, 165, 250, 0.15);
+  border-radius: 12px;
+  background: rgba(13, 21, 48, 0.3);
+}
+
+.ad-page--half .ad-logo-area {
+  top: 50%;
+  left: 50%;
+}
+
+.ad-page--half .ad-logo-mark {
+  width: clamp(28px, 7vw, 90px);
+  height: clamp(28px, 7vw, 90px);
+}
+
+.ad-page--half .ad-logo-name {
+  font-size: clamp(11px, 3vw, 34px);
+}
+
+.ad-placement-marker {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 5;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: default;
+}
+
+.ad-placement-marker::after {
+  content: '◆';
+  font-size: 12px;
+  color: #ec4899;
+}
+
+.ad-placement-marker:hover .placement-tooltip {
+  display: block;
+}
+
+/* Маркер у верхнего края страницы — тултип раскрывается вниз, а не вверх */
+.ad-placement-marker .placement-tooltip {
+  top: calc(100% + 8px);
+  bottom: auto;
+  left: auto;
+  right: 0;
+  transform: none;
+}
+
+.ad-placement-marker .placement-tooltip::after {
+  top: auto;
+  bottom: 100%;
+  left: auto;
+  right: 10px;
+  transform: none;
+  border-top-color: transparent;
+  border-bottom-color: rgba(236, 72, 153, 0.4);
+}
+
+.ad-right {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Обложка (только у генерального партнёра) */
+.ad-cover-title {
+  position: absolute;
+  bottom: 90px;
+  left: 28px;
+  z-index: 4;
+  text-align: left;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(18px, 5vw, 48px);
+  font-weight: 600;
+  line-height: 1.15;
+  color: #f0f4ff;
+}
+
+.ad-headline-accent {
+  color: #818cf8;
+}
+
+.ad-geo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.ad-logo-area {
+  position: absolute;
+  top: 20%;
+  left: 57%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  gap: clamp(6px, 2.5vw, 16px);
+  z-index: 4;
+}
+
+.ad-logo-mark {
+  width: clamp(40px, 12vw, 150px);
+  height: clamp(40px, 12vw, 150px);
+  border-radius: 20px;
+  background: rgba(129, 140, 248, 0.12);
+  border: 1px solid rgba(129, 140, 248, 0.22);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ad-logo-mark svg {
+  width: 50%;
+  height: 50%;
+}
+
+.ad-logo-name {
+  font-family: 'Roboto', sans-serif;
+  font-size: clamp(14px, 5vw, 56px);
+  font-weight: 100;
+  color: #e2edf8;
+  letter-spacing: 0.01em;
+  line-height: 1.25;
+}
+
+.ad-stats {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 18px;
+  z-index: 4;
+}
+
+.ad-stat {
+  text-align: right;
+}
+
+.ad-stat-val {
+  font-size: 17px;
+  font-weight: 500;
+  color: #f0f4ff;
+  line-height: 1;
+}
+
+.ad-stat-lbl {
+  font-size: 9px;
+  color: #475569;
+  margin-top: 3px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* ─── Календарная сетка ──────────────────────────── */
+.calendar-grid {
+  flex: 1;
+  display: flex;
+  gap: 8px;
+  min-height: 0;
+}
+
+.weekdays-vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex-shrink: 0;
+  width: 110px;
+}
+
+.weekday-vertical {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: #3b82f6;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  background: rgba(59, 130, 246, 0.08);
+  border-radius: 10px;
+  padding: 6px 8px;
+  word-break: break-word;
+}
+
+.calendar-days-vertical {
+  display: flex;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+
+.calendar-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0; /* gap убран — нужен для слияния рамок placement */
+  flex: 1;
+  min-width: 0;
+}
+
+/* Обычные ячейки получают gap через margin-bottom */
+.calendar-day {
+  flex: 1;
+  background: rgba(13, 21, 48, 0.5);
+  border: 1px solid rgba(96, 165, 250, 0.1);
+  border-radius: 10px;
+  margin-bottom: 6px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.calendar-day:last-child {
+  margin-bottom: 0;
+}
+
+.calendar-day:hover:not(.empty):not(.is-placement) {
+  border-color: rgba(96, 165, 250, 0.3);
+  background: rgba(13, 21, 48, 0.7);
+  transform: translateY(-1px);
+}
+
+.calendar-day.is-today {
+  border-color: #3b82f6;
+  background: rgba(59, 130, 246, 0.15);
+  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.2);
+}
+
+.calendar-day.is-weekend .day-number {
+  color: #f87171;
+}
+
+.calendar-day.empty {
+  opacity: 0.15;
+  background: rgba(13, 21, 48, 0.2);
+}
+
+/* ─── Знаменательная дата ────────────────────────── */
+@keyframes special-pulse {
+  0% {
+    box-shadow: 0 0 0 0px rgba(139, 92, 246, 0.6), 0 0 0 1px rgba(139, 92, 246, 0.4);
+  }
+  60% {
+    box-shadow: 0 0 0 6px rgba(139, 92, 246, 0), 0 0 0 1px rgba(139, 92, 246, 0.4);
+  }
+  100% {
+    box-shadow: 0 0 0 0px rgba(139, 92, 246, 0), 0 0 0 1px rgba(139, 92, 246, 0.4);
+  }
+}
+
+.calendar-day.is-special {
+  border-color: #8b5cf6;
+  background: rgba(139, 92, 246, 0.15);
+  overflow: visible;
+  z-index: 1;
+  animation: special-pulse 2s ease-out infinite;
+}
+
+.calendar-day.is-special .day-number {
+  color: #c4b5fd;
+  font-weight: 500;
+}
+
+.calendar-day.is-special::after {
+  content: '★';
+  position: absolute;
+  top: 2px;
+  right: 4px;
+  font-size: 9px;
+  color: #8b5cf6;
+  line-height: 1;
+}
+
+.special-tooltip {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200px;
+  background: #1e1b4b;
+  border: 1px solid rgba(139, 92, 246, 0.4);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 11px;
+  line-height: 1.5;
+  color: #cbd5e1;
+  z-index: 100;
+  pointer-events: none;
+  text-align: left;
+}
+
+.special-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: rgba(139, 92, 246, 0.4);
+}
+
+.special-tooltip-count {
+  display: block;
+  font-size: 10px;
+  font-weight: 600;
+  color: #a78bfa;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+}
+
+.calendar-day.is-special:hover {
+  animation-play-state: paused;
+}
+
+.calendar-day.is-special:hover .special-tooltip {
+  display: block;
+}
+
+/* ─── Размещение макета компании ─────────────────── */
+/*
+  Объединённая рамка: gap между ячейками внутри группы убран через margin-bottom: 0,
+  а border-radius и border-top/bottom управляются по позиции в группе.
+*/
+
+/* Все ячейки группы */
+.calendar-day.is-placement {
+  background: rgba(236, 72, 153, 0.1);
+  border-color: #ec4899;
+  border-radius: 0;
+  margin-bottom: 0; /* убираем зазор внутри группы */
+  padding-bottom: 6px;
+  overflow: visible;
+  z-index: 1;
+  cursor: default;
+}
+
+/* Верхняя ячейка группы */
+.calendar-day.placement-first {
+  border-radius: 10px 10px 0 0;
+  border-bottom: none; /* граница между first и middle/last убрана */
+  margin-top: 0;
+}
+
+/* Средние ячейки */
+.calendar-day.placement-middle {
+  border-top: none;
+  border-bottom: none;
+}
+
+/* Нижняя ячейка группы */
+.calendar-day.placement-last {
+  border-radius: 0 0 10px 10px;
+  border-top: none;
+  margin-bottom: 6px; /* восстанавливаем зазор после группы */
+}
+
+.calendar-day.is-placement::after {
+  content: '◆';
+  position: absolute;
+  top: 2px;
+  right: 4px;
+  font-size: 8px;
+  color: #ec4899;
+  line-height: 1;
+}
+
+/* Маркер только на первой ячейке, не на остальных */
+.calendar-day.placement-middle::after,
+.calendar-day.placement-last::after {
+  display: none;
+}
+
+.placement-tooltip {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200px;
+  background: #2d1b2e;
+  border: 1px solid rgba(236, 72, 153, 0.4);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 11px;
+  line-height: 1.5;
+  color: #cbd5e1;
+  z-index: 100;
+  pointer-events: none;
+  text-align: left;
+}
+
+.placement-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: rgba(236, 72, 153, 0.4);
+}
+
+.placement-tooltip-count {
+  display: block;
+  font-size: 10px;
+  font-weight: 600;
+  color: #f472b6;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+}
+
+.calendar-day.placement-first:hover .placement-tooltip {
+  display: block;
+}
+
+/* ─── Числа ──────────────────────────────────────── */
+.day-number {
+  font-size: 15px;
+  font-weight: 500;
+  color: #dce8f5;
+}
+
+/* ─── Адаптивность ───────────────────────────────── */
+@media (max-width: 900px) {
+  .grid-wrapper {
+    padding: 16px;
+  }
+
+  .weekdays-vertical {
+    width: 88px;
+  }
+
+  .weekday-vertical {
+    font-size: 10px;
+  }
+
+  .day-number {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 768px) {
+  .weekdays-vertical {
+    width: 76px;
+  }
+
+  .weekday-vertical {
+    font-size: 9px;
+  }
+
+  .day-number {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 640px) {
+  .weekdays-vertical {
+    width: 64px;
+  }
+
+  .weekday-vertical {
+    font-size: 8px;
+    border-radius: 8px;
+  }
+
+  .calendar-grid {
+    gap: 4px;
+  }
+
+  .calendar-days-vertical {
+    gap: 4px;
+  }
+
+  .day-number {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 480px) {
+  .grid-wrapper {
+    padding: 10px;
+  }
+
+  .weekdays-vertical {
+    width: 54px;
+  }
+
+  .weekday-vertical {
+    font-size: 7px;
+    padding: 4px;
+  }
+
+  .day-number {
+    font-size: 10px;
+  }
+
+  .month-nav {
+    font-size: 14px;
+    padding: 2px 8px;
+  }
+
+  .current-month {
+    font-size: 13px;
+    min-width: 0;
+  }
+
+  .ad-logo-area {
+    top: 14px;
+    left: 14px;
+    transform: none;
+  }
+
+  .ad-cover-title {
+    bottom: 40px;
+    left: 14px;
+  }
+
+  .ad-stats {
+    bottom: 8px;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    gap: 14px;
+  }
+
+  .ad-stat {
+    text-align: center;
+  }
+
+  .ad-stat-val {
+    font-size: 13px;
+  }
+
+  .ad-stat-lbl {
+    font-size: 6px;
+  }
+}

@@ -28,28 +28,10 @@ const routes = [
     name: 'grid'
   },
   {
-    path: '/participation/general-partner',
-    component: () => import('../views/Pages/View/GeneralPartner.vue'),
-    name: 'general-partner',
-    props: { slug: 'general-partner' }
-  },
-  {
-    path: '/participation/official-partner',
-    component: () => import('../views/Pages/View/OfficialPartner.vue'),
-    name: 'official-partner',
-    props: { slug: 'official-partner' }
-  },
-  {
-    path: '/participation/business-partner',
-    component: () => import('../views/Pages/View/BusinessPartner.vue'),
-    name: 'business-partner',
-    props: { slug: 'business-partner' }
-  },
-  {
-    path: '/participation/project-participant',
-    component: () => import('../views/Pages/View/ProjectParticipant.vue'),
-    name: 'project-participant',
-    props: { slug: 'project-participant' }
+    path: '/participation/:slug',
+    component: () => import('../views/Pages/View/Participation.vue'),
+    name: 'participation',
+    props: true
   },
   {
     path: '/consent-personal-data',
