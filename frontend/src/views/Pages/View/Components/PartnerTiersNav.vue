@@ -15,7 +15,7 @@ const otherTiers = computed(() =>
     <router-link
       v-for="tier in otherTiers"
       :key="tier.slug"
-      :to="`/participation/${tier.slug}`"
+      :to="`/participation/${tier.slug}#${tier.slug}`"
       class="tier-nav-link"
     >
       {{ tier.label }} →
