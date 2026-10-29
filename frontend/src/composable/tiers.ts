@@ -3,6 +3,7 @@ export type AdLayout = 'full' | 'half'
 
 export interface TierConfig {
   slug: string
+  label: string
   hasCover: boolean
   headline: string
   headlineAccent: string
@@ -21,6 +22,7 @@ const AD_NAME_FULL = 'Размещение макета компании на с
 export const tiers: Record<string, TierConfig> = {
   'general-partner': {
     slug: 'general-partner',
+    label: 'Генеральный партнёр',
     hasCover: true,
     headline: 'Ваш бренд на каждой',
     headlineAccent: 'странице',
@@ -35,6 +37,7 @@ export const tiers: Record<string, TierConfig> = {
   },
   'official-partner': {
     slug: 'official-partner',
+    label: 'Официальный партнёр',
     hasCover: false,
     headline: 'Ваш бренд в',
     headlineAccent: 'ключевые даты',
@@ -49,6 +52,7 @@ export const tiers: Record<string, TierConfig> = {
   },
   'business-partner': {
     slug: 'business-partner',
+    label: 'Деловой партнёр',
     hasCover: false,
     headline: 'Ваш бренд',
     headlineAccent: 'в деловой среде',
@@ -63,6 +67,7 @@ export const tiers: Record<string, TierConfig> = {
   },
   'project-participant': {
     slug: 'project-participant',
+    label: 'Участник проекта',
     hasCover: false,
     headline: 'Ваше имя',
     headlineAccent: 'в указателе года',

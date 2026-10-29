@@ -1,22 +1,12 @@
 <script setup lang="ts">
-interface Tier {
-  key: string
-  path: string
-  label: string
-}
+import { computed } from 'vue'
+import { tiers } from '@/composable/tiers'
 
-const props = defineProps<{
-  current: string
-}>()
+const props = defineProps<{ current: string }>()
 
-const tiers: Tier[] = [
-  {key: 'general-partner', path: '/participation/general-partner', label: 'Генеральный партнёр'},
-  {key: 'official-partner', path: '/participation/official-partner', label: 'Официальный партнёр'},
-  {key: 'business-partner', path: '/participation/business-partner', label: 'Деловой партнёр'},
-  {key: 'project-participant', path: '/participation/project-participant', label: 'Участник проекта'}
-]
-
-const otherTiers = tiers.filter(t => t.key !== props.current)
+const otherTiers = computed(() =>
+  Object.values(tiers).filter(t => t.slug !== props.current)
+)
 </script>
 
 <template>
@@ -24,8 +14,8 @@ const otherTiers = tiers.filter(t => t.key !== props.current)
     <span class="tier-nav-label">Другие форматы участия:</span>
     <router-link
       v-for="tier in otherTiers"
-      :key="tier.key"
-      :to="tier.path"
+      :key="tier.slug"
+      :to="`/participation/${tier.slug}`"
       class="tier-nav-link"
     >
       {{ tier.label }} →
