@@ -17,7 +17,7 @@
         <tr><td style="color: #64748b;">Город</td><td>{{ $lead->city }}</td></tr>
         <tr><td style="color: #64748b;">Место работы</td><td>{{ $lead->workplace }}</td></tr>
         <tr><td style="color: #64748b;">Должность</td><td>{{ $lead->position }}</td></tr>
-        <tr><td style="color: #64748b;">E-mail</td><td><a href="mailto:{{ rawurlencode($lead->email) }}">{{ $lead->email }}</a></td></tr>
+        <tr><td style="color: #64748b;">E-mail</td><td><a href="mailto:{{ strtr($lead->email, ['%' => '%25', '?' => '%3F', '&' => '%26', '#' => '%23']) }}">{{ $lead->email }}</a></td></tr>
         <tr><td style="color: #64748b;">Телефон</td><td><a href="tel:{{ preg_replace('/[^\d+]/', '', $lead->phone) }}">{{ $lead->phone }}</a></td></tr>
         @if ($lead->source)
             <tr><td style="color: #64748b;">Страница</td><td>{{ $lead->source }}</td></tr>

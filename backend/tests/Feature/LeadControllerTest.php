@@ -198,7 +198,16 @@ class LeadControllerTest extends TestCase
         $html = (new NewLead($lead))->render();
 
         $this->assertStringContainsString('href="tel:+79991234567">+7 999 123-45-67</a>', $html);
-        $this->assertStringContainsString('href="mailto:ivan%40mail.ru">ivan@mail.ru</a>', $html);
+        $this->assertStringContainsString('href="mailto:ivan@mail.ru">ivan@mail.ru</a>', $html);
+    }
+
+    public function test_mailto_encodes_dangerous_characters_and_keeps_at_sign(): void
+    {
+        $lead = Lead::create([...$this->payload(['email' => 'a%b?c#d@mail.ru']), 'consent_at' => now()]);
+
+        $html = (new NewLead($lead))->render();
+
+        $this->assertStringContainsString('href="mailto:a%25b%3Fc%23d@mail.ru">a%b?c#d@mail.ru</a>', $html);
     }
 
     public function test_mail_has_reply_to_and_limited_subject(): void

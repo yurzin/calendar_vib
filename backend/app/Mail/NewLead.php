@@ -24,8 +24,6 @@ class NewLead extends Mailable implements ShouldQueue
 
     public int $backoff = 60;
 
-    public bool $deleteWhenMissingModels = true;
-
     public function __construct(public Lead $lead) {}
 
     public function envelope(): Envelope
