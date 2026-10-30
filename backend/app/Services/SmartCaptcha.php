@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Throwable;
 
 // Проверка токена Yandex SmartCaptcha: https://yandex.cloud/ru/docs/smartcaptcha/concepts/validation
@@ -17,6 +18,7 @@ class SmartCaptcha
     {
         try {
             $response = Http::asForm()
+                ->connectTimeout(2)
                 ->timeout(3)
                 ->post('https://smartcaptcha.yandexcloud.net/validate', [
                     'secret' => config('services.smartcaptcha.server_key'),
@@ -30,8 +32,18 @@ class SmartCaptcha
             return true;
         }
 
+        // 4xx — ошибка настройки (например, неверный ключ): пропускаем, но это нужно чинить
+        if ($response->clientError()) {
+            Log::critical('SmartCaptcha отвергла запрос, капча не работает', [
+                'status' => $response->status(),
+                'body' => $response->body(),
+            ]);
+
+            return true;
+        }
+
         if (! $response->ok()) {
-            report(new \RuntimeException('SmartCaptcha validate: HTTP ' . $response->status()));
+            report(new \RuntimeException('SmartCaptcha validate: HTTP '.$response->status()));
 
             return true;
         }

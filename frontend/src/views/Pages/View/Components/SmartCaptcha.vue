@@ -27,7 +27,7 @@ function loadScript(): Promise<SmartCaptchaApi> {
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 
-const props = defineProps<{ sitekey: string }>()
+const props = defineProps<{ sitekey: string; modelValue?: string }>()
 const emit = defineEmits<{ (e: 'update:modelValue', token: string): void }>()
 
 const container = ref<HTMLElement | null>(null)
@@ -51,6 +51,7 @@ onMounted(async () => {
 
 onBeforeUnmount(() => {
   if (widgetId !== undefined) window.smartCaptcha?.destroy(widgetId)
+  emit('update:modelValue', '')
 })
 
 // Токен одноразовый: после неудачной отправки капчу нужно пройти заново
