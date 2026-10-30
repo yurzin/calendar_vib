@@ -190,4 +190,43 @@ class LeadControllerTest extends TestCase
         $this->assertStringContainsString('name="viewport"', $html);
         $this->assertStringContainsString($lead->created_at->timezone('Asia/Novokuznetsk')->format('d.m.Y H:i'), $html);
     }
+
+    public function test_mail_links_are_normalized_and_text_is_kept(): void
+    {
+        $lead = Lead::create([...$this->payload(), 'consent_at' => now()]);
+
+        $html = (new NewLead($lead))->render();
+
+        $this->assertStringContainsString('href="tel:+79991234567">+7 999 123-45-67</a>', $html);
+        $this->assertStringContainsString('href="mailto:ivan%40mail.ru">ivan@mail.ru</a>', $html);
+    }
+
+    public function test_mail_has_reply_to_and_limited_subject(): void
+    {
+        $lead = Lead::create([...$this->payload(['last_name' => str_repeat('я', 100)]), 'consent_at' => now()]);
+
+        $mail = new NewLead($lead);
+
+        $mail->assertHasReplyTo('ivan@mail.ru', $lead->full_name);
+        $mail->assertHasSubject('Новая заявка «Хочу в календарь»: '.str_repeat('я', 80).'...');
+    }
+
+    public function test_mail_failure_is_logged(): void
+    {
+        $lead = Lead::create([...$this->payload(), 'consent_at' => now()]);
+        Log::spy();
+
+        (new NewLead($lead))->failed(new \RuntimeException('smtp down'));
+
+        Log::shouldHaveReceived('error')->once()
+            ->with('NewLead: письмо не отправлено', ['lead_id' => $lead->id, 'error' => 'smtp down']);
+    }
+
+    public function test_full_name_accessor_and_hidden_fields(): void
+    {
+        $lead = Lead::create([...$this->payload(['middle_name' => 'Иванович']), 'ip' => '127.0.0.1', 'consent_at' => now()]);
+
+        $this->assertSame('Иванов Иван Иванович', $lead->full_name);
+        $this->assertSame([], array_intersect(['ip', 'birthday', 'phone', 'email'], array_keys($lead->toArray())));
+    }
 }
