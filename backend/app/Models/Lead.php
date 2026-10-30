@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 
 class Lead extends Model
@@ -11,13 +12,17 @@ class Lead extends Model
         'workplace', 'position', 'email', 'phone', 'source', 'ip', 'consent_at',
     ];
 
+    protected $hidden = ['ip', 'birthday', 'phone', 'email'];
+
     protected $casts = [
         'birthday' => 'date',
         'consent_at' => 'datetime',
     ];
 
-    public function getFullNameAttribute(): string
+    protected function fullName(): Attribute
     {
-        return trim(implode(' ', array_filter([$this->last_name, $this->first_name, $this->middle_name])));
+        return Attribute::get(
+            fn (): string => trim(implode(' ', array_filter([$this->last_name, $this->first_name, $this->middle_name]))),
+        );
     }
 }
