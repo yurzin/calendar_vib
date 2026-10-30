@@ -2,6 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Новая заявка</title>
 </head>
 <body style="font-family: Arial, sans-serif; font-size: 14px; color: #1e293b;">
@@ -21,8 +22,8 @@
         @if ($lead->source)
             <tr><td style="color: #64748b;">Страница</td><td>{{ $lead->source }}</td></tr>
         @endif
-        <tr><td style="color: #64748b;">Согласие на обработку ПД</td><td>{{ $lead->consent_at ? 'дано ' . $lead->consent_at->timezone('Asia/Novokuznetsk')->format('d.m.Y H:i') : 'нет' }}</td></tr>
-        <tr><td style="color: #64748b;">Дата</td><td>{{ $lead->created_at->timezone('Asia/Novokuznetsk')->format('d.m.Y H:i') }}</td></tr>
+        <tr><td style="color: #64748b;">Согласие на обработку ПД</td><td>{{ $lead->consent_at ? 'дано ' . $lead->consent_at->timezone(config('services.leads.timezone'))->format('d.m.Y H:i') : 'нет' }}</td></tr>
+        <tr><td style="color: #64748b;">Дата</td><td>{{ $lead->created_at->timezone(config('services.leads.timezone'))->format('d.m.Y H:i') }}</td></tr>
     </table>
 </body>
 </html>

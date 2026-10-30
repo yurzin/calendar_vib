@@ -42,7 +42,7 @@ const fields: FieldDef[] = [
   { key: 'workplace',   label: 'Место работы',  type: 'text',  placeholder: 'ООО «Название»',    autocomplete: 'organization',    required: true, wide: true },
   { key: 'position',    label: 'Должность',     type: 'text',  placeholder: 'Генеральный директор', autocomplete: 'organization-title', required: true, wide: true },
   { key: 'email',       label: 'E-mail',        type: 'email', placeholder: 'mail@example.ru',   autocomplete: 'email',           required: true },
-  { key: 'phone',       label: 'Телефон',       type: 'tel',   placeholder: '+7 (___) ___-__-__', autocomplete: 'tel',            required: true },
+  { key: 'phone',       label: 'Телефон',       type: 'tel',   placeholder: '+7 999 123-45-67', autocomplete: 'tel',            required: true },
 ]
 
 const emptyForm = (): Record<FieldKey, string> => ({
@@ -66,7 +66,13 @@ const captchaKey = import.meta.env.VITE_SMARTCAPTCHA_CLIENT_KEY || ''
 const captchaToken = ref('')
 const captchaRef = ref<InstanceType<typeof SmartCaptcha> | null>(null)
 
-const today = new Date().toISOString().slice(0, 10)
+// Сервер требует дату рождения раньше сегодняшней
+const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10)
+
+// Ошибки остальных полей показываем общим сообщением, иначе заявка потеряется молча
+function isVisibleField(key: string) {
+  return fields.some(f => f.key === key) || key === 'consent' || (key === 'captcha' && !!captchaKey)
+}
 
 const canSubmit = computed(() =>
   !sending.value && consent.value && (!captchaKey || captchaToken.value !== '')
@@ -76,12 +82,14 @@ const canSubmit = computed(() =>
 watch(() => props.modelValue, (open) => {
   if (!open) return
   openedAt = Date.now()
+  captchaToken.value = ''
+  error.value = ''
+  fieldErrors.value = {}
   // При повторном открытии — снова показываем форму, а не экран успеха
   if (formSent.value) {
     formSent.value = false
     Object.assign(form, emptyForm())
     consent.value = false
-    captchaToken.value = ''
   }
 }, { immediate: true })
 
@@ -94,7 +102,7 @@ async function submitForm() {
     await axios.post('/api/leads', {
       ...form,
       consent: consent.value,
-      source: route.fullPath,
+      source: route.path,
       company_site: companySite.value,
       form_time: Date.now() - openedAt,
       captcha: captchaToken.value,
@@ -106,7 +114,9 @@ async function submitForm() {
     captchaRef.value?.reset()
     const errors = getValidationErrors(e)
     if (errors) {
-      fieldErrors.value = Object.fromEntries(Object.entries(errors).map(([k, v]) => [k, v[0]]))
+      const messages = Object.entries(errors).map(([k, v]) => [k, v[0]] as const)
+      fieldErrors.value = Object.fromEntries(messages.filter(([k]) => isVisibleField(k)))
+      error.value = messages.filter(([k]) => !isVisibleField(k)).map(([, m]) => m).join(' ')
     } else if (axios.isAxiosError(e) && e.response?.status === 429) {
       error.value = 'Слишком много заявок подряд. Попробуйте позже.'
     } else {
@@ -165,7 +175,7 @@ async function submitForm() {
                     :class="{ 'gl-field-input--err': fieldErrors[f.key] }"
                     :placeholder="f.placeholder"
                     :autocomplete="f.autocomplete"
-                    :max="f.type === 'date' ? today : undefined"
+                    :max="f.type === 'date' ? yesterday : undefined"
                     :min="f.type === 'date' ? '1900-01-01' : undefined"
                   />
                   <span v-if="fieldErrors[f.key]" class="gl-field-err">{{ fieldErrors[f.key] }}</span>

@@ -31,6 +31,8 @@ return [
     'leads' => [
         // Адрес, на который приходят заявки из формы «Хочу в календарь»
         'email' => env('LEADS_EMAIL'),
+        // Часовой пояс дат в письме о заявке
+        'timezone' => env('LEADS_TIMEZONE', 'Asia/Novokuznetsk'),
     ],
 
     'smartcaptcha' => [
