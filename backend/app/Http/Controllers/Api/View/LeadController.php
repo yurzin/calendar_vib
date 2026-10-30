@@ -6,9 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Mail\NewLead;
 use App\Models\Lead;
 use App\Services\SmartCaptcha;
+use Closure;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
 use Throwable;
@@ -25,7 +27,14 @@ class LeadController extends Controller
     {
         // Ловушка для ботов: скрытое поле заполнено или форма отправлена слишком быстро.
         // Отвечаем «успехом», чтобы бот не понял, что его отсеяли
-        if ($request->filled('company_site') || (int) $request->input('form_time') < self::MIN_FILL_MS) {
+        if ($request->filled('company_site')) {
+            return $this->accepted();
+        }
+
+        $fillMs = (int) $request->input('form_time');
+        if ($fillMs < self::MIN_FILL_MS) {
+            Log::info('Lead dropped: too fast', ['ms' => $fillMs, 'ip' => $request->ip()]);
+
             return $this->accepted();
         }
 
@@ -40,8 +49,13 @@ class LeadController extends Controller
             'workplace' => ['required', 'string', 'max:255', self::NO_LINKS],
             'position' => ['required', 'string', 'max:255', self::NO_LINKS],
             'email' => 'required|email|max:255',
-            'phone' => ['required', 'string', 'max:32', 'regex:/^[\d\s()+\-]{6,}$/'],
-            'source' => 'nullable|string|max:255',
+            'phone' => ['bail', 'required', 'string', 'max:32', 'regex:/^[\d\s()+\-]{6,}$/', function (string $attribute, string $value, Closure $fail) {
+                $digits = strlen(preg_replace('/\D/', '', $value));
+                if ($digits < 10 || $digits > 15) {
+                    $fail('Укажите корректный номер телефона.');
+                }
+            }],
+            'source' => ['nullable', 'string', 'max:255', self::NO_LINKS],
             'consent' => 'accepted',
             'captcha' => [$captchaRequired ? 'required' : 'nullable', 'string', 'max:4096'],
         ], [
@@ -70,11 +84,16 @@ class LeadController extends Controller
             ]);
         }
 
+        // Ivan@Mail.ru и ivan@mail.ru — один контакт
+        $validated = array_merge($validated, ['email' => mb_strtolower(trim($validated['email']))]);
+
         // Повторная заявка с теми же контактами за сутки — не сохраняем и не шлём письмо
         $duplicate = Lead::where('created_at', '>=', now()->subDay())
             ->where(fn ($q) => $q->where('email', $validated['email'])->orWhere('phone', $validated['phone']))
             ->exists();
         if ($duplicate) {
+            Log::info('Lead dropped: duplicate', ['ip' => $request->ip()]);
+
             return $this->accepted();
         }
 
@@ -84,15 +103,17 @@ class LeadController extends Controller
             'consent_at' => now(),
         ]);
 
-        // Письмо уходит через очередь (NewLead — ShouldQueue); заявка уже сохранена,
+        // Письмо уходит через очередь; заявка уже сохранена,
         // поэтому сбой постановки в очередь не должен ломать ответ пользователю
         $recipient = config('services.leads.email');
         if ($recipient) {
             try {
-                Mail::to($recipient)->send(new NewLead($lead));
+                Mail::to($recipient)->queue(new NewLead($lead));
             } catch (Throwable $e) {
                 report($e);
             }
+        } else {
+            Log::warning('services.leads.email не задан');
         }
 
         return $this->accepted();
